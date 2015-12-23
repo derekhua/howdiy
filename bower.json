@@ -1,0 +1,10 @@
+{
+  "name": "howdiy",
+  "private": "true",
+  "devDependencies": {
+    "ionic": "driftyco/ionic-bower#1.2.1"
+  },
+  "dependencies": {
+    "famous-angular": "~0.5.2"
+  }
+}
