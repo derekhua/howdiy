@@ -12,8 +12,8 @@ app.use(bodyParser.json());
 app.use(helmet());
 
 // Connect to the db
-// howdiy_test is the name of the db
-mongoose.connect('mongodb://localhost/howdiy_test');
+// howdiy_db is the name of the db
+mongoose.connect('mongodb://howdiy-admin:lobster897@ds039095.mongolab.com:39095/howdiy-db');
 var db = mongoose.connection;
 
 // Set port number
