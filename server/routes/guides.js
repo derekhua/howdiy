@@ -1,42 +1,48 @@
-var express = require('express');
-var router = express.Router();
+var express   = require('express');
+var passport  = require('passport');
+var router    = express.Router();
 
-Guides = require('../models/guides')
+var TokenHelpers  = require('../utility/token-helpers')
+var Guides        = require('../models/guides')
+
+require('../config/passport')(passport);
 
 // GET
-
 // Returns all guides
-router.get('/', function(req, res) {
-  Guides.getGuides(function(err, guide) {
-    if(err) {
-      throw err;
-    }
-    res.json(guide);
-  }); 
+router.get('/', passport.authenticate('jwt', { session: false}), function(req, res) {
+  TokenHelpers.verifyToken(req, res, function(req, res) {
+    Guides.getGuides(function(err, guides) {
+      if(err) {
+        throw err;
+      }
+      res.json(guides);
+    });
+  });
 });
 
-// Returns single guide 
-router.get('/:id', function(req, res) {
-  var query = { 'id': req.params.id };
-  Guides.getGuide(query, function(err, guide) {
-    if(err) {
-      throw err;
-    }
-    res.json(guide);
-  }); 
+// Returns single guide according to id
+router.get('/:id', passport.authenticate('jwt', { session: false}), function(req, res) {
+  TokenHelpers.verifyToken(req, res, function(req, res) {
+    Guides.getGuide({ 'id': req.params.id }, function(err, guide) {
+      if(err) {
+        throw err;
+      }
+      res.json(guide);
+    });
+  });
 });
 
 // POST
-
-router.post('/', function(req, res) {
-  var guide = req.body;
-  Guides.addGuide(guide, function(err, guide) {
-    if(err) {
-      console.log('Error occured in adding');
-      console.log(err);
-    } else {
-      res.json(guide);
-    }
+router.post('/', passport.authenticate('jwt', { session: false}), function(req, res) {
+  TokenHelpers.verifyToken(req, res, function(req, res) {
+    Guides.addGuide(req.body, function(err, guide) {
+      if(err) {
+        console.log('Error occured in adding');
+        console.log(err);
+      } else {
+        res.json(guide);
+      }
+    });
   });
 });
 

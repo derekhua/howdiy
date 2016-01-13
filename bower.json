@@ -5,6 +5,7 @@
     "ionic": "driftyco/ionic-bower#1.2.1"
   },
   "dependencies": {
-    "famous-angular": "~0.5.2"
+    "famous-angular": "~0.5.2",
+    "angular-mocks": "~1.4.8"
   }
 }

@@ -1,47 +1,65 @@
-var mongoose = require('mongoose');
+var mongoose        = require('mongoose');
+var bcrypt          = require('bcrypt');
+var uniqueValidator = require('mongoose-unique-validator');
 
 // User Schema
 var userSchema = mongoose.Schema({
-  id: {
-    type: String, 
+  username: {
+    type: String,
+    unique: true,
     required: true
   },
-  userName: {
+  email: {
+    type: String, 
+    unique: true,
+    required: true },
+  password: {
     type: String,
     required: true
-  },
-  passwordHash: {
-    type: String,
-    required: true
-  },
-  firstName: {
-    type: String, 
-    required: true
-  },
-  lastName: {
-    type: String, 
-    required: true
-  },
-  profilePicturePath: {
-    type: String
-  },
-  meta: {
-    followers: Number,
-    createDate: {
-      type: Date,
-      default: Date.now
-    }
   }
 });
 
-var Users = module.exports = mongoose.model('Users', userSchema);
+// Apply the uniqueValidator plugin to userSchema.
+userSchema.plugin(uniqueValidator);
 
-module.exports.getUser = function(query, callback, limit) {
-  Users.findOne(query, callback).limit(limit);
+userSchema.pre('save', function (next) {
+  var user = this;
+  if (this.isModified('password') || this.isNew) {
+    bcrypt.genSalt(10, function (err, salt) {
+      if (err) {
+        return next(err);
+      }
+      bcrypt.hash(user.password, salt, function (err, hash) {
+        if (err) {
+          return next(err);
+        }
+        user.password = hash;
+        console.log('here');
+        next();
+      });
+    });
+  } else {
+    return next();
+  }
+});
+
+userSchema.methods.comparePassword = function (passw, cb) {
+  bcrypt.compare(passw, this.password, function (err, isMatch) {
+    if (err) {
+      return cb(err);
+    }
+    cb(null, isMatch);
+  });
 };
 
-module.exports.getUsers = function(query, callback, limit) {
-  Users.find(query, callback).limit(limit);
+var Users = module.exports = mongoose.model('Users', userSchema);
+
+module.exports.getUser = function(params, callback, limit) {
+  Users.findOne(params, callback).limit(limit);
+};
+
+module.exports.getUsers = function(params, callback, limit) {
+  Users.find(params, callback).limit(limit);
 };
 
 module.exports.addUser = function(user, callback) {

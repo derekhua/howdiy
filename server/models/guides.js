@@ -3,26 +3,27 @@ var mongoose = require('mongoose');
 // Guide Schema
 var guideSchema = mongoose.Schema({
   id: {
-    type: String, 
+    type: String,
+    unique: true,
     required: true
   },
   title: {
-    type: String, 
+    type: String,
     required: true
   },
   picturePath: {
     type: String
   },
   author: {
-    type: String, 
+    type: String,
     required: true
   },
   description: {
-    type: String, 
+    type: String,
     default: ""
   },
   category: {
-    type: String, 
+    type: String,
     required: true
   },
   steps: [{
@@ -30,17 +31,17 @@ var guideSchema = mongoose.Schema({
       type: String
     },
     body: {
-      type: String, 
+      type: String,
       default: ""
     },
-    comments: [{ 
-      body: String, 
-      date: Date 
+    comments: [{
+      body: String,
+      date: Date
     }]
   }],
-  comments: [{ 
-    body: String, 
-    date: Date 
+  comments: [{
+    body: String,
+    date: Date
   }],
   meta: {
     favs: Number,
@@ -53,12 +54,12 @@ var guideSchema = mongoose.Schema({
 
 var Guides = module.exports = mongoose.model('Guides', guideSchema);
 
-module.exports.getGuide = function(query, callback, limit) {
-  Guides.findOne(query, callback).limit(limit);
+module.exports.getGuide = function(params, callback, limit) {
+  Guides.findOne(params, callback).limit(limit);
 };
 
-module.exports.getGuides = function(query, callback, limit) {
-  Guides.find(query, callback).limit(limit);
+module.exports.getGuides = function(params, callback, limit) {
+  Guides.find(params, callback).limit(limit);
 };
 
 module.exports.addGuide = function(guide, callback) {
