@@ -5,11 +5,18 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', 'famous.angular'])
+var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter.services', 'famous.angular'])
 
-.run(function($ionicPlatform) {
+.run(function($rootScope, $ionicPlatform) {
+  $rootScope.appReady = {status:false};
+
   $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+  
+  	console.log('ionic Ready');
+	$rootScope.appReady.status = true;
+	$rootScope.$apply();
+    
+	// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -23,7 +30,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
+.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
@@ -90,24 +97,46 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
     var $state = $injector.get("$state");
     $state.go("tab.dash");
   });
-
 })
 
-.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
-  $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
-    if ('data' in next && 'authorizedRoles' in next.data) {
-      var authorizedRoles = next.data.authorizedRoles;
-      if (!AuthService.isAuthorized(authorizedRoles)) {
-        event.preventDefault();
-        $state.go($state.current, {}, {reload: true});
-        $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-      }
+// .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+  // $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
+    // if ('data' in next && 'authorizedRoles' in next.data) {
+      // var authorizedRoles = next.data.authorizedRoles;
+      // if (!AuthService.isAuthorized(authorizedRoles)) {
+        // event.preventDefault();
+        // $state.go($state.current, {}, {reload: true});
+        // $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+      // }
+    // }
+    // if (!AuthService.isAuthenticated()) {
+      // if (next.name !== 'login') {
+        // event.preventDefault();
+        // $state.go('login');
+      // }
+    // }
+  // });
+// });
+
+
+howdiyApp.controller("CameraController", function($scope, $cordovaCamera) {
+    $scope.takePicture = function() {
+        var options = { 
+            quality : 75, 
+            destinationType : Camera.DestinationType.DATA_URL, 
+            sourceType : Camera.PictureSourceType.CAMERA, 
+            allowEdit : true,
+            encodingType: Camera.EncodingType.JPEG,
+            targetWidth: 300,
+            targetHeight: 300,
+            popoverOptions: CameraPopoverOptions,
+            saveToPhotoAlbum: false
+        };
+ 
+        $cordovaCamera.getPicture(options).then(function(imageData) {
+            $scope.imgURI = "data:image/jpeg;base64," + imageData;
+        }, function(err) {
+            // An error occured. Show a message to the user
+        });
     }
-    if (!AuthService.isAuthenticated()) {
-      if (next.name !== 'login') {
-        event.preventDefault();
-        $state.go('login');
-      }
-    }
-  });
 });

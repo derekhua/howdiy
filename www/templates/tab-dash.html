@@ -3,7 +3,7 @@
     <button class="button icon-left ion-log-out button-stable" ng-click="logout()">Logout</button>
   </ion-nav-buttons>
 
-  <ion-content class="padding">
+  <ion-content class="padding" ng-controller="CameraController">
     <div class="row"><div class="col text-center">
       <h3 class="title">Welcome {{username}}!</h3>
       This could be your Dashboard.
@@ -19,6 +19,16 @@
       </button>
       <br><br>
       {{response}}
+	  
+	  <img ng-show="imgURI !== undefined" ng-src="{{imgURI}}">
+	  <img ng-show="imgURI === undefined" ng-src="http://placehold.it/300x300">
+      <button class="button" ng-click="takePicture()">Take Picture</button>
+	  <button class="button button-block button-balanced" ng-click="selImages()" ng-disabled="!ready">
+		Select Images
+	  </button>	  
+	  <p ng-repeat="img in images">
+		<img ng-src="{{img}}" />
+	  </p>
     </div></div>
   </ion-content>
 </ion-view>

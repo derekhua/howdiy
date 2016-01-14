@@ -41,7 +41,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('DashCtrl', function($scope, $state, $http, $ionicPopup, AuthService) {
+.controller('DashCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService) {
   $scope.logout = function() {
     AuthService.logout();
     $state.go('login');
@@ -64,6 +64,33 @@ angular.module('starter.controllers', [])
   $scope.printToken = function() {
     console.log(window.localStorage.getItem('yourTokenKey'));
     $scope.response = window.localStorage.getItem('yourTokenKey');
+  };
+  
+  $scope.ready = false;
+  $scope.images = [];
+	
+  $rootScope.$watch('appReady.status', function() {
+	console.log('watch fired '+$rootScope.appReady.status);
+	if($rootScope.appReady.status) $scope.ready = true;
+  });
+	
+  $scope.selImages = function() {
+	var options = {
+	  quality: 50,
+	  destinationType: Camera.DestinationType.FILE_URI,
+	  sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+	  targetWidth: 200,
+	  targetHeight: 200
+	};
+
+	$cordovaCamera.getPicture(options).then(function(imageUri) {
+	  console.log('img', imageUri);
+	  $scope.images.push(imageUri);
+					
+	}, function(err) {
+	  // error
+	});
+
   };
 })
 
@@ -91,3 +118,4 @@ angular.module('starter.controllers', [])
     enableFriends: true
   };
 });
+
