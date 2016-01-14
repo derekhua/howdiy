@@ -20,19 +20,17 @@ angular.module('starter.services', [])
   }
 
   function useCredentials(token) {
-    username = token.split('.')[0];
+    username = token.split('@')[0];
     isAuthenticated = true;
-    authToken = token;
-
+    authToken = token.split('@')[1];
     if (username == 'admin') {
       role = USER_ROLES.admin
     }
     if (username == 'user') {
       role = USER_ROLES.public
     }
-
     // Set the token as header for requests
-    $http.defaults.headers.common['Authorization'] = token;
+    $http.defaults.headers.common['Authorization'] = authToken;
   }
 
   function destroyUserCredentials() {
@@ -45,16 +43,11 @@ angular.module('starter.services', [])
 
   var login = function(username, pw) {
     return $q(function(resolve, reject) {
-      console.log(username);
-      console.log(pw);
       $http.post('http://localhost:3000/api/auth', {"username": username,"password": pw})
       .then(function(response) {
-        console.log(response);
         if (response.data.success === true) {
           // Make a request and receive your auth token from your server
-          storeUserCredentials(name + response.data.token);
-
-          console.log(window.localStorage.getItem(LOCAL_TOKEN_KEY));
+          storeUserCredentials(username + '@' + response.data.token);
           resolve('Login success.');
         } else {
           reject('Login failed.');
