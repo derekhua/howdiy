@@ -9,6 +9,8 @@ var sh = require('shelljs');
 var jshint = require('gulp-jshint');
 var jasmineNode = require('gulp-jasmine-node');
 var nodemon = require('gulp-nodemon');
+var karma = require('gulp-karma');
+var Server = require('karma').Server;
 
 var paths = {
   sass: ['./scss/**/*.scss'],
@@ -16,9 +18,9 @@ var paths = {
   server: ['server/**/.js']
 };
 
-gulp.task('default', ['sass']);
-gulp.task('server', ['server']);
-gulp.task('test', ['lint-server', 'lint-www','server-test']);
+gulp.task('default', ['sass', 'start-node-server', 'watch']);
+gulp.task('serve', ['start-node-server']);
+gulp.task('test', ['run-server-tests', 'run-www-tests']);
 
 gulp.task('sass', function(done) {
   gulp.src('./scss/ionic.app.scss')
@@ -35,6 +37,8 @@ gulp.task('sass', function(done) {
 
 gulp.task('watch', function() {
   gulp.watch(paths.sass, ['sass']);
+  gulp.watch(paths.www, ['lint-www', 'run-www-tests']);
+  gulp.watch(paths.server, ['lint-server']);
 });
 
 gulp.task('install', ['git-check'], function() {
@@ -58,28 +62,35 @@ gulp.task('git-check', function(done) {
 });
 
 gulp.task('lint-server', function() {
-    return gulp.src(paths.server, {base: './'})
-      .pipe(jshint())
-      .pipe(jshint.reporter('default'));
+  return gulp.src(paths.server, {base: './'})
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('lint-www', function() {
-    return gulp.src(paths.www, {base: './'})
-      .pipe(jshint())
-      .pipe(jshint.reporter('default'));
+  return gulp.src(paths.www, {base: './'})
+    .pipe(jshint())
+    .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('server-test', function () {
-    return gulp.src(['server/specs/**/*spec.js'])
-      .pipe(jasmineNode({timeout: 10000}));
+gulp.task('run-server-tests', function () {
+  return gulp.src(['server/specs/**/*spec.js'])
+    .pipe(jasmineNode({timeout: 100000}));
 });
 
-gulp.task('server', function () {
+gulp.task('run-www-tests', function(done) {
+  new Server({
+    configFile: __dirname + '/www/tests/unit-tests.conf.js',
+    singleRun: true
+  }, done).start();
+});
+
+gulp.task('start-node-server', function () {
   nodemon({ script: 'server/server.js'
           , ext: 'html js'
           , ignore: ['ignored.js']
-          , tasks: ['lint-server'] })
+          , tasks: ['run-server-tests'] })
     .on('restart', function () {
-      console.log('restarted!')
+      console.log('server restarted!')
     });
-})
+});

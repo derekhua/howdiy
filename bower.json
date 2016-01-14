@@ -2,10 +2,11 @@
   "name": "howdiy",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.2.1"
+    "ionic": "driftyco/ionic-bower#1.2.1",
+    "angular-mocks": "^1.4.3"
   },
   "dependencies": {
     "famous-angular": "~0.5.2",
-    "angular-mocks": "~1.4.8"
+    "ngCordova": "~0.1.23-alpha"
   }
 }
