@@ -9,3 +9,4 @@ plugins/
 *.swo
 *.log
 *.DS_Store
+.io-config.json

@@ -30,6 +30,11 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   });
 })
 
+.config(function($ionicConfigProvider) {
+    $ionicConfigProvider.navBar.alignTitle('center');
+    $ionicConfigProvider.tabs.position('bottom');
+})
+
 .config(function($stateProvider, $urlRouterProvider, $compileProvider) {
 
   // Ionic uses AngularUI Router which uses the concept of states
@@ -91,14 +96,64 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
       }
     }
   })
+    
+    .state('tab.home', {
+    url: '/home',
+    views: {
+      'tab-home': {
+        templateUrl: 'templates/tab-home.html',
+        controller: 'HomeCtrl'
+      }
+    }
+  })
+  
+    .state('tab.search', {
+    url: '/search',
+    views: {
+      'tab-search': {
+        templateUrl: 'templates/tab-search.html',
+        controller: 'SearchCtrl'
+      }
+    }
+  })
+  
+    .state('tab.creation', {
+    url: '/creation',
+    views: {
+      'tab-creation': {
+        templateUrl: 'templates/tab-creation.html',
+        controller: 'CreationCtrl'
+      }
+    }
+  })
+
+    .state('tab.activity', {
+    url: '/activity',
+    views: {
+      'tab-activity': {
+        templateUrl: 'templates/tab-activity.html',
+        controller: 'ActivityCtrl'
+      }
+    }
+  })
+  
+    .state('tab.profile', {
+    url: '/profile',
+    views: {
+      'tab-profile': {
+        templateUrl: 'templates/tab-profile.html',
+        controller: 'ProfileCtrl'
+      }
+    }
+  });
+
 
   // If none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise(function ($injector, $location) {
     var $state = $injector.get("$state");
-    $state.go("tab.dash");
+    $state.go("tab.home");
   });
 })
-
 // .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
   // $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
     // if ('data' in next && 'authorizedRoles' in next.data) {

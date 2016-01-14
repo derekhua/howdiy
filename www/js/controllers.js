@@ -30,7 +30,7 @@ angular.module('starter.controllers', [])
 
   $scope.login = function(data) {
     AuthService.login(data.username, data.password).then(function(authenticated) {
-      $state.go('tab.dash', {}, {reload: true});
+      $state.go('tab.home', {}, {reload: true});
       $scope.setCurrentUsername(data.username);
     }, function(err) {
       var alertPopup = $ionicPopup.alert({
@@ -41,7 +41,7 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('DashCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService) {
+.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService) {
   $scope.logout = function() {
     AuthService.logout();
     $state.go('login');
@@ -117,5 +117,23 @@ angular.module('starter.controllers', [])
   $scope.settings = {
     enableFriends: true
   };
-});
+})
 
+
+.controller('SearchCtrl', function($scope) {
+    
+})
+
+
+.controller('CreationCtrl', function($scope) {
+    
+})
+
+.controller('ActivityCtrl', function($scope) {
+    
+})
+
+.controller('ProfileCtrl', function($scope) {
+    
+})
+;
