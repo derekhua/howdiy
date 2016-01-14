@@ -24,20 +24,20 @@ angular.module('starter.services', [])
     isAuthenticated = true;
     authToken = token.split('@')[1];
     if (username == 'admin') {
-      role = USER_ROLES.admin
+      role = USER_ROLES.admin;
     }
     if (username == 'user') {
-      role = USER_ROLES.public
+      role = USER_ROLES.public;
     }
     // Set the token as header for requests
-    $http.defaults.headers.common['Authorization'] = authToken;
+    $http.defaults.headers.common.Authorization = authToken;
   }
 
   function destroyUserCredentials() {
     authToken = undefined;
     username = '';
     isAuthenticated = false;
-    $http.defaults.headers.common['Authorization'] = undefined;
+    $http.defaults.headers.common.Authorization = undefined;
     window.localStorage.removeItem(LOCAL_TOKEN_KEY);
   }
 

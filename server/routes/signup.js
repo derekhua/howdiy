@@ -1,7 +1,7 @@
 var express = require('express');
 var router  = express.Router();
 
-var User = require('../models/users')
+var User = require('../models/users');
 
 // Create a new user account (POST http://localhost:8080/api/signup)
 router.post('/', function(req, res) {

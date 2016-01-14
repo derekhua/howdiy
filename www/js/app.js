@@ -11,11 +11,11 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   $rootScope.appReady = {status:false};
 
   $ionicPlatform.ready(function() {
-  
+
   	console.log('ionic Ready');
 	$rootScope.appReady.status = true;
 	$rootScope.$apply();
-    
+
 	// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
@@ -96,7 +96,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
       }
     }
   })
-    
+
     .state('tab.home', {
     url: '/home',
     views: {
@@ -106,7 +106,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
       }
     }
   })
-  
+
     .state('tab.search', {
     url: '/search',
     views: {
@@ -116,7 +116,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
       }
     }
   })
-  
+
     .state('tab.creation', {
     url: '/creation',
     views: {
@@ -136,7 +136,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
       }
     }
   })
-  
+
     .state('tab.profile', {
     url: '/profile',
     views: {
@@ -153,7 +153,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     var $state = $injector.get("$state");
     $state.go("tab.home");
   });
-})
+});
 // .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
   // $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
     // if ('data' in next && 'authorizedRoles' in next.data) {
@@ -176,10 +176,10 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
 
 howdiyApp.controller("CameraController", function($scope, $cordovaCamera) {
     $scope.takePicture = function() {
-        var options = { 
-            quality : 75, 
-            destinationType : Camera.DestinationType.DATA_URL, 
-            sourceType : Camera.PictureSourceType.CAMERA, 
+        var options = {
+            quality : 75,
+            destinationType : Camera.DestinationType.DATA_URL,
+            sourceType : Camera.PictureSourceType.CAMERA,
             allowEdit : true,
             encodingType: Camera.EncodingType.JPEG,
             targetWidth: 300,
@@ -187,11 +187,11 @@ howdiyApp.controller("CameraController", function($scope, $cordovaCamera) {
             popoverOptions: CameraPopoverOptions,
             saveToPhotoAlbum: false
         };
- 
+
         $cordovaCamera.getPicture(options).then(function(imageData) {
             $scope.imgURI = "data:image/jpeg;base64," + imageData;
         }, function(err) {
             // An error occured. Show a message to the user
         });
-    }
+    };
 });

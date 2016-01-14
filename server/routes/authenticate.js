@@ -3,7 +3,7 @@ var jwt     = require('jwt-simple');
 var config  = require('../config/database');
 var router  = express.Router();
 
-var User = require('../models/users')
+var User = require('../models/users');
 
 // Route to authenticate a user (POST http://localhost:8080/api/auth)
 router.post('/', function(req, res) {

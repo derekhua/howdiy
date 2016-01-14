@@ -1,6 +1,6 @@
 var config  = require('../config/database');
 var jwt     = require('jwt-simple');
-var Users   = require('../models/users')
+var Users   = require('../models/users');
 
 var verifyToken = function(req, res, callback) {
   var token = getToken(req.headers);
@@ -16,7 +16,7 @@ var verifyToken = function(req, res, callback) {
   } else {
     return res.status(403).send({success: false, msg: 'No token provided.'});
   }
-}
+};
 
 var getToken = function (headers) {
   if (headers && headers.authorization) {

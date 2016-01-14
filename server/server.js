@@ -17,12 +17,12 @@ var users 	= require('./routes/users');
 var app = express();
 
 // Parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 // Parse application/json
 app.use(bodyParser.json());
 app.use(helmet());
 // HTTP request logger
-app.use(morgan('combined'))
+app.use(morgan('combined'));
 app.use(passport.initialize());
 
 // Connect to the howdiy_db
@@ -34,7 +34,7 @@ app.set('port', process.env.PORT || 3000);
 
 app.get('/', function(req, res) {res.send('Use /api/');});
 app.use('/api/', index);
-app.use('/api/signup', signup)
+app.use('/api/signup', signup);
 app.use('/api/auth', auth);
 app.use('/api/g', guides);
 app.use('/api/u', users);

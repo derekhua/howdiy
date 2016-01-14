@@ -2,8 +2,8 @@ var express   = require('express');
 var passport  = require('passport');
 var router    = express.Router();
 
-var TokenHelpers  = require('../utility/token-helpers')
-var Guides        = require('../models/guides')
+var TokenHelpers  = require('../utility/token-helpers');
+var Guides        = require('../models/guides');
 
 require('../config/passport')(passport);
 
