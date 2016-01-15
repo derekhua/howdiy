@@ -1,4 +1,4 @@
-angular.module('starter.controllers', [])
+angular.module('starter.controllers', ['ionic'])
 
 .controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
   $scope.username = AuthService.username();
@@ -93,34 +93,18 @@ angular.module('starter.controllers', [])
   };
 })
 
-.controller('ChatsCtrl', function($scope, Chats) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
-
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  };
-})
-
-.controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
-  $scope.chat = Chats.get($stateParams.chatId);
-})
-
 .controller('AccountCtrl', function($scope) {
   $scope.settings = {
     enableFriends: true
   };
 })
 
-
-.controller('SearchCtrl', function($scope) {
-
+.controller('SearchCtrl', function($scope, $injector) {
+  var $state = $injector.get("$state");
+  // go to guide testing purposes
+  $scope.goToGuide = function() {
+  $state.go('guide');
+};
 })
 
 
@@ -135,4 +119,20 @@ angular.module('starter.controllers', [])
 .controller('ProfileCtrl', function($scope) {
 
 })
-;
+
+.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate) {
+    
+    $scope.friend = friends;
+    $scope.slideHasChanged = function() {
+        $ionicSlideBoxDelegate.update();
+  };
+});
+
+var friends = [
+    {name:'Xin Steak 1', source:'http://i.imgur.com/NErBswV.jpg', description:'Xin likes this the most.'},
+    {name:'Xin Steak 2', source:'http://i.imgur.com/464Qa.jpg', description:'Xin likes this second most.'},
+    {name:'Xin Steak 3', source:'http://i.imgur.com/elhXCPw.jpg', description:'Xin likes this third most.'},
+    {name:'Xin Steak 4', source:'http://i.imgur.com/twdmb.jpg', description:'Xin likes this fourth most.'},
+    {name:'Xin Steak 5', source:'http://i.imgur.com/hHYufmJ.jpg', description:'Xin likes this fifth most.'}
+
+];

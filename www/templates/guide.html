@@ -1,0 +1,29 @@
+<ion-view view-title="GUIDE TEST">
+    <ion-nav-bar class="bar-assertive">
+    </ion-nav-bar>
+  
+  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+        <ion-slide-box on-slide-changed="slideHasChanged()" show-pager="false">
+          <ion-slide ng-repeat="i in friend">
+            <div class="card">
+              
+                <div class="item item-avatar">
+                  <img src="http://i.imgur.com/GFZn0aB.png">
+                  <h2>{{i.name}}</h2>
+                  <p></p>
+                </div>
+                
+              <div class="item item-image">
+                    <img src="{{i.source}}">
+                  </div>
+
+              <div  class="item">
+                {{i.description}}
+              </div>
+
+            </div>
+          </ion-slide>
+        </ion-slide-box>
+    </ion-content>
+</ion-view>
+
