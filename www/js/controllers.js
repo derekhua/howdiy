@@ -41,7 +41,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService) {
+.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer) {
   $scope.logout = function() {
     AuthService.logout();
     $state.go('login');
@@ -49,15 +49,21 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.getGuides = function() {
     $http.get('http://localhost:3000/api/g').then(
-      function(result) {
+      function successCallback(result) {
         $scope.response = result;
+      },
+      function errorCallback(result) {
+        console.log("getGuides error");
       });
   };
 
   $scope.getUsers = function() {
     $http.get('http://localhost:3000/api/u').then(
-      function(result) {
+      function successCallback(result) {
         $scope.response = result;
+      },
+      function errorCallback(result) {
+        console.log("getUsers error");
       });
   };
 
@@ -69,27 +75,82 @@ angular.module('starter.controllers', ['ionic'])
   $scope.images = [];
 
   $rootScope.$watch('appReady.status', function() {
-	console.log('watch fired '+$rootScope.appReady.status);
-	if($rootScope.appReady.status) $scope.ready = true;
+  	console.log('watch fired '+$rootScope.appReady.status);
+  	if($rootScope.appReady.status) $scope.ready = true;
   });
 
   $scope.selImages = function() {
-	var options = {
-	  quality: 50,
-	  destinationType: Camera.DestinationType.FILE_URI,
-	  sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-	  targetWidth: 200,
-	  targetHeight: 200
-	};
+  	var options = {
+  	  quality: 50,
+  	  destinationType: Camera.DestinationType.FILE_URI,
+  	  sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+  	  targetWidth: 200,
+  	  targetHeight: 200
+  	};
+  	$cordovaCamera.getPicture(options).then(function(imageUri) {
+  	  console.log('img', imageUri);
+  	  $scope.images.push(imageUri);
+  	}, function(err) {
+  	  // error
+  	});
+  };
 
-	$cordovaCamera.getPicture(options).then(function(imageUri) {
-	  console.log('img', imageUri);
-	  $scope.images.push(imageUri);
+  $scope.uploadPicture = function() {
+    var options = {
+    	quality: 50,
+    	destinationType: Camera.DestinationType.FILE_URI,
+    	sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+    };
 
-	}, function(err) {
-	  // error
-	});
+    $cordovaCamera.getPicture(options).then(
+  	function(imageURI) {
+      $ionicLoading.show({template: 'Uploading photo...', duration:500});
+      window.resolveLocalFileSystemURL(imageURI, function successCallback(fileEntry) {
+        var fileURL = imageURI;
 
+    		var options = new FileUploadOptions();
+    		options.fileKey = "file";
+    		options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+    		options.mimeType = "image/jpeg";
+    		options.chunkedMode = true;
+
+        var ft = new FileTransfer();
+    		ft.upload(fileURL, encodeURI('http://localhost:3000/photos'),
+        function successCallback(FileUploadResult) {
+          console.log('response:');
+          console.log(FileUploadResult.response);
+        },
+        function(error) {
+          $ionicLoading.show({template: 'Connection error...'});
+    		  $ionicLoading.hide();
+        },
+        options);
+			},
+      function errorCallback() {
+      });
+  	},
+  	function(err){
+  		$ionicLoading.show({template: 'Error uploading photo...', duration:500});
+  	});
+  };
+
+  $scope.takePicture = function() {
+    var options = {
+      quality : 75,
+      destinationType : Camera.DestinationType.DATA_URL,
+      sourceType : Camera.PictureSourceType.CAMERA,
+      allowEdit : true,
+      encodingType: Camera.EncodingType.JPEG,
+      targetWidth: 300,
+      targetHeight: 300,
+      popoverOptions: CameraPopoverOptions,
+      saveToPhotoAlbum: false
+    };
+    $cordovaCamera.getPicture(options).then(function(imageData) {
+      $scope.imgURI = "data:image/jpeg;base64," + imageData;
+    }, function(err) {
+      // An error occured. Show a message to the user
+    });
   };
 })
 
@@ -101,10 +162,10 @@ angular.module('starter.controllers', ['ionic'])
 
 .controller('SearchCtrl', function($scope, $injector) {
   var $state = $injector.get("$state");
-  // go to guide testing purposes
-  $scope.goToGuide = function() {
-  $state.go('guide');
-};
+    // go to guide testing purposes
+    $scope.goToGuide = function() {
+    $state.go('guide');
+  };
 })
 
 
@@ -121,18 +182,15 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 .controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate) {
-    
-    $scope.friend = friends;
-    $scope.slideHasChanged = function() {
-        $ionicSlideBoxDelegate.update();
+  $scope.friend = [
+    {name:'Steak 1', source:'http://i.imgur.com/NErBswV.jpg', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'},
+    {name:'Steak 2', source:'http://i.imgur.com/464Qa.jpg', description:'Aliquam vitae magna quis eros iaculis laoreet at vel est. Vestibulum nisi enim, placerat vel sagittis sed, lacinia sed mauris. Praesent iaculis lorem nec dolor viverra, et ultricies risus vehicula. Vestibulum pulvinar, lectus in tincidunt euismod, urna nibh pulvinar justo, ac ultrices nibh justo id nulla. Maecenas nec volutpat lorem, eu lacinia quam. In eu metus consectetur, condimentum nisl elementum, placerat turpis. Nam efficitur, ante non tempor convallis, risus ipsum accumsan tortor, laoreet viverra dolor neque nec est. Sed ex eros, volutpat eget nibh quis, tristique malesuada lacus. Nulla vestibulum auctor elit consectetur condimentum. Nam efficitur, dolor a tincidunt vulputate, sapien nisi luctus libero, ut aliquet diam lorem non lorem. Aliquam erat volutpat.'},
+    {name:'Steak 3', source:'http://i.imgur.com/elhXCPw.jpg', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'},
+    {name:'Steak 4', source:'http://i.imgur.com/twdmb.jpg', description:'Aliquam vitae magna quis eros iaculis laoreet at vel est. Vestibulum nisi enim, placerat vel sagittis sed, lacinia sed mauris. Praesent iaculis lorem nec dolor viverra, et ultricies risus vehicula. Vestibulum pulvinar, lectus in tincidunt euismod, urna nibh pulvinar justo, ac ultrices nibh justo id nulla. Maecenas nec volutpat lorem, eu lacinia quam. In eu metus consectetur, condimentum nisl elementum, placerat turpis. Nam efficitur, ante non tempor convallis, risus ipsum accumsan tortor, laoreet viverra dolor neque nec est. Sed ex eros, volutpat eget nibh quis, tristique malesuada lacus. Nulla vestibulum auctor elit consectetur condimentum. Nam efficitur, dolor a tincidunt vulputate, sapien nisi luctus libero, ut aliquet diam lorem non lorem. Aliquam erat volutpat.'},
+    {name:'Steak 5', source:'http://i.imgur.com/hHYufmJ.jpg', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'}
+  ];
+
+  $scope.slideHasChanged = function() {
+    $ionicSlideBoxDelegate.update();
   };
 });
-
-var friends = [
-    {name:'Xin Steak 1', source:'http://i.imgur.com/NErBswV.jpg', description:'Xin likes this the most.'},
-    {name:'Xin Steak 2', source:'http://i.imgur.com/464Qa.jpg', description:'Xin likes this second most.'},
-    {name:'Xin Steak 3', source:'http://i.imgur.com/elhXCPw.jpg', description:'Xin likes this third most.'},
-    {name:'Xin Steak 4', source:'http://i.imgur.com/twdmb.jpg', description:'Xin likes this fourth most.'},
-    {name:'Xin Steak 5', source:'http://i.imgur.com/hHYufmJ.jpg', description:'Xin likes this fifth most.'}
-
-];

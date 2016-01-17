@@ -14,8 +14,8 @@ var Server = require('karma').Server;
 
 var paths = {
   sass: ['./scss/**/*.scss'],
-  www: ['www/js/**/.js'],
-  server: ['server/**/.js']
+  www: ['./www/js/**/.js'],
+  server: ['./server/**/.js']
 };
 
 gulp.task('default', ['sass', 'start-node-server', 'watch']);
@@ -62,15 +62,15 @@ gulp.task('git-check', function(done) {
 });
 
 gulp.task('lint-server', function() {
-  return gulp.src(paths.server, {base: './'})
+  return gulp.src(paths.server)
     .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
+    .pipe(jshint.reporter('default'));
 });
 
 gulp.task('lint-www', function() {
-  return gulp.src(paths.www, {base: './'})
+  return gulp.src(paths.www)
     .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'));
+    .pipe(jshint.reporter('default'));
 });
 
 gulp.task('run-server-tests', function () {

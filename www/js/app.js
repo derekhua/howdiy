@@ -48,7 +48,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     templateUrl: 'templates/login.html',
     controller: 'LoginCtrl'
   })
-  
+
   .state('guide', {
     url: '/guide',
     templateUrl: 'templates/guide.html',
@@ -62,48 +62,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     templateUrl: 'templates/tabs.html'
   })
 
-  // Each tab has its own nav history stack:
-
-  .state('tab.dash', {
-    url: '/dash',
-    views: {
-      'tab-dash': {
-        templateUrl: 'templates/tab-dash.html',
-        controller: 'DashCtrl'
-      }
-    }
-  })
-
-  .state('tab.chats', {
-    url: '/chats',
-    views: {
-      'tab-chats': {
-        templateUrl: 'templates/tab-chats.html',
-        controller: 'ChatsCtrl'
-      }
-    }
-  })
-  .state('tab.chat-detail', {
-    url: '/chats/:chatId',
-    views: {
-      'tab-chats': {
-        templateUrl: 'templates/chat-detail.html',
-        controller: 'ChatDetailCtrl'
-      }
-    }
-  })
-
-  .state('tab.account', {
-    url: '/account',
-    views: {
-      'tab-account': {
-        templateUrl: 'templates/tab-account.html',
-        controller: 'AccountCtrl'
-      }
-    }
-  })
-
-    .state('tab.home', {
+  .state('tab.home', {
     url: '/home',
     views: {
       'tab-home': {
@@ -113,7 +72,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   })
 
-    .state('tab.search', {
+  .state('tab.search', {
     url: '/search',
     views: {
       'tab-search': {
@@ -123,7 +82,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   })
 
-    .state('tab.creation', {
+  .state('tab.creation', {
     url: '/creation',
     views: {
       'tab-creation': {
@@ -133,7 +92,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   })
 
-    .state('tab.activity', {
+  .state('tab.activity', {
     url: '/activity',
     views: {
       'tab-activity': {
@@ -143,7 +102,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   })
 
-    .state('tab.profile', {
+  .state('tab.profile', {
     url: '/profile',
     views: {
       'tab-profile': {
@@ -153,13 +112,13 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   });
 
-
   // If none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise(function ($injector, $location) {
     var $state = $injector.get("$state");
     $state.go("tab.home");
   });
 });
+
 // .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
   // $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
     // if ('data' in next && 'authorizedRoles' in next.data) {
@@ -178,26 +137,3 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     // }
   // });
 // });
-
-
-howdiyApp.controller("CameraController", function($scope, $cordovaCamera) {
-    $scope.takePicture = function() {
-        var options = {
-            quality : 75,
-            destinationType : Camera.DestinationType.DATA_URL,
-            sourceType : Camera.PictureSourceType.CAMERA,
-            allowEdit : true,
-            encodingType: Camera.EncodingType.JPEG,
-            targetWidth: 300,
-            targetHeight: 300,
-            popoverOptions: CameraPopoverOptions,
-            saveToPhotoAlbum: false
-        };
-
-        $cordovaCamera.getPicture(options).then(function(imageData) {
-            $scope.imgURI = "data:image/jpeg;base64," + imageData;
-        }, function(err) {
-            // An error occured. Show a message to the user
-        });
-    };
-});
