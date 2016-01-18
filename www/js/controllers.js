@@ -96,44 +96,37 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.uploadPicture = function() {
-    console.log("test1");
     var options = {
       quality: 50,
       destinationType: Camera.DestinationType.FILE_URI,
       sourceType: Camera.PictureSourceType.PHOTOLIBRARY
     };
-
     $cordovaCamera.getPicture(options).then(
     function(imageURI) {
       $ionicLoading.show({template: 'Uploading photo...', duration:500});
-      window.FilePath.resolveNativePath(imageURI, function successCallback(fileEntry) {
-        var fileURL = imageURI;
+      console.log("imageURI", imageURI);
+      var options = new FileUploadOptions();
+      options.fileKey = "file";
+      options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+      options.mimeType = "image/jpeg";
+      options.chunkedMode = true;
 
-        var options = new FileUploadOptions();
-        options.fileKey = "file";
-        options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-        options.mimeType = "image/jpeg";
-        options.chunkedMode = true;
-
-        var ft = new FileTransfer();
-        ft.upload(fileURL, encodeURI(EC2.address + '/photos'),
+      var ft = new FileTransfer();
+      ft.upload(imageURI, encodeURI(EC2.address + '/photos'),
         function successCallback(FileUploadResult) {
           console.log('response:');
           console.log(FileUploadResult.response);
+          $ionicLoading.show({template: 'Success!', duration:500});
         },
-        function(error) {
-          console.log("Upload error");
-          $ionicLoading.show({template: 'Connection error...'});
-          $ionicLoading.hide();
+        function erroCallback(error) {
+          console.log("Upload error:");
+          console.log(error);
+          $ionicLoading.show({template: 'Connection error...', duration:500});
         },
         options);
-      },
-      function errorCallback() {
-        console.log("Upload error 2");
-      });
     },
     function(err){
-      $ionicLoading.show({template: 'Error uploading photo...', duration:500});
+      $ionicLoading.show({template: 'Error getting photo...', duration:500});
     });
   };
 
@@ -167,7 +160,7 @@ angular.module('starter.controllers', ['ionic'])
     // go to guide testing purposes
   $scope.goToGuide = function(guideId) {
     $state.go('guide-detail', { "guideId": guideId });
-  };         
+  };
 })
 
 
@@ -209,7 +202,7 @@ angular.module('starter.controllers', ['ionic'])
   else if (id === 1){
     $scope.guideSteps = $scope.friend;
   }
-  
+
   $scope.slideHasChanged = function() {
     $ionicSlideBoxDelegate.update();
   };

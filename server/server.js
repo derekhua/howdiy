@@ -46,32 +46,37 @@ app.get('/', function(req, res) {res.send('Use /api/');});
 
 // Test route for posting photos
 app.post('/photos', multipart(), function(req, res) {
-  console.log("Request filepath: " + req.files.file.path);
   var filepath = req.files.file.path;
+  console.log("Request filepath: " + filepath);
   fs.readFile(filepath, function (err, data) {
-    console.log("File name: " + req.files.file.name);
+    var filename = req.files.file.name;
+    if (filename.substr(filename.lastIndexOf('.') + 1) !== 'jpg') {
+      filename += '.jpg';
+    }
+    console.log("File name: " + filename);
     if (err) {
       console.log(err);
     }
     else {
       var params = {
         localFile: filepath,
-
         s3Params: {
           Bucket: "howdiy",
-          Key: req.files.file.name + ".jpg"
+          Key: filename
         }
       };
       var uploader = s3Client.uploadFile(params);
       uploader.on('error', function(err) {
         console.error("unable to upload:", err.stack);
+        res.sendStatus(500);
       });
       uploader.on('progress', function() {
         console.log("progress", uploader.progressMd5Amount,
         uploader.progressAmount, uploader.progressTotal);
       });
       uploader.on('end', function() {
-        console.log("done uploading");
+        console.log("Done uploading");
+        res.sendStatus(200);
       });
     };
   });
