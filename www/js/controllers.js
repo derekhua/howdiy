@@ -103,28 +103,61 @@ angular.module('starter.controllers', ['ionic'])
     };
     $cordovaCamera.getPicture(options).then(
     function(imageURI) {
-      $ionicLoading.show({template: 'Uploading photo...', duration:500});
-      console.log("imageURI", imageURI);
-      var options = new FileUploadOptions();
-      options.fileKey = "file";
-      options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
-      options.mimeType = "image/jpeg";
-      options.chunkedMode = true;
+      var tempImg = new Image();
+      tempImg.src = imageURI;
+      tempImg.onload = function() {
+        var canvas = document.createElement('canvas');
+        // Get image size and aspect ratio.
+        var targetWidth = tempImg.width;
+        var targetHeight = tempImg.height;
+        var aspect = tempImg.width / tempImg.height;
 
-      var ft = new FileTransfer();
-      ft.upload(imageURI, encodeURI(EC2.address + '/photos'),
-        function successCallback(FileUploadResult) {
-          console.log('response:');
-          console.log(FileUploadResult.response);
-          $ionicLoading.show({template: 'Success!', duration:500});
-        },
-        function erroCallback(error) {
-          console.log("Upload error:");
-          console.log(error);
-          $ionicLoading.show({template: 'Connection error...', duration:500});
-        },
-        options);
+        // Calculate resolution of resized image based on the max resolution that
+        // we want images to have on the long side
+        var longSideMax = 1280;
+        if (tempImg.width > tempImg.height) {
+          longSideMax = Math.min(tempImg.width, longSideMax);
+          targetWidth = longSideMax;
+          targetHeight = longSideMax / aspect;
+        }
+        else {
+          longSideMax = Math.min(tempImg.height, longSideMax);
+          targetHeight = longSideMax;
+          targetWidth = longSideMax * aspect;
+        }
+    
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        var ctx = canvas.getContext("2d");
+        
+        // .jpeg does not support transparent background this sets the background
+        // to white if we are converting a .png image with transparent pixels to .jpeg
+        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillRect(0,0,targetWidth,targetHeight);
+        ctx.drawImage(this, 0, 0, targetWidth, targetHeight);
+        
+        $ionicLoading.show({template: 'Uploading photo...', duration:500});
+        var options = new FileUploadOptions();
+        options.fileKey = "file";
+        options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+        options.mimeType = "image/jpeg";
+        options.chunkedMode = true;
+
+        var ft = new FileTransfer();
+        var image = canvas.toDataURL("image/jpeg"); //extracts resized image as a jpeg
+        ft.upload(image, encodeURI(EC2.address + '/photos'),
+          function successCallback(FileUploadResult) {
+            console.log('response: ' + FileUploadResult.response);
+            $ionicLoading.show({template: 'Success!', duration:500});
+          },
+          function errorCallback(error) {
+            console.log("Upload error: " + error);
+            $ionicLoading.show({template: 'Connection error...', duration:500});
+          },
+          options);
+      };
     },
+    
     function(err){
       $ionicLoading.show({template: 'Error getting photo...', duration:500});
     });
