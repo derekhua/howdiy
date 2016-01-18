@@ -41,14 +41,14 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer) {
+.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2) {
   $scope.logout = function() {
     AuthService.logout();
     $state.go('login');
-  };
+  }
 
   $scope.getGuides = function() {
-    $http.get('http://ec2-52-91-172-136.compute-1.amazonaws.com:3000/api/g').then(
+    $http.get(EC2.address + '/api/g').then(
       function successCallback(result) {
         $scope.response = result;
       },
@@ -58,7 +58,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.getUsers = function() {
-    $http.get('http://ec2-52-91-172-136.compute-1.amazonaws.com:3000/api/u').then(
+    $http.get(EC2.address + '/api/u').then(
       function successCallback(result) {
         $scope.response = result;
       },
@@ -115,7 +115,7 @@ angular.module('starter.controllers', ['ionic'])
     		options.chunkedMode = true;
 
         var ft = new FileTransfer();
-    		ft.upload(fileURL, encodeURI('http://ec2-52-91-172-136.compute-1.amazonaws.com:3000/photos'),
+    		ft.upload(fileURL, encodeURI(EC2.address + '/photos'),
         function successCallback(FileUploadResult) {
           console.log('response:');
           console.log(FileUploadResult.response);

@@ -1,6 +1,6 @@
 angular.module('starter.services', [])
 
-.service('AuthService', function($q, $http, USER_ROLES) {
+.service('AuthService', function($q, $http, USER_ROLES, EC2) {
   var LOCAL_TOKEN_KEY = 'yourTokenKey';
   var username = '';
   var isAuthenticated = false;
@@ -43,7 +43,7 @@ angular.module('starter.services', [])
 
   var login = function(username, pw) {
     return $q(function(resolve, reject) {
-      $http.post('http://ec2-52-91-172-136.compute-1.amazonaws.com:3000/api/auth', {"username": username,"password": pw})
+      $http.post(EC2.address + '/api/auth', {"username": username,"password": pw})
       .then(function(response) {
         if (response.data.success === true) {
           // Make a request and receive your auth token from your server
