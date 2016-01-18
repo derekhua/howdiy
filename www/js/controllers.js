@@ -75,47 +75,48 @@ angular.module('starter.controllers', ['ionic'])
   $scope.images = [];
 
   $rootScope.$watch('appReady.status', function() {
-  	console.log('watch fired '+$rootScope.appReady.status);
-  	if($rootScope.appReady.status) $scope.ready = true;
+    console.log('watch fired '+$rootScope.appReady.status);
+    if($rootScope.appReady.status) $scope.ready = true;
   });
 
   $scope.selImages = function() {
-  	var options = {
-  	  quality: 50,
-  	  destinationType: Camera.DestinationType.FILE_URI,
-  	  sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-  	  targetWidth: 200,
-  	  targetHeight: 200
-  	};
-  	$cordovaCamera.getPicture(options).then(function(imageUri) {
-  	  console.log('img', imageUri);
-  	  $scope.images.push(imageUri);
-  	}, function(err) {
-  	  // error
-  	});
+    var options = {
+      quality: 50,
+      destinationType: Camera.DestinationType.FILE_URI,
+      sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+      targetWidth: 200,
+      targetHeight: 200
+    };
+    $cordovaCamera.getPicture(options).then(function(imageUri) {
+      console.log('img', imageUri);
+      $scope.images.push(imageUri);
+    }, function(err) {
+      // error
+    });
   };
 
   $scope.uploadPicture = function() {
+    console.log("test1");
     var options = {
-    	quality: 50,
-    	destinationType: Camera.DestinationType.FILE_URI,
-    	sourceType: Camera.PictureSourceType.PHOTOLIBRARY
+      quality: 50,
+      destinationType: Camera.DestinationType.FILE_URI,
+      sourceType: Camera.PictureSourceType.PHOTOLIBRARY
     };
 
     $cordovaCamera.getPicture(options).then(
-  	function(imageURI) {
+    function(imageURI) {
       $ionicLoading.show({template: 'Uploading photo...', duration:500});
-      window.resolveLocalFileSystemURL(imageURI, function successCallback(fileEntry) {
+      window.FilePath.resolveNativePath(imageURI, function successCallback(fileEntry) {
         var fileURL = imageURI;
 
-    		var options = new FileUploadOptions();
-    		options.fileKey = "file";
-    		options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
-    		options.mimeType = "image/jpeg";
-    		options.chunkedMode = true;
+        var options = new FileUploadOptions();
+        options.fileKey = "file";
+        options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+        options.mimeType = "image/jpeg";
+        options.chunkedMode = true;
 
         var ft = new FileTransfer();
-    		ft.upload(fileURL, encodeURI(EC2.address + '/photos'),
+        ft.upload(fileURL, encodeURI(EC2.address + '/photos'),
         function successCallback(FileUploadResult) {
           console.log('response:');
           console.log(FileUploadResult.response);
@@ -123,16 +124,17 @@ angular.module('starter.controllers', ['ionic'])
         function(error) {
           console.log("Upload error");
           $ionicLoading.show({template: 'Connection error...'});
-    		  $ionicLoading.hide();
+          $ionicLoading.hide();
         },
         options);
-			},
+      },
       function errorCallback() {
+        console.log("Upload error 2");
       });
-  	},
-  	function(err){
-  		$ionicLoading.show({template: 'Error uploading photo...', duration:500});
-  	});
+    },
+    function(err){
+      $ionicLoading.show({template: 'Error uploading photo...', duration:500});
+    });
   };
 
   $scope.takePicture = function() {

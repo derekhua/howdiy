@@ -8,12 +8,13 @@ var passport		= require('passport');
 var multipart   = require('connect-multiparty');
 var fs          = require('fs');
 
-var index 	= require('./routes/index');
-var config 	= require('./config/database');
-var signup 	= require('./routes/signup');
-var auth 		= require('./routes/authenticate');
-var guides 	= require('./routes/guides');
-var users 	= require('./routes/users');
+var index     = require('./routes/index');
+var config    = require('./config/database');
+var signup    = require('./routes/signup');
+var auth      = require('./routes/authenticate');
+var guides    = require('./routes/guides');
+var users     = require('./routes/users');
+var s3Client  = require('./config/s3')
 
 var app = express();
 
@@ -45,12 +46,37 @@ app.get('/', function(req, res) {res.send('Use /api/');});
 
 // Test route for posting photos
 app.post('/photos', multipart(), function(req, res) {
-  fs.readFile(req.files.file.path, function (err, data) {
-    fs.writeFile(__dirname + '/photos/' + req.files.file.name, data, function (err) {
-      if (err) { console.log(err); }
-    });
+  console.log("Request filepath: " + req.files.file.path);
+  var filepath = req.files.file.path;
+  fs.readFile(filepath, function (err, data) {
+    console.log("File name: " + req.files.file.name);
+    if (err) {
+      console.log(err);
+    }
+    else {
+      var params = {
+        localFile: filepath,
+
+        s3Params: {
+          Bucket: "howdiy",
+          Key: req.files.file.name + ".jpg"
+        }
+      };
+      var uploader = s3Client.uploadFile(params);
+      uploader.on('error', function(err) {
+        console.error("unable to upload:", err.stack);
+      });
+      uploader.on('progress', function() {
+        console.log("progress", uploader.progressMd5Amount,
+        uploader.progressAmount, uploader.progressTotal);
+      });
+      uploader.on('end', function() {
+        console.log("done uploading");
+      });
+    };
   });
 });
+
 app.use('/api/', index);
 app.use('/api/signup', signup);
 app.use('/api/auth', auth);
