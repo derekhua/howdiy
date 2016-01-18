@@ -47,7 +47,7 @@ app.get('/', function(req, res) {res.send('Use /api/');});
 app.post('/photos', multipart(), function(req, res) {
   fs.readFile(req.files.file.path, function (err, data) {
     fs.writeFile(__dirname + '/photos/' + req.files.file.name, data, function (err) {
-      console.log(err);
+      if (err) { console.log(err); }
     });
   });
 });

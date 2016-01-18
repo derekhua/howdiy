@@ -121,6 +121,7 @@ angular.module('starter.controllers', ['ionic'])
           console.log(FileUploadResult.response);
         },
         function(error) {
+          console.log("Upload error");
           $ionicLoading.show({template: 'Connection error...'});
     		  $ionicLoading.hide();
         },
