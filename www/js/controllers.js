@@ -163,12 +163,11 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('SearchCtrl', function($scope, $injector) {
-  var $state = $injector.get("$state");
+.controller('SearchCtrl', function($scope, $state) {
     // go to guide testing purposes
-    $scope.goToGuide = function() {
-    $state.go('guide');
-  };
+  $scope.goToGuide = function(guideId) {
+    $state.go('guide-detail', { "guideId": guideId });
+  };         
 })
 
 
@@ -184,15 +183,33 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate) {
-  $scope.friend = [
-    {name:'Steak 1', source:'http://i.imgur.com/NErBswV.jpg', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'},
-    {name:'Steak 2', source:'http://i.imgur.com/464Qa.jpg', description:'Aliquam vitae magna quis eros iaculis laoreet at vel est. Vestibulum nisi enim, placerat vel sagittis sed, lacinia sed mauris. Praesent iaculis lorem nec dolor viverra, et ultricies risus vehicula. Vestibulum pulvinar, lectus in tincidunt euismod, urna nibh pulvinar justo, ac ultrices nibh justo id nulla. Maecenas nec volutpat lorem, eu lacinia quam. In eu metus consectetur, condimentum nisl elementum, placerat turpis. Nam efficitur, ante non tempor convallis, risus ipsum accumsan tortor, laoreet viverra dolor neque nec est. Sed ex eros, volutpat eget nibh quis, tristique malesuada lacus. Nulla vestibulum auctor elit consectetur condimentum. Nam efficitur, dolor a tincidunt vulputate, sapien nisi luctus libero, ut aliquet diam lorem non lorem. Aliquam erat volutpat.'},
-    {name:'Steak 3', source:'http://i.imgur.com/elhXCPw.jpg', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'},
-    {name:'Steak 4', source:'http://i.imgur.com/twdmb.jpg', description:'Aliquam vitae magna quis eros iaculis laoreet at vel est. Vestibulum nisi enim, placerat vel sagittis sed, lacinia sed mauris. Praesent iaculis lorem nec dolor viverra, et ultricies risus vehicula. Vestibulum pulvinar, lectus in tincidunt euismod, urna nibh pulvinar justo, ac ultrices nibh justo id nulla. Maecenas nec volutpat lorem, eu lacinia quam. In eu metus consectetur, condimentum nisl elementum, placerat turpis. Nam efficitur, ante non tempor convallis, risus ipsum accumsan tortor, laoreet viverra dolor neque nec est. Sed ex eros, volutpat eget nibh quis, tristique malesuada lacus. Nulla vestibulum auctor elit consectetur condimentum. Nam efficitur, dolor a tincidunt vulputate, sapien nisi luctus libero, ut aliquet diam lorem non lorem. Aliquam erat volutpat.'},
-    {name:'Steak 5', source:'http://i.imgur.com/hHYufmJ.jpg', description:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'}
-  ];
+.controller('GuideCtrl', function($scope) {
+})
 
+.controller('GuideDetailCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2) {
+  $scope.friend = [
+    {_id:'Steak 1', picturePath:'http://i.imgur.com/NErBswV.jpg', body:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'},
+    {_id:'Steak 2', picturePath:'http://i.imgur.com/464Qa.jpg', body:'Aliquam vitae magna quis eros iaculis laoreet at vel est. Vestibulum nisi enim, placerat vel sagittis sed, lacinia sed mauris. Praesent iaculis lorem nec dolor viverra, et ultricies risus vehicula. Vestibulum pulvinar, lectus in tincidunt euismod, urna nibh pulvinar justo, ac ultrices nibh justo id nulla. Maecenas nec volutpat lorem, eu lacinia quam. In eu metus consectetur, condimentum nisl elementum, placerat turpis. Nam efficitur, ante non tempor convallis, risus ipsum accumsan tortor, laoreet viverra dolor neque nec est. Sed ex eros, volutpat eget nibh quis, tristique malesuada lacus. Nulla vestibulum auctor elit consectetur condimentum. Nam efficitur, dolor a tincidunt vulputate, sapien nisi luctus libero, ut aliquet diam lorem non lorem. Aliquam erat volutpat.'},
+    {_id:'Steak 3', picturePath:'http://i.imgur.com/elhXCPw.jpg', body:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'},
+    {_id:'Steak 4', picturePath:'http://i.imgur.com/twdmb.jpg', body:'Aliquam vitae magna quis eros iaculis laoreet at vel est. Vestibulum nisi enim, placerat vel sagittis sed, lacinia sed mauris. Praesent iaculis lorem nec dolor viverra, et ultricies risus vehicula. Vestibulum pulvinar, lectus in tincidunt euismod, urna nibh pulvinar justo, ac ultrices nibh justo id nulla. Maecenas nec volutpat lorem, eu lacinia quam. In eu metus consectetur, condimentum nisl elementum, placerat turpis. Nam efficitur, ante non tempor convallis, risus ipsum accumsan tortor, laoreet viverra dolor neque nec est. Sed ex eros, volutpat eget nibh quis, tristique malesuada lacus. Nulla vestibulum auctor elit consectetur condimentum. Nam efficitur, dolor a tincidunt vulputate, sapien nisi luctus libero, ut aliquet diam lorem non lorem. Aliquam erat volutpat.'},
+    {_id:'Steak 5', picturePath:'http://i.imgur.com/hHYufmJ.jpg', body:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'}
+  ];
+  // using if statements for now to separate between friend array and the guide in db
+  var id = Number($stateParams.guideId);
+  if (id === 0){
+    $http.get(EC2.address + '/api/g').then(
+      function successCallback(result) {
+        $scope.guideSteps = result.data[id].steps;
+        $ionicSlideBoxDelegate.update();
+      },
+      function errorCallback(result) {
+        console.log("getGuides error");
+    });
+  }
+  else if (id === 1){
+    $scope.guideSteps = $scope.friend;
+  }
+  
   $scope.slideHasChanged = function() {
     $ionicSlideBoxDelegate.update();
   };
