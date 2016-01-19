@@ -130,8 +130,8 @@ angular.module('starter.controllers', ['ionic'])
     $cordovaCamera.getPicture(options).then(
     function(imageURI) {
       var tempImg = new Image();
-      tempImg.src = imageURI;
       tempImg.onload = function() {
+        console.log("inside onload");
         var canvas = document.createElement('canvas');
         // Get image size and aspect ratio.
         var targetWidth = tempImg.width;
@@ -182,8 +182,12 @@ angular.module('starter.controllers', ['ionic'])
           },
           options);
       };
-    },
-    
+      tempImg.onerror = function(error) {
+        console.log("Image loading error: " + error);
+      };
+      tempImg.src = imageURI;
+      console.log(tempImg.src);
+    },  
     function(err){
       $ionicLoading.show({template: 'Error getting photo...', duration:500});
     });
