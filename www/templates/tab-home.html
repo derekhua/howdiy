@@ -6,6 +6,7 @@
   </ion-nav-buttons>
 
   <ion-content class="padding">
+    <ion-refresher on-refresh="doRefresh()" spinner="ripple" class="assertive"></ion-refresher>
     <div class="row"><div class="col text-center">
       <h3 class="title">Welcome {{username}}!</h3>
       This could be your Dashboard.
@@ -19,13 +20,12 @@
       <button class="button button-full button-assertive" ng-click="printToken()">
         Print token
       </button>
-      <br><br>
       {{response}}
 
 	  <img ng-show="imgURI !== undefined" ng-src="{{imgURI}}">
 	  <img ng-show="imgURI === undefined" ng-src="http://placehold.it/300x300">
-    <button class="button" ng-click="takePicture()">Take Picture</button>
-	  <button class="button button-block button-balanced" ng-click="selImages()" ng-disabled="!ready">Select Images</button>
+    <button class="button button-full button-calm" ng-click="takePicture()">Take Picture</button>
+	  <button class="button button-full button-balanced" ng-click="selImages()" ng-disabled="!ready">Select Images</button>
 	  <div ng-repeat="img in images">
 		    <img ng-src="{{img}}" />
 	  </div>

@@ -11,12 +11,10 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   $rootScope.appReady = {status:false};
 
   $ionicPlatform.ready(function() {
+  	$rootScope.appReady.status = true;
+  	$rootScope.$apply();
 
-  	console.log('ionic Ready');
-	$rootScope.appReady.status = true;
-	$rootScope.$apply();
-
-	// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+	  // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
@@ -43,10 +41,22 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   // Each state's controller can be found in controllers.js
   $stateProvider
 
+  .state('intro', {
+    url: '/',
+    templateUrl: 'templates/intro.html',
+    controller: 'IntroCtrl'
+  })
+
   .state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
     controller: 'LoginCtrl'
+  })
+
+  .state('signup', {
+    url: '/signup',
+    templateUrl: 'templates/signup.html',
+    controller: 'SignupCtrl'
   })
 
   .state('guide', {
@@ -54,13 +64,13 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     templateUrl: 'templates/guide.html',
     controller: 'GuideCtrl'
   })
-  
+
   .state('guide-detail', {
     url: '/guide/:guideId',
     templateUrl: 'templates/guide-detail.html',
     controller: 'GuideDetailCtrl'
   })
-  
+
   // Setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
@@ -121,25 +131,39 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   // If none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise(function ($injector, $location) {
     var $state = $injector.get("$state");
-    $state.go("tab.home");
+    // If seen intro already
+    if (window.localStorage['intro']) {
+      $state.go("login");
+    } else {
+      $state.go("intro");
+      // Set intro to true
+      window.localStorage['intro'] = true;
+    }
+  });
+})
+
+.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+  $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+    // Authorization
+    if ('data' in next && 'authorizedRoles' in next.data) {
+      var authorizedRoles = next.data.authorizedRoles;
+      if (!AuthService.isAuthorized(authorizedRoles)) {
+        event.preventDefault();
+        $state.go($state.current, {}, {reload: true});
+        $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+      }
+    }
+    // Authentication
+    if (!AuthService.isAuthenticated() && window.localStorage['intro'] && next.name !== 'signup') {
+      if (next.name !== 'login') {
+        event.preventDefault();
+        $state.go('login');
+      }
+    } else if (!AuthService.isAuthenticated() && !window.localStorage['intro']) {
+      if (next.name !== 'intro') {
+        event.preventDefault();
+        $state.go('intro');
+      }
+    }
   });
 });
-
-// .run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
-  // $rootScope.$on('$stateChangeStart', function (event,next, nextParams, fromState) {
-    // if ('data' in next && 'authorizedRoles' in next.data) {
-      // var authorizedRoles = next.data.authorizedRoles;
-      // if (!AuthService.isAuthorized(authorizedRoles)) {
-        // event.preventDefault();
-        // $state.go($state.current, {}, {reload: true});
-        // $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-      // }
-    // }
-    // if (!AuthService.isAuthenticated()) {
-      // if (next.name !== 'login') {
-        // event.preventDefault();
-        // $state.go('login');
-      // }
-    // }
-  // });
-// });

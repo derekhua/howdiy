@@ -5,8 +5,8 @@ var User = require('../models/users');
 
 // Create a new user account (POST http://localhost:8080/api/signup)
 router.post('/', function(req, res) {
-  if (!req.body.username || !req.body.password) {
-    res.json({success: false, msg: 'Please pass username and password.'});
+  if (!req.body.username || !req.body.password || !req.body.email) {
+    res.json({success: false, msg: 'Please pass username, email, and password.'});
   } else {
     var newUser = new User({
       username: req.body.username,

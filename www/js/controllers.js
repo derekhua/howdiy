@@ -27,7 +27,6 @@ angular.module('starter.controllers', ['ionic'])
 
 .controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService) {
   $scope.data = {};
-
   $scope.login = function(data) {
     AuthService.login(data.username, data.password).then(function(authenticated) {
       $state.go('tab.home', {}, {reload: true});
@@ -39,9 +38,36 @@ angular.module('starter.controllers', ['ionic'])
       });
     });
   };
+
+  $scope.goSignup = function() {
+    $state.go('signup');
+  };
 })
 
-.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2) {
+.controller('SignupCtrl', function($scope, $state, $ionicPopup, AuthService, $ionicViewSwitcher) {
+  $scope.data = {};
+  $scope.signup = function(data) {
+    AuthService.signup(data.username, data.email, data.password).then(function() {
+      $state.go('login', {}, {reload: true});
+      var alertPopup = $ionicPopup.alert({
+        title: 'Success!',
+        template: 'Now log in!'
+      });
+    }, function(err) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Sign up failed!',
+        template: 'Please check your credentials!'
+      });
+    });
+  };
+
+  $scope.back = function() {
+    $ionicViewSwitcher.nextDirection('back'); // 'forward', 'back', etc.
+    $state.go('login');
+  };
+})
+
+.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2, $timeout) {
   $scope.logout = function() {
     AuthService.logout();
     $state.go('login');
@@ -181,6 +207,15 @@ angular.module('starter.controllers', ['ionic'])
       // An error occured. Show a message to the user
     });
   };
+
+  $scope.doRefresh = function() {
+    console.log('Refreshing!');
+    $timeout( function() {
+      //simulate async response
+      //Stop the ion-refresher from spinning
+      $scope.$broadcast('scroll.refreshComplete');
+    }, 1000);
+  };
 })
 
 .controller('AccountCtrl', function($scope) {
@@ -238,5 +273,23 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.slideHasChanged = function() {
     $ionicSlideBoxDelegate.update();
+  };
+})
+
+.controller('IntroCtrl', function($scope, $state, $ionicSlideBoxDelegate) {
+  // Called to navigate to the main app
+  $scope.startApp = function() {
+    $state.go('login');
+  };
+  $scope.next = function() {
+    $ionicSlideBoxDelegate.next();
+  };
+  $scope.previous = function() {
+    $ionicSlideBoxDelegate.previous();
+  };
+
+  // Called each time the slide changes
+  $scope.slideChanged = function(index) {
+    $scope.slideIndex = index;
   };
 });

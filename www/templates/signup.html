@@ -1,0 +1,25 @@
+<ion-view view-title="Howdiy" name="signup-view">
+  <ion-nav-bar class="bar-assertive">
+  </ion-nav-bar>
+
+  <ion-nav-buttons side="left">
+    <button class="button button-clear icon-left ion-chevron-left button-clear button-dark" ng-click="back()">
+      Back
+    </button>
+  </ion-nav-buttons>
+
+  <ion-content class="padding">
+      <div class="list list-inset">
+          <label class="item item-input">
+              <input type="text" placeholder="Username" ng-model="data.username">
+          </label>
+          <label class="item item-input">
+              <input type="text" placeholder="Email" ng-model="data.email">
+          </label>
+          <label class="item item-input">
+              <input type="password" placeholder="Password" ng-model="data.password">
+          </label>
+      </div>
+      <button class="button button-block button-positive" ng-click="signup(data)">Sign Up!</button>
+  </ion-content>
+</ion-view>
