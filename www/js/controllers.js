@@ -31,7 +31,7 @@ angular.module('starter.controllers', ['ionic'])
     AuthService.login(data.username, data.password).then(function(authenticated) {
       $state.go('tab.home', {}, {reload: true});
       $scope.setCurrentUsername(data.username);
-    }, function(err) {
+    }).catch(function(err) {
       var alertPopup = $ionicPopup.alert({
         title: 'Login failed!',
         template: 'Please check your credentials!'
@@ -53,7 +53,7 @@ angular.module('starter.controllers', ['ionic'])
         title: 'Success!',
         template: 'Now log in!'
       });
-    }, function(err) {
+    }).catch(function(err) {
       var alertPopup = $ionicPopup.alert({
         title: 'Sign up failed!',
         template: 'Please check your credentials!'
@@ -67,30 +67,26 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2, $timeout) {
+.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2, $timeout, ImageService) {
   $scope.logout = function() {
     AuthService.logout();
     $state.go('login');
   }
 
   $scope.getGuides = function() {
-    $http.get(EC2.address + '/api/g').then(
-      function successCallback(result) {
-        $scope.response = result;
-      },
-      function errorCallback(result) {
-        console.log("getGuides error");
-      });
+    $http.get(EC2.address + '/api/g').then(function(result) {
+      $scope.response = result;
+    }).catch(function(result) {
+      console.log("getGuides error");
+    });
   };
 
   $scope.getUsers = function() {
-    $http.get(EC2.address + '/api/u').then(
-      function successCallback(result) {
-        $scope.response = result;
-      },
-      function errorCallback(result) {
-        console.log("getUsers error");
-      });
+    $http.get(EC2.address + '/api/u').then(function(result) {
+      $scope.response = result;
+    }).catch(function(result) {
+      console.log("getUsers error");
+    });
   };
 
   $scope.printToken = function() {
@@ -116,7 +112,7 @@ angular.module('starter.controllers', ['ionic'])
     $cordovaCamera.getPicture(options).then(function(imageUri) {
       console.log('img', imageUri);
       $scope.images.push(imageUri);
-    }, function(err) {
+    }).catch(function(err) {
       // error
     });
   };
@@ -127,69 +123,26 @@ angular.module('starter.controllers', ['ionic'])
       destinationType: Camera.DestinationType.FILE_URI,
       sourceType: Camera.PictureSourceType.PHOTOLIBRARY
     };
-    $cordovaCamera.getPicture(options).then(
-    function(imageURI) {
-      var tempImg = new Image();
-      tempImg.onload = function() {
-        console.log("inside onload");
-        var canvas = document.createElement('canvas');
-        // Get image size and aspect ratio.
-        var targetWidth = tempImg.width;
-        var targetHeight = tempImg.height;
-        var aspect = tempImg.width / tempImg.height;
-
-        // Calculate resolution of resized image based on the max resolution that
-        // we want images to have on the long side
-        var longSideMax = 1280;
-        if (tempImg.width > tempImg.height) {
-          longSideMax = Math.min(tempImg.width, longSideMax);
-          targetWidth = longSideMax;
-          targetHeight = longSideMax / aspect;
-        }
-        else {
-          longSideMax = Math.min(tempImg.height, longSideMax);
-          targetHeight = longSideMax;
-          targetWidth = longSideMax * aspect;
-        }
-    
-        canvas.width = targetWidth;
-        canvas.height = targetHeight;
-        var ctx = canvas.getContext("2d");
-        
-        // .jpeg does not support transparent background this sets the background
-        // to white if we are converting a .png image with transparent pixels to .jpeg
-        ctx.fillStyle = "rgb(255,255,255)";
-        ctx.fillRect(0,0,targetWidth,targetHeight);
-        ctx.drawImage(this, 0, 0, targetWidth, targetHeight);
-        
+    $cordovaCamera.getPicture(options).then(function(imageURI) {      
+      ImageService.resizeAndConvert(imageURI).then(function(image64) {
         $ionicLoading.show({template: 'Uploading photo...', duration:500});
         var options = new FileUploadOptions();
         options.fileKey = "file";
-        options.fileName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
+        options.fileName = image64.substr(image64.lastIndexOf('/') + 1);
         options.mimeType = "image/jpeg";
         options.chunkedMode = true;
-
         var ft = new FileTransfer();
-        var image = canvas.toDataURL("image/jpeg"); //extracts resized image as a jpeg
-        ft.upload(image, encodeURI(EC2.address + '/photos'),
-          function successCallback(FileUploadResult) {
-            console.log('response: ' + FileUploadResult.response);
-            $ionicLoading.show({template: 'Success!', duration:500});
-          },
-          function errorCallback(error) {
-            console.log("Upload error: " + error);
-            $ionicLoading.show({template: 'Connection error...', duration:500});
-          },
-          options);
-      };
-      tempImg.onerror = function(error) {
-        console.log("Image loading error: " + error);
-      };
-      tempImg.src = imageURI;
-      console.log(tempImg.src);
-    },  
-    function(err){
-      $ionicLoading.show({template: 'Error getting photo...', duration:500});
+        ft.upload(image64, encodeURI(EC2.address + '/photos'), 
+        function successCallback(FileUploadResult) {
+          console.log(FileUploadResult.response);        
+          $ionicLoading.show({template: 'Done!', duration:500});
+        },function errorCallback(err) {
+          console.log(err);
+          $ionicLoading.show({template: 'Failed!', duration:500});
+        }, options);
+      });
+    }).catch(function(err) {
+      console.log(err);
     });
   };
 
@@ -207,8 +160,8 @@ angular.module('starter.controllers', ['ionic'])
     };
     $cordovaCamera.getPicture(options).then(function(imageData) {
       $scope.imgURI = "data:image/jpeg;base64," + imageData;
-    }, function(err) {
-      // An error occured. Show a message to the user
+    }).catch(function(err) {
+      console.log(err);
     });
   };
 
@@ -254,7 +207,6 @@ angular.module('starter.controllers', ['ionic'])
 .controller('GuideDetailCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory) {
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     viewData.enableBack = true;
-    
   });
  
   $scope.myGoBack = function() {

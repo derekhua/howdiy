@@ -93,6 +93,57 @@ angular.module('starter.services', [])
   };
 })
 
+.service('ImageService', function($q) {
+  var resizeAndConvert = function(imageURI) {    
+    return $q(function(resolve, reject) {
+      var tempImg = new Image();
+      tempImg.onload = function() {
+        var canvas = document.createElement('canvas');
+        // Get image size and aspect ratio.
+        var targetWidth = tempImg.width;
+        var targetHeight = tempImg.height;
+        var aspect = tempImg.width / tempImg.height;
+
+        // Calculate resolution of resized image based on the max resolution that
+        // we want images to have on the long side
+        var longSideMax = 1280;
+        if (tempImg.width > tempImg.height) {
+          longSideMax = Math.min(tempImg.width, longSideMax);
+          targetWidth = longSideMax;
+          targetHeight = longSideMax / aspect;
+        }
+        else {
+          longSideMax = Math.min(tempImg.height, longSideMax);
+          targetHeight = longSideMax;
+          targetWidth = longSideMax * aspect;
+        }
+    
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        var ctx = canvas.getContext("2d");
+        
+        // .jpeg does not support transparent background this sets the background
+        // to white if we are converting a .png image with transparent pixels to .jpeg
+        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillRect(0,0,targetWidth,targetHeight);
+        ctx.drawImage(this, 0, 0, targetWidth, targetHeight);
+
+        resolve(canvas.toDataURL("image/jpeg"));
+      };
+
+      tempImg.onerror = function(err) {        
+        reject(err);
+      };
+
+      tempImg.src = imageURI;
+    });
+  };
+
+  return {
+    resizeAndConvert: resizeAndConvert
+  };
+})
+
  // Broadcast a message when returns 401 or 403
 .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
   return {
