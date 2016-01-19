@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory) {
   $scope.username = AuthService.username();
 
   // Handle broadcasted messages
@@ -23,6 +23,12 @@ angular.module('starter.controllers', ['ionic'])
   $scope.setCurrentUsername = function(name) {
     $scope.username = name;
   };
+
+  $scope.myGoBack = function() {
+    $ionicHistory.goBack();
+    console.log('back');
+  };
+
 })
 
 .controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService) {
@@ -184,7 +190,7 @@ angular.module('starter.controllers', ['ionic'])
 .controller('SearchCtrl', function($scope, $state) {
     // go to guide testing purposes
   $scope.goToGuide = function(guideId) {
-    $state.go('guide-detail', { "guideId": guideId });
+    $state.go('guide', { "guideId": guideId });
   };
 })
 
@@ -201,10 +207,21 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('GuideCtrl', function($scope) {
-})
+.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal) {
+  $ionicModal.fromTemplateUrl('templates/guide-modal.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+    $scope.modal.show();
+    $ionicSlideBoxDelegate.update();
+  });
 
-.controller('GuideDetailCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicLoading, $ionicGesture) {
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    viewData.enableBack = true;
+  });
+
+  $scope.images = [];
+
   var elements = document.getElementsByClassName("guideDetail");
   var angularElements = [];
 
@@ -230,39 +247,30 @@ angular.module('starter.controllers', ['ionic'])
       }, angularElements[i]);
     }
   });
-
-  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
-    viewData.enableBack = true;
-  });
- 
-  $scope.myGoBack = function() {
-     $ionicHistory.goBack();
-  };
   
-  $scope.friend = [
-    {_id:'Steak 1', picturePath:'http://i.imgur.com/NErBswV.jpg', body:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'},
-    {_id:'Steak 2', picturePath:'http://i.imgur.com/464Qa.jpg', body:'Aliquam vitae magna quis eros iaculis laoreet at vel est. Vestibulum nisi enim, placerat vel sagittis sed, lacinia sed mauris. Praesent iaculis lorem nec dolor viverra, et ultricies risus vehicula. Vestibulum pulvinar, lectus in tincidunt euismod, urna nibh pulvinar justo, ac ultrices nibh justo id nulla. Maecenas nec volutpat lorem, eu lacinia quam. In eu metus consectetur, condimentum nisl elementum, placerat turpis. Nam efficitur, ante non tempor convallis, risus ipsum accumsan tortor, laoreet viverra dolor neque nec est. Sed ex eros, volutpat eget nibh quis, tristique malesuada lacus. Nulla vestibulum auctor elit consectetur condimentum. Nam efficitur, dolor a tincidunt vulputate, sapien nisi luctus libero, ut aliquet diam lorem non lorem. Aliquam erat volutpat.'},
-    {_id:'Steak 3', picturePath:'http://i.imgur.com/elhXCPw.jpg', body:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'},
-    {_id:'Steak 4', picturePath:'http://i.imgur.com/twdmb.jpg', body:'Aliquam vitae magna quis eros iaculis laoreet at vel est. Vestibulum nisi enim, placerat vel sagittis sed, lacinia sed mauris. Praesent iaculis lorem nec dolor viverra, et ultricies risus vehicula. Vestibulum pulvinar, lectus in tincidunt euismod, urna nibh pulvinar justo, ac ultrices nibh justo id nulla. Maecenas nec volutpat lorem, eu lacinia quam. In eu metus consectetur, condimentum nisl elementum, placerat turpis. Nam efficitur, ante non tempor convallis, risus ipsum accumsan tortor, laoreet viverra dolor neque nec est. Sed ex eros, volutpat eget nibh quis, tristique malesuada lacus. Nulla vestibulum auctor elit consectetur condimentum. Nam efficitur, dolor a tincidunt vulputate, sapien nisi luctus libero, ut aliquet diam lorem non lorem. Aliquam erat volutpat.'},
-    {_id:'Steak 5', picturePath:'http://i.imgur.com/hHYufmJ.jpg', body:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque feugiat id justo eu eleifend. Vivamus congue faucibus dictum. Curabitur suscipit ac metus ac vehicula. Praesent diam justo, scelerisque in purus nec, bibendum ultrices massa. .'}
-  ];
-  // using if statements for now to separate between friend array and the guide in db
-  var id = Number($stateParams.guideId);
-  if (id === 0){
-    $http.get(EC2.address + '/api/g').then(
-      function successCallback(result) {
-        $scope.guideSteps = result.data[id].steps;
-        $ionicSlideBoxDelegate.update();
-      },
-      function errorCallback(result) {
-        console.log("getGuides error");
-    });
-  }
-  else if (id === 1){
-    $scope.guideSteps = $scope.friend;
-  }
+  var id = $stateParams.guideId;
+  $scope.stepNumber = 1;
+  $http.get(EC2.address + '/api/g/' + id).then(function successCallback(result) {
+    $scope.guide = result.data;
+    $ionicSlideBoxDelegate.update();
+    console.log($scope.guide.steps);
+    for(i = 0; i < $scope.guide.steps.length; ++i) {
+      $scope.images.push({id: i, src: $scope.guide.steps[i].picturePath});
+    }
+  }).catch(function errorCallback(result) {
+    console.log("getGuides error");
+  });
 
-  $scope.slideHasChanged = function() {
+  $scope.slideHasChanged = function(index) {
+    $scope.stepNumber = index + 1;
+    $ionicSlideBoxDelegate.update();
+  };
+
+  $scope.goToSlide = function(index) {
+    console.log(index);
+    $scope.stepNumber = index + 1;
+    $scope.modal.show();
+    $ionicSlideBoxDelegate.slide(index);
     $ionicSlideBoxDelegate.update();
   };
 })

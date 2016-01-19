@@ -1,7 +1,148 @@
+<style type="text/css" media="screen">
+  .card, .list-inset {
+    position:relative;
+    overflow: hidden;
+    margin: 0px 0px;
+    border-radius: 0px;
+    padding: 0px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    float:left; /* important */  
+    position:relative; /* important(so we can absolutely position the description div */  
+    min-height: 110px
+  }
+  .row {
+    margin-bottom: 7.5px;
+    padding: 0px;
+  }
+
+  .col-1 {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 0.5%;
+    -moz-box-flex: 0;
+    -moz-flex: 0 0 0.5%;
+    -ms-flex: 0 0 0.5%;
+    flex: 0 0 0.5%;
+    max-width: 0.5%;
+    padding: 0px;
+  }
+
+  .col-24 {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 24.65%;
+    -moz-box-flex: 0;
+    -moz-flex: 0 0 24.65%;
+    -ms-flex: 0 0 24.65%;
+    flex: 0 0 24.65%;
+    max-width: 24.65%;
+    padding: 0px;
+  }
+
+  div.description{  
+    position:absolute; /* absolute position (so we can position it where we want)*/  
+    bottom:0px; /* position will be on bottom */  
+    left:0px;  
+    width:100%;  
+    border-color: black;
+    border-bottom: 1px;
+    border-left: 1px;
+    border-right: 1px;
+    /* styling bellow */  
+    background-color:white;  
+    font-family: 'tahoma';  
+    font-size:15px;  
+    color:black;  
+    z-index: 1000;
+    /*opacity: .6;*/
+  }  
+  .item {
+    border: 0;
+    padding: 8px;
+  }
+
+  .thumbnailPic {
+    border-width: 1px;
+  }
+</style>
+
 <ion-view view-title="GUIDE TEST">
   <ion-nav-bar class="bar-assertive">
+    <ion-nav-back-button class="button-clear" ng-click="myGoBack()">
+      <i class="ion-ios-arrow-back"></i> Back
+    </ion-nav-back-button>
   </ion-nav-bar>
 
-  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">    
+    <div style="height: 10px"></div>
+
+    <div class="row" ng-repeat="image in images" ng-if="$index % 4 === 0">
+        <div class="card col col-24" ng-if="$index < images.length" ng-click="goToSlide($index)" type="button">
+            <img ng-src="{{images[$index].src}}" width="100%" class="thumbnailPic"/>
+            <div class='item description'>  
+              <!-- description content -->  
+              <p class='description_content'>Lorem ipsum throwsum mo</p>  
+              <!-- end description content -->  
+            </div> 
+        </div>
+
+        <div class=" col col-1"></div>
+        
+        <div class="card col col-24" ng-if="$index + 1 < images.length" ng-click="goToSlide($index+1)" type="button">
+            <img ng-src="{{images[$index + 1].src}}" width="100%"class="thumbnailPic"/>
+            <div class='item description'>  
+              <!-- description content -->  
+              <p class='description_content'>Lorem ipsum throwsum mo</p>  
+              <!-- end description content -->  
+            </div> 
+        </div>
+        
+        <div class=" col col-1"></div>
+        
+        <div class="card col col-24" ng-if="$index + 2 < images.length" ng-click="goToSlide($index+2)" type="button">
+            <img ng-src="{{images[$index + 2].src}}" width="100%"class="thumbnailPic"/>
+            <div class='item description'>  
+              <!-- description content -->  
+              <p class='description_content'>Lorem ipsum throwsum mo</p>  
+              <!-- end description content -->  
+            </div> 
+        </div>
+
+        <div class=" col col-1"></div>
+
+        <div class="card col col-25" ng-if="$index + 3 < images.length" ng-click="goToSlide($index+3)" type="button">
+            <img ng-src="{{images[$index + 3].src}}" width="100%" class="thumbnailPic"/>
+            <div class='item description'>  
+              <!-- description content -->  
+              <p class='description_content'>Lorem ipsum throwsum mo</p>  
+              <!-- end description content -->  
+            </div> 
+        </div>
+    </div>
+
   </ion-content>
+
+  <script id="templates/guide-modal.html" type="text/ng-template">
+    <ion-modal-view>
+      <ion-header-bar class="bar bar-header bar-positive">
+        <h1 class="title">Step {{stepNumber}}</h1>
+        <button class="button button-clear button-primary" ng-click="modal.hide()">Cancel</button>
+      </ion-header-bar>
+      <ion-content class="padding">
+        <ion-slide-box on-slide-changed="slideHasChanged($index)" show-pager="false" >
+          <ion-slide ng-repeat="step in guide.steps">
+            
+              <div class="item item-image">
+                <img src="{{step.picturePath}}">
+              </div>
+
+              <div class="item item-text-wrap">
+                <p>{{step.body}}</p>
+              </div>
+          </ion-slide>
+        </ion-slide-box>
+      </ion-content>
+    </ion-modal-view>
+  </script>
+
 </ion-view>
