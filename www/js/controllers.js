@@ -207,13 +207,11 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal) {
+.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet) {
   $ionicModal.fromTemplateUrl('templates/guide-modal.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
-    $scope.modal.show();
-    $ionicSlideBoxDelegate.update();
   });
 
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
@@ -272,6 +270,29 @@ angular.module('starter.controllers', ['ionic'])
     $scope.modal.show();
     $ionicSlideBoxDelegate.slide(index);
     $ionicSlideBoxDelegate.update();
+  };
+
+  $scope.showActionsheet = function() {
+    $ionicActionSheet.show({
+      titleText: 'ActionSheet Example',
+      buttons: [
+        { text: '<i class="icon ion-share"></i> Share' },
+        { text: '<i class="icon ion-arrow-move"></i> Move' },
+      ],
+      destructiveText: 'Delete',
+      cancelText: 'Cancel',
+      cancel: function() {
+        console.log('CANCELLED');
+      },
+      buttonClicked: function(index) {
+        console.log('BUTTON CLICKED', index);
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        console.log('DESTRUCT');
+        return true;
+      }
+    });
   };
 })
 

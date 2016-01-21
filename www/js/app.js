@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter.services'])
+var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.controllers', 'starter.services', 'angular-loading-bar'])
 
 .run(function($rootScope, $ionicPlatform) {
   $rootScope.appReady = {status:false};
@@ -27,6 +27,11 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   });
 })
+
+.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+  cfpLoadingBarProvider.includeSpinner = false;
+  cfpLoadingBarProvider.latencyThreshold = 100;
+}])
 
 .config(function($ionicConfigProvider) {
     $ionicConfigProvider.navBar.alignTitle('center');

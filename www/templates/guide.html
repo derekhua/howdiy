@@ -10,7 +10,8 @@
     flex-direction: column;
     float:left; /* important */  
     position:relative; /* important(so we can absolutely position the description div */  
-    min-height: 110px
+    min-height: 110px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
   }
   .row {
     margin-bottom: 7.5px;
@@ -66,15 +67,15 @@
   }
 </style>
 
-<ion-view view-title="GUIDE TEST">
+<ion-view view-title="{{guide.title}}">
   <ion-nav-bar class="bar-assertive">
     <ion-nav-back-button class="button-clear" ng-click="myGoBack()">
-      <i class="ion-ios-arrow-back"></i> Back
+      <i class="ion-chevron-left"></i>
     </ion-nav-back-button>
   </ion-nav-bar>
 
   <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">    
-    <div style="height: 10px"></div>
+    <div style="height: 2px"></div>
 
     <div class="row" ng-repeat="image in images" ng-if="$index % 4 === 0">
         <div class="card col col-24" ng-if="$index < images.length" ng-click="goToSlide($index)" type="button">
@@ -122,16 +123,32 @@
 
   </ion-content>
 
+  <ion-footer-bar class="bar bar-footer bar-stable">
+    <button class="button button-clear button-primary">
+      <i class="ion-ios-list-outline" style="font-size: 30px;"></i>
+    </button>
+    <h1 class="title">{{guide.steps.length}} Steps</h1>
+    <button class="button button-clear button-primary" ng-click="showActionsheet()">
+      <i class="ion-more" style="font-size: 30px; padding-right: 8px;"></i>
+    </button>
+  </ion-footer-bar>
+
   <script id="templates/guide-modal.html" type="text/ng-template">
     <ion-modal-view>
-      <ion-header-bar class="bar bar-header bar-positive">
+      <ion-header-bar class="bar bar-header bar-assertive">
+        <button class="button button-clear button-primary" ng-click="modal.hide()">
+          <i class="ion-chevron-left"></i>
+        </button>
         <h1 class="title">Step {{stepNumber}}</h1>
-        <button class="button button-clear button-primary" ng-click="modal.hide()">Cancel</button>
       </ion-header-bar>
-      <ion-content class="padding">
+
+      <ion-content class="">
+        
         <ion-slide-box on-slide-changed="slideHasChanged($index)" show-pager="false" >
+      
           <ion-slide ng-repeat="step in guide.steps">
-            
+      
+            <div class="card">
               <div class="item item-image">
                 <img src="{{step.picturePath}}">
               </div>
@@ -139,9 +156,24 @@
               <div class="item item-text-wrap">
                 <p>{{step.body}}</p>
               </div>
+            </div>
+         
           </ion-slide>
+      
         </ion-slide-box>
+      
       </ion-content>
+
+      <ion-footer-bar class="bar bar-footer bar-stable">
+        <button class="button button-clear button-primary">
+          <i class="ion-ios-list-outline" style="font-size: 30px;"></i>
+        </button>
+        <h1 class="title"></h1>
+        <button class="button button-clear button-primary" ng-click="showActionsheet()">
+          <i class="ion-more" style="font-size: 30px; padding-right: 8px;"></i>
+        </button>
+      </ion-footer-bar>
+
     </ion-modal-view>
   </script>
 
