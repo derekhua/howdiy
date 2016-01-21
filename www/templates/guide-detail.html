@@ -5,7 +5,7 @@
     </ion-nav-back-button>
   </ion-nav-bar>
 
-  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false" >
+  <ion-content class="guideDetail" has-bouncing="false" scrollbar-x="false" scrollbar-y="false" overflow-scroll="false" >
     <ion-slide-box on-slide-changed="slideHasChanged()" show-pager="false" >
       <ion-slide ng-repeat="i in guideSteps">
         <div class="card" >
@@ -28,4 +28,3 @@
       </ion-slide>
     </ion-slide-box>
   </ion-content>
-</ion-view>

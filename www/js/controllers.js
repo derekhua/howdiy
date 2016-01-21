@@ -204,7 +204,33 @@ angular.module('starter.controllers', ['ionic'])
 .controller('GuideCtrl', function($scope) {
 })
 
-.controller('GuideDetailCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory) {
+.controller('GuideDetailCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicLoading, $ionicGesture) {
+  var elements = document.getElementsByClassName("guideDetail");
+  var angularElements = [];
+
+  // when there are multiple elements with same class name we need to create multiple angular element objects
+  for(i = 0; i < elements.length; i++) {
+    angularElements.push(angular.element(elements[i]));
+  }
+
+  var events = [{
+    event: 'pinchin',
+    text: 'You pinched in!'
+  },{
+    event: 'pinchout',
+    text: 'You pinched out!'
+  }];
+
+  angular.forEach(events, function(obj){
+    for (i = 0; i < elements.length; i++) {
+      $ionicGesture.on(obj.event, function (event) {
+        $scope.$apply(function () {
+          $ionicLoading.show({template: obj.text, duration: 500});
+        });
+      }, angularElements[i]);
+    }
+  });
+
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     viewData.enableBack = true;
   });
