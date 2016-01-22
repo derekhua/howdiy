@@ -1,7 +1,9 @@
 angular.module('starter.controllers', ['ionic'])
 
 .controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory, $cordovaStatusbar, COLORS) {
-  $cordovaStatusbar.styleHex(COLORS.statusbar);
+  if (ionic.Platform.isAndroid()) {
+    $cordovaStatusbar.styleHex(COLORS.statusbar);
+  }
   $scope.username = AuthService.username();
 
   // Handle broadcasted messages
