@@ -1,6 +1,7 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory, $cordovaStatusbar, COLORS) {
+  $cordovaStatusbar.styleHex(COLORS.statusbar);
   $scope.username = AuthService.username();
 
   // Handle broadcasted messages
@@ -203,11 +204,24 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope) {
-
+.controller('ProfileCtrl', function($scope, $ionicModal) {
+  $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
+  $scope.numberOfGuides = 0;
+  $scope.website = "http://testing.com";
+  $scope.bio = "This is my biography";
+  $scope.email = "testemail@test.com";
+  $scope.phone = "5615555555";
+  $ionicModal.fromTemplateUrl('templates/edit-profile.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+  $scope.editProfile = function() {
+    $scope.modal.show();
+  }
 })
 
-.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet) {
+.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading) {
   $ionicModal.fromTemplateUrl('templates/guide-modal.html', {
     scope: $scope
   }).then(function(modal) {
@@ -219,32 +233,6 @@ angular.module('starter.controllers', ['ionic'])
   });
 
   $scope.images = [];
-
-  var elements = document.getElementsByClassName("guideDetail");
-  var angularElements = [];
-
-  // when there are multiple elements with same class name we need to create multiple angular element objects
-  for(i = 0; i < elements.length; i++) {
-    angularElements.push(angular.element(elements[i]));
-  }
-
-  var events = [{
-    event: 'pinchin',
-    text: 'You pinched in!'
-  },{
-    event: 'pinchout',
-    text: 'You pinched out!'
-  }];
-
-  angular.forEach(events, function(obj){
-    for (i = 0; i < elements.length; i++) {
-      $ionicGesture.on(obj.event, function (event) {
-        $scope.$apply(function () {
-          $ionicLoading.show({template: obj.text, duration: 500});
-        });
-      }, angularElements[i]);
-    }
-  });
   
   var id = $stateParams.guideId;
   $scope.stepNumber = 1;
@@ -268,6 +256,37 @@ angular.module('starter.controllers', ['ionic'])
     console.log(index);
     $scope.stepNumber = index + 1;
     $scope.modal.show();
+
+    var elements = document.getElementsByClassName("guide-step");
+    var angularElements = [];
+    console.log(elements.length);
+    // when there are multiple elements with same class name we need to create multiple angular element objects
+    for(i = 0; i < elements.length; i++) {
+      angularElements.push(angular.element(elements[i]));
+    }
+
+    var events = [{
+      event: 'pinchin',
+      text: 'You pinched in!'
+    },{
+      event: 'pinchout',
+      text: 'You pinched out!'
+    }];
+
+    angular.forEach(events, function(obj){
+      for (i = 0; i < elements.length; i++) {
+        $ionicGesture.on(obj.event, function (event) {
+          $scope.$apply(function () {
+            if (obj.event === 'pinchin' && $scope.modal.isShown()) {
+              $scope.modal.hide();
+            }
+            else if (obj.event !== 'pinchin') {
+              $ionicLoading.show({template: obj.text, duration: 500});
+            }
+          });
+        }, angularElements[i]);
+      }
+    });
     $ionicSlideBoxDelegate.slide(index);
     $ionicSlideBoxDelegate.update();
   };

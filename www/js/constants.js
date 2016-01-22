@@ -12,4 +12,8 @@ angular.module('starter')
 .constant('USER_ROLES', {
   admin: 'admin_role',
   public: 'public_role'
+})
+
+.constant('COLORS', {
+  statusbar: '#FF6600'
 });
