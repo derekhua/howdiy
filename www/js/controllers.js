@@ -5,7 +5,6 @@ angular.module('starter.controllers', ['ionic'])
     $cordovaStatusbar.styleHex(COLORS.statusbar);
   }
   $scope.username = AuthService.username();
-
   // Handle broadcasted messages
   $scope.$on(AUTH_EVENTS.notAuthorized, function(event) {
     var alertPopup = $ionicPopup.alert({
@@ -206,20 +205,42 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope, $ionicModal) {
+.controller('ProfileCtrl', function($scope, $ionicModal, $http, EC2) {
   $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
   $scope.numberOfGuides = 0;
-  $scope.website = "http://testing.com";
-  $scope.bio = "This is my biography";
-  $scope.email = "testemail@test.com";
-  $scope.phone = "5615555555";
+
+  $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
+    $scope.userInfo = result.data;
+    $scope.website = $scope.userInfo.website;
+    $scope.bio = $scope.userInfo.bio;
+    $scope.email = $scope.userInfo.email;
+    $scope.phone = $scope.userInfo.phone;
+    $scope.genderValues = [ "Male", "Female", "Other", "Not Specified"];
+    $scope.gender = $scope.userInfo.gender;
+  }).catch(function(result) {
+    console.log("http get userInfo error");
+  });
+
   $ionicModal.fromTemplateUrl('templates/edit-profile.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
   });
+
   $scope.editProfile = function() {
     $scope.modal.show();
+  }
+
+  $scope.updateUserInfo = function() {
+    console.log(document.getElementById("websiteText").value);
+    console.log(document.getElementById("bioText").value);
+    console.log(document.getElementById("emailText").value);
+    console.log(document.getElementById("phoneText").value);
+    console.log($scope.gender);
+  }
+
+  $scope.changeGenderSelectValue = function(gender) {
+    $scope.gender = gender;
   }
 })
 
