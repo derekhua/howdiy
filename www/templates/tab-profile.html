@@ -5,9 +5,18 @@
   padding: 13px 45px 15px 0px;
   direction: ltr;
 }
+select {
+  margin-left: 45px;
+}
+i {
+  margin-right: 20px;
+}
+span.input-label {
+  margin-right: -130px;
+}
 </style>
 
-<ion-view>>
+<ion-view>
   <ion-nav-bar class="bar-assertive">
     <ion-nav-title>
       <i class="icon ion-ios-person-outline"></i> {{username}}
@@ -26,65 +35,56 @@
   </ion-content>
 
   <script id="templates/edit-profile.html" type="text/ng-template">
-    <ion-header-bar class="bar bar-header bar-assertive">
-      <button class="button button-clear button-primary" ng-click="modal.hide()">
-        <i class="ion-close"></i>
-      </button>
-      <h1 class="title">Edit Profile</h1>
-      <button class="button button-clear button-primary" side="right">
-        <i class="ion-checkmark"></i>
-      </button>
-    </ion-header-bar>
-    <ion-content class="padding">
-      <label class="item item-input">
-        <span class="input-label">
+    <ion-modal-view>
+      <ion-header-bar class="bar bar-header bar-assertive">
+        <button class="button button-clear button-primary" ng-click="modal.hide()">
+          <i class="ion-close"></i>
+        </button>
+        <h1 class="title">Edit Profile</h1>
+        <button class="button button-clear button-primary" side="right" ng-click="updateUserInfo()">
+          <i class="ion-checkmark"></i>
+        </button>
+      </ion-header-bar>
+      <ion-content class="padding">
+        <label class="item item-input">
           <i class="ion-android-person"></i>
-        </span>
-        <input type="text" ng-readonly="true" value="{{username}}">
-      </label>
-
-      <label class="item item-input">
-        <span class="input-label">
-          <i class="ion-paper-airplane"></i>
-        </span>
-        <input type="text" placeholder="Website URL" ng-readonly="false" value="{{website}}">
-      </label>
-
-      <label class="item item-input">
-        <span class="input-label">
-          <i class="ion-quote"></i>
-        </span>
-        <textarea placeholder="Bio">{{bio}}</textarea>
-      </label>
-
-      <br><b> Private Information </b>
-      <label class="item item-input">
-        <span class="input-label">
-          <i class="ion-email"></i>
-        </span>
-        <input type="email" placeholder="Address" ng-readonly="false" value="{{email}}">
-      </label>
-
-      <label class="item item-input">
-        <span class="input-label">
-          <i class="ion-android-phone-portrait"></i>
-        </span>
-        <input type="tel" placeholder="Add Phone Number" ng-readonly="false" value="{{phone}}">
-      </label>
-
-      <div class="list">
-        <label class="item item-input item-select">
-        <span class="input-label">
-          <i class="ion-transgender"></i>
-        </span>
-        <select>
-          <option selected>Not Specified</option>
-          <option>Male</option>
-          <option>Female</option>
-          <option>Attack Helicopter</option>
-        </select>
+          <input type="text" ng-readonly="true" value="{{username}}">
         </label>
-      </div>
-    </ion-content>
+
+        <label class="item item-input">
+          <i class="ion-paper-airplane"></i>
+          <input id="websiteText" type="text" placeholder="Website URL" ng-readonly="false" value="{{website}}">
+        </label>
+
+        <label class="item item-input">
+          <i class="ion-quote"></i>
+          <textarea id="bioText" placeholder="Bio" maxlength="160">{{bio}}</textarea>
+        </label>
+
+        <br><b> Private Information </b>
+        <label class="item item-input">
+          <i class="ion-email"></i>
+          <input id="emailText" type="email" placeholder="Address" ng-readonly="false" value="{{email}}">
+        </label>
+
+        <label class="item item-input">
+          <i class="ion-android-phone-portrait"></i> 
+          <input id="phoneText" type="tel" placeholder="Add Phone Number" ng-readonly="false" value="{{phone}}">
+        </label>
+
+        <div class="list">
+          <label class="item item-input item-select">
+          <span class="input-label">
+            <i class="ion-transgender"></i>
+          </span>
+          <select name="genderSelect" ng-model="gender" ng-options="v for v in genderValues" ng-change="changeGenderSelectValue(gender)">
+          </select>
+          </label>
+        </div>
+
+        <ion-footer-bar class="bar bar-footer bar-stable">
+        </ion-footer-bar>
+      </ion-content>
+    </ion-modal-view>
   </script>
 </ion-view>
