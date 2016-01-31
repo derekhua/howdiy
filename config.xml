@@ -70,4 +70,5 @@
     <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png"/>
   </platform>
   <plugin name="com.hiddentao.cordova.filepath" spec="~1.0.0"/>
+  <plugin name="cordova-plugin-statusbar" spec="~2.1.0"/>
 </widget>
