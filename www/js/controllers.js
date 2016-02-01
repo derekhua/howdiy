@@ -232,11 +232,11 @@ angular.module('starter.controllers', ['ionic'])
   }
 
   $scope.updateUserInfo = function() {
-    console.log(document.getElementById("websiteText").value);
-    console.log(document.getElementById("bioText").value);
-    console.log(document.getElementById("emailText").value);
-    console.log(document.getElementById("phoneText").value);
-    console.log($scope.gender);
+    $http.post(EC2.address + '/api/u/' + $scope.username, {"username": $scope.username, "email": document.getElementById("emailText").value, 
+                                                           "bio" : document.getElementById("bioText").value, "website" : document.getElementById("websiteText").value, 
+                                                           "phone" : document.getElementById("phoneText").value, "gender" : $scope.gender});
+
+    $scope.modal.hide();
   }
 
   $scope.changeGenderSelectValue = function(gender) {
