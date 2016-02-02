@@ -1,0 +1,70 @@
+<style type="text/css" media="screen">
+  .col-25-saved {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 24.8125%;
+    -moz-box-flex: 0;
+    -moz-flex: 0 0 24.8125%;
+    -ms-flex: 0 0 24.8125%;
+    flex: 0 0 24.8125%;
+    max-width: 24.8125%;
+    padding: 0px;
+  }
+
+</style>
+
+<ion-view view-title="Saved Guides">
+  <ion-nav-bar class="bar-assertive">
+    <ion-nav-back-button class="button-clear" ng-click="myGoBack()">
+      <i class="ion-chevron-left"></i>
+    </ion-nav-back-button>
+  </ion-nav-bar>
+
+  <ion-content>    
+    <ion-item ng-repeat="guide in guideData">
+      <div class="item item-thumbnail-left" ng-click="goToGuide({{guide.id}})">
+        <img ng-src="{{guide.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
+        <h2>{{guide.title}}</h2>
+        <p>{{guide.description}}</p>
+      </div>
+    </ion-item>
+  </ion-content>
+
+  <script id="templates/savedguide-modal.html" type="text/ng-template" >
+    <ion-modal-view>
+      <ion-header-bar class="bar bar-header bar-assertive">
+        <button class="button button-clear button-primary" ng-click="modal.hide()">
+          <i class="ion-chevron-left"></i>
+        </button>
+        <h1 class="title">Step {{stepNumber}}</h1>
+      </ion-header-bar>
+
+      <ion-content class="guide-step" scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">  
+        <ion-slide-box on-slide-changed="slideHasChanged($index)" show-pager="false" >
+          <ion-slide ng-repeat="step in guide.steps">
+            <div overflow-scroll="true">
+              <div class="item-image">
+                <img src="{{step.picturePath}}">
+              </div>
+
+              <div class="item-text-wrap">
+                <p>{{step.body}}</p>
+              </div>
+            </div>
+          </ion-slide>
+        </ion-slide-box>
+      
+      </ion-content>
+
+      <ion-footer-bar class="bar bar-footer bar-stable">
+        <button class="button button-clear button-primary">
+          <i class="ion-ios-list-outline" style="font-size: 30px;"></i>
+        </button>
+        <h1 class="title"></h1>
+        <button class="button button-clear button-primary" ng-click="showActionsheet()">
+          <i class="ion-more" style="font-size: 30px; padding-right: 8px;"></i>
+        </button>
+      </ion-footer-bar>
+
+    </ion-modal-view>
+  </script>
+</ion-view>

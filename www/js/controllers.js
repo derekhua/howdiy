@@ -205,7 +205,7 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope, $ionicModal, $http, EC2) {
+.controller('ProfileCtrl', function($scope, $state, $ionicModal, $http, EC2) {
   $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
   $scope.numberOfGuides = 0;
 
@@ -242,6 +242,45 @@ angular.module('starter.controllers', ['ionic'])
   $scope.changeGenderSelectValue = function(gender) {
     $scope.gender = gender;
   }
+
+  $scope.goToSavedGuides = function() {
+    $state.go('saved');
+  }
+})
+
+.controller('SavedCtrl', function($scope, $state, $ionicHistory, $http, EC2, $ionicModal, $ionicGesture, $ionicSlideBoxDelegate, $ionicLoading) {
+  $scope.myGoBack = function() {
+    $ionicHistory.goBack();
+  };
+
+  $ionicModal.fromTemplateUrl('templates/savedguide-modal.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    viewData.enableBack = true;
+  });
+  $scope.savedGuides = ["0","1"];
+  $scope.guideData = [];
+
+  var getSaved = function(i) {
+    $http.get(EC2.address + '/api/g/' + $scope.savedGuides[i]).then(function successCallback(result) {
+      $scope.guide = result.data;
+      $scope.guideData.push({id:$scope.guide.id, image: $scope.guide.steps[0].picturePath, title: $scope.guide.title, description: $scope.guide.description});
+    }).catch(function errorCallback(result) {
+      console.log("get saved guides error");
+    });
+  }
+
+  for (i = 0; i < $scope.savedGuides.length; i++) {
+    getSaved(i);
+  }
+
+  $scope.goToGuide = function(guideId) {
+    $state.go('guide', { "guideId": guideId })
+  };
 })
 
 .controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading) {

@@ -70,6 +70,12 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     controller: 'GuideCtrl'
   })
 
+  .state('saved', {
+    url: '/saved',
+    templateUrl: 'templates/saved.html',
+    controller: 'SavedCtrl'
+  })
+
   // Setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
