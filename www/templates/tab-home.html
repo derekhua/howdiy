@@ -20,15 +20,31 @@
   .home-list-item > .item {
     border-width: 0px;
   }
+
+  .icon-flipped {
+    -moz-transform: rotate(100deg);
+    -webkit-transform: rotate(100deg);
+    -o-transform: rotate(100deg);
+    -ms-transform: rotate(100deg);
+    transform: rotate(100deg);
+  }
 </style>
 
-<ion-view view-title="Howdiy">
-    <ion-nav-bar class="bar-assertive">
-    </ion-nav-bar>
-    <ion-nav-buttons side="right">
-    <button class="button icon-left ion-log-out button-stable" ng-click="logout()">Logout</button>
-  </ion-nav-buttons>
-
+<ion-view>
+  <ion-nav-bar class="bar-assertive">
+    <ion-nav-title>
+      <div class="bar item-input-inset-opaque">
+        <i ng-hide="flippedIcon" class="icon ion-erlenmeyer-flask light" style="margin-right: 12px" ng-click="flippedIcon = !flippedIcon"></i>
+        <i ng-show="flippedIcon" class="icon-flipped icon ion-erlenmeyer-flask light .icon-flipped" style="margin-right: 12px" ng-click="flippedIcon = !flippedIcon"></i>
+        <label class="item-input-wrapper-opaque" >
+          <i class="icon ion-ios-search-strong dark"></i>
+          <input type="search" placeholder="Howdiy?"
+          ng-click="goSearch()">
+        </label>
+      </div>
+    </ion-nav-title>
+  </ion-nav-bar>
+  
   <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
     <ion-refresher on-refresh="doRefresh()" spinner="ripple" class="assertive"></ion-refresher>
 

@@ -76,10 +76,9 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 .controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2, $timeout, ImageService) {
-  $scope.logout = function() {
-    AuthService.logout();
-    $state.go('login');
-  }
+  $scope.goSearch = function() {
+    $state.go('search');
+  };
 
   $scope.getGuides = function() {
     $http.get(EC2.address + '/api/g').then(function(result) {
@@ -192,7 +191,11 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 .controller('SearchCtrl', function($scope, $state) {
-    // go to guide testing purposes
+  $scope.goHome = function() {
+    $state.go('tab.home');
+  };
+
+  // go to guide testing purposes
   $scope.goToGuide = function(guideId) {
     $state.go('guide', { "guideId": guideId });
   };
@@ -207,7 +210,12 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope, $state, $ionicModal, $http, EC2) {
+.controller('ProfileCtrl', function($scope, $state, $ionicModal, $http, EC2, AuthService) {
+  $scope.logout = function() {
+    AuthService.logout();
+    $state.go('login');
+  }
+
   $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
   $scope.numberOfGuides = 0;
 

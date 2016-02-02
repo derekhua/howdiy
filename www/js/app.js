@@ -76,6 +76,12 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     controller: 'SavedCtrl'
   })
 
+  .state('search', {
+    url: '/search',
+    templateUrl: 'templates/search.html',
+    controller: 'SearchCtrl'
+  })
+
   // Setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
@@ -89,16 +95,6 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
       'tab-home': {
         templateUrl: 'templates/tab-home.html',
         controller: 'HomeCtrl'
-      }
-    }
-  })
-
-  .state('tab.search', {
-    url: '/search',
-    views: {
-      'tab-search': {
-        templateUrl: 'templates/tab-search.html',
-        controller: 'SearchCtrl'
       }
     }
   })

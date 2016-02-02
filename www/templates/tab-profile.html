@@ -25,6 +25,11 @@ form {
       {{username}}
     </ion-nav-title>
   </ion-nav-bar>
+
+  <ion-nav-buttons side="right">
+    <button class="button icon-left ion-log-out button-stable" ng-click="logout()">Logout</button>
+  </ion-nav-buttons>
+
   <ion-content class="padding" ng-show="!modal.isShown()">
     <div class="item item-avatar">
       <img src="{{profilePicture}}"> 
