@@ -1,14 +1,14 @@
 <style type="text/css" media="screen">
-  .tabs-stable > .tabs, .tabs.tabs-stable {
+  .tabs-stable > .tabs, .tabs.tabs-stable, .tabs-striped.tabs-stable .tabs{
     border-color: #25292c;
     background-color: #25292c;
   }
 
-  ion-tabs.tabs-color-active-positive .tab-item {
-    color: #FFFFFF;
+  ion-tabs.tabs-color-active-positive .tab-item, .tabs-striped.tabs-stable .tab-item{
+    color: #ddd;
   }
 
-  ion-tabs.tabs-color-active-positive .tab-item.tab-item-active, ion-tabs.tabs-color-active-positive .tab-item.active, ion-tabs.tabs-color-active-positive .tab-item.activated {
+  ion-tabs.tabs-color-active-positive .tab-item.tab-item-active, ion-tabs.tabs-color-active-positive .tab-item.active, ion-tabs.tabs-color-active-positive .tab-item.activated, .tabs-striped.tabs-stable .tab-item.tab-item-active, .tabs-striped.tabs-stable .tab-item.active, .tabs-striped.tabs-stable .tab-item.activated {
     color: #e84c3d;
   }
 </style>
@@ -17,30 +17,30 @@ Create tabs with an icon and label, using the tabs-positive style.
 Each tab's child <ion-nav-view> directive will have its own
 navigation history that also transitions its views in and out.
 -->
-<ion-tabs class="tabs-icon-top tabs-color-active-positive tabs-stable">
+<ion-tabs class="tabs-color-active-positive tabs-stable">
 
   <!-- Home Tab -->
-  <ion-tab title="Home" icon-off="ion-ios-home" icon-on="ion-ios-home" href="#/tab/home">
+  <ion-tab title="Home" icon-off="ion-ios-home-outline" icon-on="ion-ios-home" href="#/tab/home">
     <ion-nav-view name="tab-home"></ion-nav-view>
   </ion-tab>
 
   <!-- Search Tab -->
-  <ion-tab title="Search" icon-off="ion-ios-search-strong" icon-on="ion-ios-search-strong" href="#/tab/search">
+  <ion-tab title="Search" icon-off="ion-ios-search" icon-on="ion-ios-search-strong" href="#/tab/search">
     <ion-nav-view name="tab-search"></ion-nav-view>
   </ion-tab>
 
   <!-- Create Tab -->
-  <ion-tab title="Create" icon-off="ion-ios-plus" icon-on="ion-ios-plus" href="#/tab/creation">
+  <ion-tab title="Create" icon-off="ion-ios-compose-outline" icon-on="ion-ios-compose" href="#/tab/creation">
     <ion-nav-view name="tab-creation"></ion-nav-view>
   </ion-tab>
   
   <!-- Activity Tab -->
-  <ion-tab title="Activity" icon-off="ion-ios-list" icon-on="ion-ios-list" href="#/tab/activity">
+  <ion-tab title="Activity" icon-off="ion-ios-list-outline" icon-on="ion-ios-list" href="#/tab/activity">
     <ion-nav-view name="tab-activity"></ion-nav-view>
   </ion-tab>
 
   <!-- Profile Tab -->
-  <ion-tab title="Profile" icon-off="ion-ios-person" icon-on="ion-ios-person" href="#/tab/profile">
+  <ion-tab title="Profile" icon-off="ion-ios-person-outline" icon-on="ion-ios-person" href="#/tab/profile">
     <ion-nav-view name="tab-profile"></ion-nav-view>
   </ion-tab>
 

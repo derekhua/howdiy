@@ -84,6 +84,7 @@ angular.module('starter.controllers', ['ionic'])
   $scope.getGuides = function() {
     $http.get(EC2.address + '/api/g').then(function(result) {
       $scope.response = result;
+      $scope.guides = result.data;
     }).catch(function(result) {
       console.log("getGuides error");
     });
@@ -175,11 +176,12 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.doRefresh = function() {
     console.log('Refreshing!');
-    $timeout( function() {
-      //simulate async response
-      //Stop the ion-refresher from spinning
+    $http.get(EC2.address + '/api/g').then(function(result) {
+      $scope.guides = result.data;
       $scope.$broadcast('scroll.refreshComplete');
-    }, 1000);
+    }).catch(function(result) {
+      console.log("getGuides error");
+    });
   };
 })
 
