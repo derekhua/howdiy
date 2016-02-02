@@ -1,69 +1,67 @@
 <style type="text/css" media="screen">
-  .card, .list-inset {
-    position:relative;
-    overflow: hidden;
-    margin: 0px 0px;
-    border-radius: 0px;
-    padding: 0px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    float:left; /* important */  
-    position:relative; /* important(so we can absolutely position the description div */  
-    min-height: 110px;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  }
-  .row {
-    margin-bottom: 7.5px;
-    padding: 0px;
-  }
-
   .col-1 {
     -webkit-box-flex: 0;
-    -webkit-flex: 0 0 0.5%;
+    -webkit-flex: 0 0 0.25%;
     -moz-box-flex: 0;
-    -moz-flex: 0 0 0.5%;
-    -ms-flex: 0 0 0.5%;
-    flex: 0 0 0.5%;
-    max-width: 0.5%;
+    -moz-flex: 0 0 0.25%;
+    -ms-flex: 0 0 0.25%;
+    flex: 0 0 0.25%;
+    max-width: 0.25%;
     padding: 0px;
   }
 
-  .col-24 {
+  .col-25 {
     -webkit-box-flex: 0;
-    -webkit-flex: 0 0 24.65%;
+    -webkit-flex: 0 0 24.8125%;
     -moz-box-flex: 0;
-    -moz-flex: 0 0 24.65%;
-    -ms-flex: 0 0 24.65%;
-    flex: 0 0 24.65%;
-    max-width: 24.65%;
+    -moz-flex: 0 0 24.8125%;
+    -ms-flex: 0 0 24.8125%;
+    flex: 0 0 24.8125%;
+    max-width: 24.8125%;
     padding: 0px;
   }
 
-  div.description{  
-    position:absolute; /* absolute position (so we can position it where we want)*/  
-    bottom:0px; /* position will be on bottom */  
-    left:0px;  
-    width:100%;  
-    border-color: black;
-    border-bottom: 1px;
-    border-left: 1px;
-    border-right: 1px;
-    /* styling bellow */  
-    background-color:white;  
-    font-family: 'tahoma';  
-    font-size:15px;  
-    color:black;  
-    z-index: 1000;
-    /*opacity: .6;*/
-  }  
-  .item {
-    border: 0;
-    padding: 8px;
+  div.thumbnail {
+    height: 0;
+    padding-bottom: 25%;
+    overflow: hidden;
+    position: relative;
   }
 
-  .thumbnailPic {
-    border-width: 1px;
+  img.thumbnailPic {
+    position: absolute;
+    margin: auto; 
+    min-height: 100%;
+    min-width: 100%;
+    /* For the following settings we set 100%, but it can be higher if needed 
+    See the answer's update */
+    left: -100%;
+    right: -100%;
+    top: -100%;
+    bottom: -100%;
+  } 
+
+  /*override*/
+  .row {
+    padding: 0px 0px 1.75%;
+  }
+
+  .item {
+    border-width: 0px;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  div.slider, div.slider-slides {
+    height: 100%;
+  }
+
+  ion-slide.slider-slide {
+    height: 100%;
+  }
+
+  .item-text-wrap {
+    padding: 5px 10px 5px;
   }
 </style>
 
@@ -75,49 +73,33 @@
   </ion-nav-bar>
 
   <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">    
-    <div style="height: 2px"></div>
+    <div style="height: 1px"></div>
 
     <div class="row" ng-repeat="image in images" ng-if="$index % 4 === 0">
-        <div class="card col col-24" ng-if="$index < images.length" ng-click="goToSlide($index)" type="button">
+        <div class="col col-25 thumbnail" ng-if="$index < images.length" ng-click="goToSlide($index+1)" type="button">
             <img ng-src="{{images[$index].src}}" width="100%" class="thumbnailPic"/>
-            <div class='item description'>  
-              <!-- description content -->  
-              <p class='description_content'>Lorem ipsum throwsum mo</p>  
-              <!-- end description content -->  
-            </div> 
+            
         </div>
 
-        <div class=" col col-1"></div>
+        <div class="col col-1"></div>
         
-        <div class="card col col-24" ng-if="$index + 1 < images.length" ng-click="goToSlide($index+1)" type="button">
-            <img ng-src="{{images[$index + 1].src}}" width="100%"class="thumbnailPic"/>
-            <div class='item description'>  
-              <!-- description content -->  
-              <p class='description_content'>Lorem ipsum throwsum mo</p>  
-              <!-- end description content -->  
-            </div> 
+        <div class="col col-25 thumbnail" ng-if="$index + 1 < images.length" ng-click="goToSlide($index+1)" type="button">
+            <img ng-src="{{images[$index + 1].src}}" width="100%" class="thumbnailPic"/>
+            
         </div>
         
-        <div class=" col col-1"></div>
-        
-        <div class="card col col-24" ng-if="$index + 2 < images.length" ng-click="goToSlide($index+2)" type="button">
-            <img ng-src="{{images[$index + 2].src}}" width="100%"class="thumbnailPic"/>
-            <div class='item description'>  
-              <!-- description content -->  
-              <p class='description_content'>Lorem ipsum throwsum mo</p>  
-              <!-- end description content -->  
-            </div> 
+        <div class="col col-1"></div>
+
+        <div class="col col-25 thumbnail" ng-if="$index + 2 < images.length" ng-click="goToSlide($index+2)" type="button">
+            <img ng-src="{{images[$index + 2].src}}" width="100%" class="thumbnailPic"/>
+            
         </div>
 
-        <div class=" col col-1"></div>
+        <div class="col col-1"></div>
 
-        <div class="card col col-25" ng-if="$index + 3 < images.length" ng-click="goToSlide($index+3)" type="button">
+        <div class="col col-25 thumbnail" ng-if="$index + 3 < images.length" ng-click="goToSlide($index+3)" type="button">
             <img ng-src="{{images[$index + 3].src}}" width="100%" class="thumbnailPic"/>
-            <div class='item description'>  
-              <!-- description content -->  
-              <p class='description_content'>Lorem ipsum throwsum mo</p>  
-              <!-- end description content -->  
-            </div> 
+            
         </div>
     </div>
 
@@ -133,7 +115,7 @@
     </button>
   </ion-footer-bar>
 
-  <script id="templates/guide-modal.html" type="text/ng-template">
+  <script id="templates/guide-modal.html" type="text/ng-template" >
     <ion-modal-view>
       <ion-header-bar class="bar bar-header bar-assertive">
         <button class="button button-clear button-primary" ng-click="modal.hide()">
@@ -142,24 +124,19 @@
         <h1 class="title">Step {{stepNumber}}</h1>
       </ion-header-bar>
 
-      <ion-content class="guide-step">
-        
+      <ion-content class="guide-step" scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">  
         <ion-slide-box on-slide-changed="slideHasChanged($index)" show-pager="false" >
-      
           <ion-slide ng-repeat="step in guide.steps">
-      
-            <div class="card">
-              <div class="item item-image">
+            <div overflow-scroll="true">
+              <div class="item-image">
                 <img src="{{step.picturePath}}">
               </div>
 
-              <div class="item item-text-wrap">
+              <div class="item-text-wrap">
                 <p>{{step.body}}</p>
               </div>
             </div>
-         
           </ion-slide>
-      
         </ion-slide-box>
       
       </ion-content>

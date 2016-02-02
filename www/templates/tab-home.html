@@ -5,7 +5,7 @@
     <button class="button icon-left ion-log-out button-stable" ng-click="logout()">Logout</button>
   </ion-nav-buttons>
 
-  <ion-content class="padding">
+  <ion-content class="padding" delegate-handle="content" overflow-scroll="true">
     <ion-refresher on-refresh="doRefresh()" spinner="ripple" class="assertive"></ion-refresher>
     <div class="row"><div class="col text-center">
       <h3 class="title">Welcome {{username}}!</h3>
