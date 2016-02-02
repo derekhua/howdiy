@@ -1,0 +1,129 @@
+<style type="text/css">
+  .card.repeating, .list-inset {
+    position:relative;
+    overflow: hidden;
+    margin: 0px 0px;
+    border-radius: 0px;
+    padding: 2px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    float:left; /* important */  
+    position:relative; /* important(so we can absolutely position the description div */  
+    min-height: 110px
+  }
+button.icon-large:before {
+    font-size: 300px !important;
+}
+.icon-larger {
+  font-size: 80px !important;
+}
+textarea {
+  height:auto;
+  width:100%;
+  overflow: hidden;
+  background:#fff;
+  border-radius:3px;
+  line-height:2em;
+  border:none;
+  resize: none;
+}
+.col-1 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 0.5%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 0.5%;
+  -ms-flex: 0 0 0.5%;
+  flex: 0 0 0.5%;
+  max-width: 0.5%;
+  padding: 0px;
+}
+
+.col-24 {
+  -webkit-box-flex: 0;
+  -webkit-flex: 0 0 24.65%;
+  -moz-box-flex: 0;
+  -moz-flex: 0 0 24.65%;
+  -ms-flex: 0 0 24.65%;
+  flex: 0 0 24.65%;
+  max-width: 24.65%;
+  padding: 0px;
+}
+
+.item {
+  border: 1;
+  padding: 8px;
+}
+
+.thumbnailPic {
+  border-width: 1px;
+}
+
+.button-custom {
+  font-size: 18px !important;
+}
+</style>
+
+<ion-view>
+  <ion-nav-bar class="bar-assertive">
+    <ion-nav-back-button class="button-clear button-custom" ng-click="myGoBack()">
+      <i class="ion-ios-arrow-back"></i> Back
+    </ion-nav-back-button>
+    <ion-nav-title>
+      <i class="icon ion-ios-compose-outline"></i>
+    </ion-nav-title>
+    <ion-nav-buttons side="secondary">
+      <button class="button button-custom" ng-click="submitGuide()">
+        Submit! <i class="ion-ios-arrow-forward"></i> 
+      </button>
+    </ion-nav-buttons>
+  </ion-nav-bar>
+  <ion-content>
+   <div style="height: 10px"></div>
+      <div ng-repeat="i in range(0,len)">
+        <div class = "card repeating col col-24" type="button" ng-show="$first && !$last" on-hold="deleteStep(i)" ng-click="showStep(i)">
+          <img ng-src="{{stepElements[i].picturePath}}" class="thumbnailPic" width="100%"/>
+        </div>
+                <div class=" col col-1"></div>
+       <div class = "card repeating col col-24" type="button" ng-show="!$first && !$last" on-hold="deleteStep(i)" ng-click="showStep(i)">
+          <img ng-src="{{stepElements[i].picturePath}}" class="thumbnailPic" width="100%"/>
+        </div>
+                <div class=" col col-1"></div>
+         <div class = "list-inset col col-24 row row-center" type="button" ng-show="$last">
+          <button class="button button-icon ion-ios-plus icon-larger" width="100%" ng-click="showStep(i)" ></button>
+        </div>
+                <div class=" col col-1"></div>
+      </div>
+<!--       {{stepElements}}
+
+      {{step}}
+
+      {{finishedGuide}} -->
+  </ion-content>
+  <script id="templates/creation-modal.html" type="text/ng-template">
+    <ion-modal-view>
+      <ion-header-bar class="bar bar-header bar-assertive">
+        <button class="button button-clear button-primary" ng-click="cancelStep()">Cancel</button>
+        <h1 class="title">Step {{step}}</h1>
+        <button class="button button-clear button-primary" ng-click="createStep()">Accept</button>
+      </ion-header-bar>
+      <ion-content>
+        <div class="list card">
+
+        <div class="item item-image">
+          <img ng-if="imgURI !== undefined" src="{{imgURI}}" ng-click="takePicture()" id = "new_step_pic" ></img>
+          <img ng-if="imgURI === undefined && step < len" src="{{stepElements[step].picturePath}}" ng-click="takePicture()" id = "old_step_pic"></img>
+          <button ng-if="imgURI === undefined && stepElements[step].picturePath === undefined" class="button button-icon ion-camera icon-large" ng-click="takePicture()" ></button>
+        </div>
+
+        <div class="item item-image padding">
+          <textarea placeholder="This is an auto expanding textarea with just angularjs ... try typing something."
+                    ng-keyup="expandText()" 
+                    ng-keydown="expandText()"
+                    id = "description"></textarea>
+        </div>
+      </div>
+      </ion-content>
+    </ion-modal-view>
+  </script>
+</ion-view>

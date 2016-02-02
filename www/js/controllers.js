@@ -1,9 +1,9 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory, $cordovaStatusbar, COLORS) {
-  if (ionic.Platform.isAndroid()) {
-    $cordovaStatusbar.styleHex(COLORS.statusbar);
-  }
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory) {
+  // if (ionic.Platform.isAndroid()) {
+  //   $cordovaStatusbar.styleHex(COLORS.statusbar);
+  // }
   $scope.username = AuthService.username();
   // Handle broadcasted messages
   $scope.$on(AUTH_EVENTS.notAuthorized, function(event) {
@@ -206,8 +206,142 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
+.controller('CreationCtrl', function($scope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup) {
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    viewData.enableBack = true;
+  });
+  
+  $scope.len = 0;
+  $scope.step = 0;
+  $scope.stepElements = [];
+  $scope.finishedGuide = {
+    "id": "",
+    "title": "",
+    "picturePath": "",
+    "author": "",
+    "category": "",
+    "meta": {
+        "favs": 0,
+        "createDate": {
+          "$date": ""
+        }
+    },
+    "comments": [
+        {
+          "date": {
+            "$date": ""
+          }
+        }
+    ],
+    "steps": [
+        {
+            "picturePath": "",
+            "comments": [
+                {
+                    "date": {
+                      "$date": ""
+                    }
+                }
+            ],
+            "body": ""
+        }
+    ],
+    "description": ""
+  };
+  var showFlag = false;
 
-.controller('CreationCtrl', function($scope) {
+  $scope.range = function(min, max, step) {
+   step = step || 1;
+   var input = [];
+   for (var i = min; i <= max; i += step) {
+       input.push(i);
+   }
+   return input;
+  };
+  
+  $ionicModal.fromTemplateUrl('templates/creation-modal.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+  
+  $scope.createStep = function() {
+    if( $scope.step < $scope.len )
+      $scope.stepElements[$scope.step] = { "picturePath": document.getElementById('old_step_pic').src,"comments": [{"date": {}}], "body": document.getElementById('description').value};
+    else {
+      $scope.stepElements.push({ "picturePath": document.getElementById('new_step_pic').src, "comments": [{"date": {}}], "body": document.getElementById('description').value});
+      $scope.len = $scope.len + 1;
+    }
+    $scope.imgURI = undefined;
+    document.getElementById('description').value = "";
+    $scope.modal.hide();
+  };
+  
+  $scope.cancelStep = function() {
+    $scope.imgURI = undefined;
+    document.getElementById('description').value = "";
+    $scope.modal.hide();
+  }
+
+  $scope.deleteStep = function(stepNum) {
+    $cordovaVibration.vibrate(300);
+    showFlag = true;
+    var myPopup = $ionicPopup.show({
+       title: 'Delete this step?',
+       scope: $scope,
+       buttons: [
+         { text: 'Cancel',
+            onTap: function(e) {
+              showFlag = false;
+           }
+         },
+         {
+           text: '<b>Delete</b>',
+           type: 'button-positive',
+           onTap: function(e) {
+              $scope.stepElements.splice(stepNum, 1);
+              $scope.len--;
+              showFlag = false;
+           }
+         },
+       ]
+     });
+  }
+
+  $scope.showStep = function(stepNum) {
+    if(showFlag === false) {
+      $scope.step = stepNum;
+      if (stepNum < $scope.len)
+        document.getElementById('description').value = $scope.stepElements[stepNum].body;
+      $scope.modal.show();
+    }
+  };
+  $scope.submitGuide = function () {
+    $scope.finishedGuide.steps = $scope.stepElements;
+  }
+  $scope.takePicture = function() {
+    var options = {
+      quality : 75,
+      destinationType : Camera.DestinationType.DATA_URL,
+      sourceType : Camera.PictureSourceType.CAMERA,
+      allowEdit : true,
+      encodingType: Camera.EncodingType.JPEG,
+      targetWidth: 350,
+      targetHeight: 400,
+      popoverOptions: CameraPopoverOptions,
+      saveToPhotoAlbum: false
+    };
+    $cordovaCamera.getPicture(options).then(function(imageData) {
+      $scope.imgURI = "data:image/jpeg;base64," + imageData;
+    }).catch(function(err) {
+      console.log(err);
+    });
+  };
+
+  $scope.expandText = function(){
+    var element = document.getElementById("description");
+    element.style.height =  element.scrollHeight + "px";
+  }
 
 })
 
@@ -250,7 +384,6 @@ angular.module('starter.controllers', ['ionic'])
     $http.post(EC2.address + '/api/u/' + $scope.username, {"username": $scope.username, "email": document.getElementById("emailText").value, 
                                                            "bio" : document.getElementById("bioText").value, "website" : document.getElementById("websiteText").value, 
                                                            "phone" : document.getElementById("phoneText").value, "gender" : $scope.gender});
-
     $scope.modal.hide();
   }
 

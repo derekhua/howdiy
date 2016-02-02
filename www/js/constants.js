@@ -14,6 +14,6 @@ angular.module('starter')
   public: 'public_role'
 })
 
-.constant('COLORS', {
-  statusbar: '#FF6600'
-});
+// .constant('COLORS', {
+//   statusbar: '#FF6600'
+// });

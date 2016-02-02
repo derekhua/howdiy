@@ -21,10 +21,10 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
       cordova.plugins.Keyboard.disableScroll(true);
 
     }
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
-    }
+    // if (window.StatusBar) {
+    //   // org.apache.cordova.statusbar required
+    //   StatusBar.styleDefault();
+    // }
   });
 })
 
@@ -99,14 +99,20 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   })
 
-  .state('tab.creation', {
-    url: '/creation',
+  .state('tab.search', {
+    url: '/search',
     views: {
-      'tab-creation': {
-        templateUrl: 'templates/tab-creation.html',
-        controller: 'CreationCtrl'
+      'tab-search': {
+        templateUrl: 'templates/tab-search.html',
+        controller: 'SearchCtrl'
       }
     }
+  })
+
+  .state('creation', {
+    url: '/creation',
+    templateUrl: 'templates/creation.html',
+    controller: 'CreationCtrl'
   })
 
   .state('tab.activity', {
