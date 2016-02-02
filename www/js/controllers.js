@@ -80,6 +80,11 @@ angular.module('starter.controllers', ['ionic'])
     $state.go('search');
   };
 
+  // go to guide testing purposes
+  $scope.goToGuide = function(guideId) {
+    $state.go('guide', { "guideId": guideId });
+  };
+
   $scope.getGuides = function() {
     $http.get(EC2.address + '/api/g').then(function(result) {
       $scope.response = result;
