@@ -1,22 +1,29 @@
 <style type="text/css" media="screen">
-.item-select select
-{
-  right: auto;
-  padding: 13px 45px 15px 0px;
-  direction: ltr;
-}
-select {
-  margin-left: 45px;
-}
-i {
-  margin-right: 20px;
-}
-span.input-label {
-  margin-right: -130px;
-}
-form {
-  text-align: center;
-}
+  .item-select select {
+    right: auto;
+    padding: 13px 45px 15px 0px;
+    direction: ltr;
+  }
+
+  select {
+    margin-left: 45px;
+  }
+
+  span.input-label {
+    margin-right: -130px;
+  }
+
+  form {
+    text-align: center;
+  }
+
+  .profile-pic {
+    border-radius: 50%;
+  }
+
+  .edit-button {
+    width: 100%;
+  }
 </style>
 
 <ion-view>
@@ -30,25 +37,30 @@ form {
     <button class="button icon-left ion-log-out button-stable" ng-click="logout()">Logout</button>
   </ion-nav-buttons>
 
-  <ion-content class="padding" ng-show="!modal.isShown()">
-    <div class="item item-avatar">
-      <img src="{{profilePicture}}"> 
-      <div class="col col-center">
-        <b> {{numberOfGuides}} Guides Submitted</b>
-        <button class="button button-small button-assertive" style="float:right" ng-click="editProfile()">
+  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+    <div class="item item-thumbnail-left">
+      <img class="profile-pic" src="{{profilePicture}}"> 
+      <div class="profile-right">
+        <div class="row"><h2> {{numberOfGuides}} Guides Submitted</h2></div>
+        <div class="row"><button class="button button-small button-stable edit-button" style="float:right" ng-click="editProfile()">
           Edit Profile
-        </button>
+        </button></div>      
       </div>
     </div>
-    <br>
-    <form>
-      <button class="button button-positive" >
-        Drafts
-      </button>
-      <button class="button button-dark" ng-click="goToSavedGuides()">
-        Saved
-      </button>
-    </form>
+    
+    <div class="button-bar">
+      <button class="button"><i class="icon ion-grid"></i></button>
+      <button class="button"><i class="icon ion-document"></i></button>
+      <button class="button" ng-click="getSavedGuides()"><i class="icon ion-ios-heart-outline"></i></button>
+    </div>
+    
+    <div ng-show="showSaved" class="list">
+      <div ng-repeat="guide in savedGuides" class="item item-thumbnail-left" ng-click="goToGuide({{guide.id}})">
+        <img ng-src="{{guide.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
+        <h2>{{guide.title}}</h2>
+        <p>{{guide.description}}</p>
+      </div>
+    </div>
 
   </ion-content>
 

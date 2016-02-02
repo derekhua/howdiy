@@ -312,9 +312,11 @@ angular.module('starter.controllers', ['ionic'])
   }
 
   $scope.updateUserInfo = function() {
-    $http.post(EC2.address + '/api/u/' + $scope.username, {"username": $scope.username, "email": document.getElementById("emailText").value, 
-                                                           "bio" : document.getElementById("bioText").value, "website" : document.getElementById("websiteText").value, 
-                                                           "phone" : document.getElementById("phoneText").value, "gender" : $scope.gender});
+    $http.post(EC2.address + '/api/u/' + $scope.username, {
+      "username": $scope.username, "email": document.getElementById("emailText").value, 
+      "bio" : document.getElementById("bioText").value, "website" : document.getElementById("websiteText").value, 
+      "phone" : document.getElementById("phoneText").value, "gender" : $scope.gender
+    });
     $scope.modal.hide();
   }
 
@@ -322,9 +324,24 @@ angular.module('starter.controllers', ['ionic'])
     $scope.gender = gender;
   }
 
-  $scope.goToSavedGuides = function() {
-    $state.go('saved');
-  }
+  $scope.showSaved = false;
+  $scope.showDrafts = false;
+  $scope.showOwn = true;
+
+  $scope.getSavedGuides = function() {
+    $scope.showSaved = true;
+    $scope.showDrafts = false;
+    $scope.showOwn = false;
+
+    $scope.savedGuides = [];
+
+    $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
+      $scope.savedGuides = result.data.savedGuides;
+      console.log($scope.savedGuides);
+    }).catch(function errorCallback(result) {
+      console.log("get saved guides error");
+    });
+  };
 })
 
 .controller('SavedCtrl', function($scope, $state, $ionicHistory, $http, EC2, $ionicModal, $ionicGesture, $ionicSlideBoxDelegate, $ionicLoading) {
@@ -341,6 +358,7 @@ angular.module('starter.controllers', ['ionic'])
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     viewData.enableBack = true;
   });
+
   $scope.savedGuides = ["0","1"];
   $scope.guideData = [];
 
