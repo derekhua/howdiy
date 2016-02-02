@@ -21,12 +21,8 @@
     border-width: 0px;
   }
 
-  .icon-flipped {
-    -moz-transform: rotate(100deg);
-    -webkit-transform: rotate(100deg);
-    -o-transform: rotate(100deg);
-    -ms-transform: rotate(100deg);
-    transform: rotate(100deg);
+  .button.button-clear.header-button {
+    padding-right: 12px;
   }
 </style>
 
@@ -34,13 +30,16 @@
   <ion-nav-bar class="bar-assertive">
     <ion-nav-title>
       <div class="bar item-input-inset-opaque">
-        <i ng-hide="flippedIcon" class="icon ion-erlenmeyer-flask light" style="margin-right: 12px" ng-click="flippedIcon = !flippedIcon"></i>
-        <i ng-show="flippedIcon" class="icon-flipped icon ion-erlenmeyer-flask light .icon-flipped" style="margin-right: 12px" ng-click="flippedIcon = !flippedIcon"></i>
-        <label class="item-input-wrapper-opaque" >
+        
+        <button class="button button-clear header-button" ng-click="searchOff()">
+            <i ng-class="search ? 'icon ion-close-round' : 'icon ion-erlenmeyer-flask light'"></i>
+        </button> 
+
+        <label class="item-input-wrapper-opaque"  ng-click="searchOn()">
           <i class="icon ion-ios-search-strong dark"></i>
-          <input type="search" placeholder="Howdiy?"
-          ng-click="goSearch()">
+          <input type="search" placeholder="Howdiy?" autofocus="false"/>
         </label>
+
       </div>
     </ion-nav-title>
   </ion-nav-bar>
@@ -48,7 +47,7 @@
   <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
     <ion-refresher on-refresh="doRefresh()" spinner="ripple" class="assertive"></ion-refresher>
 
-    <div class="list">
+    <div ng-hide="search" class="list">
       <div class="home-list-item" ng-repeat="guide in guides" ng-click="goToGuide({{guide.id}})"> 
         <div class="item">
           <h2>{{guide.title}}</h2>
@@ -73,9 +72,11 @@
       </div>
     </div>    
 
-    <button class="button button-full button-positive" ng-click="getGuides()">
-      Get guides
-    </button>
-
+    <div ng-show="search">
+      <button class="button button-full button-positive" ng-click="goToGuide(0)">
+        Go to db guide
+      </button>
+    </div>
+    
   </ion-content>
 </ion-view>

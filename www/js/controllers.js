@@ -76,8 +76,13 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 .controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2, $timeout, ImageService) {
-  $scope.goSearch = function() {
-    $state.go('search');
+  $scope.search = false;
+  $scope.searchOn = function() {
+    $scope.search = true;
+  };
+
+  $scope.searchOff = function() {
+    $scope.search = false;
   };
 
   // go to guide testing purposes
@@ -94,25 +99,9 @@ angular.module('starter.controllers', ['ionic'])
     });
   };
 
-  $scope.getUsers = function() {
-    $http.get(EC2.address + '/api/u').then(function(result) {
-      $scope.response = result;
-    }).catch(function(result) {
-      console.log("getUsers error");
-    });
-  };
-
   $scope.printToken = function() {
     $scope.response = window.localStorage.getItem('yourTokenKey');
   };
-
-  $scope.ready = false;
-  $scope.images = [];
-
-  $rootScope.$watch('appReady.status', function() {
-    console.log('watch fired '+$rootScope.appReady.status);
-    if($rootScope.appReady.status) $scope.ready = true;
-  });
 
   $scope.selImages = function() {
     var options = {
@@ -130,54 +119,6 @@ angular.module('starter.controllers', ['ionic'])
     });
   };
 
-  $scope.uploadPicture = function() {
-    var options = {
-      quality: 50,
-      destinationType: Camera.DestinationType.FILE_URI,
-      sourceType: Camera.PictureSourceType.PHOTOLIBRARY
-    };
-    $cordovaCamera.getPicture(options).then(function(imageURI) {      
-      ImageService.resizeAndConvert(imageURI).then(function(image64) {
-        $ionicLoading.show({template: 'Uploading photo...', duration:500});
-        var options = new FileUploadOptions();
-        options.fileKey = "file";
-        options.fileName = image64.substr(image64.lastIndexOf('/') + 1);
-        options.mimeType = "image/jpeg";
-        options.chunkedMode = true;
-        var ft = new FileTransfer();
-        ft.upload(image64, encodeURI(EC2.address + '/photos'), 
-        function successCallback(FileUploadResult) {
-          console.log(FileUploadResult.response);        
-          $ionicLoading.show({template: 'Done!', duration:500});
-        },function errorCallback(err) {
-          console.log(err);
-          $ionicLoading.show({template: 'Failed!', duration:500});
-        }, options);
-      });
-    }).catch(function(err) {
-      console.log(err);
-    });
-  };
-
-  $scope.takePicture = function() {
-    var options = {
-      quality : 75,
-      destinationType : Camera.DestinationType.DATA_URL,
-      sourceType : Camera.PictureSourceType.CAMERA,
-      allowEdit : true,
-      encodingType: Camera.EncodingType.JPEG,
-      targetWidth: 300,
-      targetHeight: 300,
-      popoverOptions: CameraPopoverOptions,
-      saveToPhotoAlbum: false
-    };
-    $cordovaCamera.getPicture(options).then(function(imageData) {
-      $scope.imgURI = "data:image/jpeg;base64," + imageData;
-    }).catch(function(err) {
-      console.log(err);
-    });
-  };
-
   $scope.doRefresh = function() {
     console.log('Refreshing!');
     $http.get(EC2.address + '/api/g').then(function(result) {
@@ -185,6 +126,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.$broadcast('scroll.refreshComplete');
     }).catch(function(result) {
       console.log("getGuides error");
+      $scope.$broadcast('scroll.refreshComplete');
     });
   };
 })
@@ -192,17 +134,6 @@ angular.module('starter.controllers', ['ionic'])
 .controller('AccountCtrl', function($scope) {
   $scope.settings = {
     enableFriends: true
-  };
-})
-
-.controller('SearchCtrl', function($scope, $state) {
-  $scope.goHome = function() {
-    $state.go('tab.home');
-  };
-
-  // go to guide testing purposes
-  $scope.goToGuide = function(guideId) {
-    $state.go('guide', { "guideId": guideId });
   };
 })
 
