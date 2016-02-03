@@ -48,7 +48,7 @@
     <ion-refresher on-refresh="doRefresh()" spinner="ripple" class="assertive"></ion-refresher>
 
     <div ng-hide="search" class="list">
-      <div class="home-list-item" ng-repeat="guide in guides" ng-click="goToGuide({{guide.id}})"> 
+      <div class="home-list-item" ng-repeat="guide in guides" ng-click="goToGuide('{{guide._id}}')"> 
         <div class="item">
           <h2>{{guide.title}}</h2>
         </div>

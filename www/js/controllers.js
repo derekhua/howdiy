@@ -125,7 +125,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.guides = result.data;
       $scope.$broadcast('scroll.refreshComplete');
     }).catch(function(result) {
-      console.log("getGuides error");
+      console.log("Refresh error");
       $scope.$broadcast('scroll.refreshComplete');
     });
   };
