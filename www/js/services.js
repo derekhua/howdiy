@@ -144,7 +144,7 @@ angular.module('starter.services', [])
     resizeAndConvert: resizeAndConvert
   };
 })
-
+        
  // Broadcast a message when returns 401 or 403
 .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
   return {

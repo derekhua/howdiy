@@ -99,26 +99,6 @@ angular.module('starter.controllers', ['ionic'])
     });
   };
 
-  $scope.printToken = function() {
-    $scope.response = window.localStorage.getItem('yourTokenKey');
-  };
-
-  $scope.selImages = function() {
-    var options = {
-      quality: 50,
-      destinationType: Camera.DestinationType.FILE_URI,
-      sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-      targetWidth: 200,
-      targetHeight: 200
-    };
-    $cordovaCamera.getPicture(options).then(function(imageUri) {
-      console.log('img', imageUri);
-      $scope.images.push(imageUri);
-    }).catch(function(err) {
-      // error
-    });
-  };
-
   $scope.doRefresh = function() {
     console.log('Refreshing!');
     $http.get(EC2.address + '/api/g').then(function(result) {
@@ -128,12 +108,6 @@ angular.module('starter.controllers', ['ionic'])
       console.log("Refresh error");
       $scope.$broadcast('scroll.refreshComplete');
     });
-  };
-})
-
-.controller('AccountCtrl', function($scope) {
-  $scope.settings = {
-    enableFriends: true
   };
 })
 
@@ -400,49 +374,31 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('SavedCtrl', function($scope, $state, $ionicHistory, $http, EC2, $ionicModal, $ionicGesture, $ionicSlideBoxDelegate, $ionicLoading) {
-  $scope.myGoBack = function() {
-    $ionicHistory.goBack();
-  };
-
-  $ionicModal.fromTemplateUrl('templates/savedguide-modal.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
-    viewData.enableBack = true;
-  });
-
-  $scope.savedGuides = ["0","1"];
-  $scope.guideData = [];
-
-
-
-  for (i = 0; i < $scope.savedGuides.length; i++) {
-    getSaved(i);
-  }
-
-
-})
-
-.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading) {
-  $ionicModal.fromTemplateUrl('templates/guide-modal.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
-    viewData.enableBack = true;
-  });
-
+.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading, $ionicPopup) {
+  $scope.commentInput = "";
   $scope.images = [];
-  
-  var id = $stateParams.guideId;
   $scope.stepNumber = 1;
-  $http.get(EC2.address + '/api/g/' + id).then(function successCallback(result) {
+  $scope.userInfo = {};
+
+  $ionicModal.fromTemplateUrl('templates/guide-modal.html', {
+    scope: $scope,
+    animation: 'fade-in'
+  }).then(function(modal) {
+    $scope.guideModal = modal;
+  });
+
+  $ionicModal.fromTemplateUrl('templates/comment-modal.html', {
+    scope: $scope
+    // animation: 'fade-in'
+  }).then(function(modal) {
+    $scope.commentModal = modal;
+  });
+
+  $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
+    viewData.enableBack = true;
+  });
+  
+  $http.get(EC2.address + '/api/g/' + $stateParams.guideId).then(function successCallback(result) {
     $scope.guide = result.data;
     $ionicSlideBoxDelegate.update();
     console.log($scope.guide.steps);
@@ -456,8 +412,6 @@ angular.module('starter.controllers', ['ionic'])
   $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
     console.log($scope.username);
     $scope.userInfo = result.data;
-    $scope.likedGuides = $scope.userInfo.likedGuides;
-    $scope.sharedGuides = $scope.userInfo.sharedGuides;
   }).catch(function(result) {
     console.log("http get userInfo error");
   });
@@ -470,7 +424,7 @@ angular.module('starter.controllers', ['ionic'])
   $scope.goToSlide = function(index) {
     console.log(index);
     $scope.stepNumber = index + 1;
-    $scope.modal.show();
+    $scope.guideModal.show();
 
     var elements = document.getElementsByClassName("guide-step");
     var angularElements = [];
@@ -506,18 +460,13 @@ angular.module('starter.controllers', ['ionic'])
     $ionicSlideBoxDelegate.update();
   };
 
-  $scope.getLikeText = function() {
-    if ($scope.guide._id in $scope.likedGuides) {
-      return "Unlike";
-    }
-    return "Like";
-  }
 
   $scope.showActionsheet = function() {
     $ionicActionSheet.show({
       titleText: 'ActionSheet Example',
       buttons: [
-        { text: '<i class="icon ion-thumbsup"></i>' + $scope.getLikeText() },
+        { text: '<i class="icon ion-thumbsup"></i>' + (($scope.guide._id in $scope.userInfo.likedGuides) ? "Unlike" : "Like") },
+        { text: '<i class="icon ion-chatbubble"></i> Comment' },
         { text: '<i class="icon ion-share"></i> Share' },
         { text: '<i class="icon ion-arrow-move"></i> Move' },
       ],
@@ -527,40 +476,31 @@ angular.module('starter.controllers', ['ionic'])
         console.log('CANCELLED');
       },
       buttonClicked: function(index) {
-        //like/unlike
+        // Like/unlike
         if (index === 0) {
-          if ($scope.guide._id in $scope.likedGuides) {
-            delete $scope.likedGuides[$scope.guide._id];
-            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {
-              $inc: { "likes" : -1}
-            });
+          if ($scope.guide._id in $scope.userInfo.likedGuides) {
+            delete $scope.userInfo.likedGuides[$scope.guide._id];
+            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : -1}});
+          } else {
+            $scope.userInfo.likedGuides[$scope.guide._id] = "1";
+            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : 1}});
           }
-          else {
-            $scope.likedGuides[$scope.guide._id] = "1";
-            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {
-              $inc: { "likes" : 1}
-            });
-          }
-          $http.post(EC2.address + '/api/u/' + $scope.username, {
-            "likedGuides" : $scope.likedGuides
-          });
+          $http.post(EC2.address + '/api/u/' + $scope.username, {"likedGuides" : $scope.userInfo.likedGuides});
         }
 
-        //share
-        if (index === 1) {
-          if ($scope.guide._id in $scope.sharedGuides) {
-            //has been shared by this user already, so do nothing
-          }
-          else {
-            var shared = $scope.guide.shares + 1;
-            $scope.sharedGuides[$scope.guide._id] = "1";
-            $http.post(EC2.address + '/api/u/' + $scope.username, {
-              "sharedGuides" : $scope.sharedGuides
-            });
-            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {
-              $inc: { "shares" : 1}
-            });
-          }
+        // Comment
+        else if (index === 1) {
+          $scope.commentModal.show();
+        }
+
+        // Share
+        else if (index === 2 && !($scope.guide._id in $scope.userInfo.sharedGuides)) {
+          var shared = $scope.guide.shares + 1;
+          $scope.userInfo.sharedGuides[$scope.guide._id] = "1";
+          $http.post(EC2.address + '/api/u/' + $scope.username, {
+            "sharedGuides" : $scope.userInfo.sharedGuides
+          });
+          $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.shares" : 1}});
         }
 
         console.log('BUTTON CLICKED', index);
@@ -570,6 +510,31 @@ angular.module('starter.controllers', ['ionic'])
         console.log('DESTRUCT');
         return true;
       }
+    });
+  };
+
+  $scope.submitComment = function(comment) {
+    $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$push: { 
+      "comments": {
+        "username": $scope.username, 
+        "body": comment
+      }
+    }}).then(function(result) {
+      // Mock update view
+      $scope.guide.comments.push({
+        "username": $scope.username, 
+        "body": comment,
+        "date": "Just now"
+      });
+      var alertPopup = $ionicPopup.alert({
+        title: 'Success!',
+        template: 'Keep commenting!'
+      });
+    }).catch(function(err) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Comment not posted!',
+        template: 'Try again.'
+      });
     });
   };
 })
