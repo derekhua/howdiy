@@ -65,6 +65,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   })
 
   .state('guide', {
+    cache: false,
     url: '/guide/:guideId',
     templateUrl: 'templates/guide.html',
     controller: 'GuideCtrl'
@@ -120,6 +121,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   })
 
   .state('tab.profile', {
+    cache: false,
     url: '/profile',
     views: {
       'tab-profile': {

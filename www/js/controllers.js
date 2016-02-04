@@ -406,6 +406,15 @@ angular.module('starter.controllers', ['ionic'])
     console.log("getGuides error");
   });
 
+  $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
+    console.log($scope.username);
+    $scope.userInfo = result.data;
+    $scope.likedGuides = $scope.userInfo.likedGuides;
+    $scope.sharedGuides = $scope.userInfo.sharedGuides;
+  }).catch(function(result) {
+    console.log("http get userInfo error");
+  });
+
   $scope.slideHasChanged = function(index) {
     $scope.stepNumber = index + 1;
     $ionicSlideBoxDelegate.update();
@@ -450,10 +459,18 @@ angular.module('starter.controllers', ['ionic'])
     $ionicSlideBoxDelegate.update();
   };
 
+  $scope.getLikeText = function() {
+    if ($scope.guide._id in $scope.likedGuides) {
+      return "Unlike";
+    }
+    return "Like";
+  }
+
   $scope.showActionsheet = function() {
     $ionicActionSheet.show({
       titleText: 'ActionSheet Example',
       buttons: [
+        { text: '<i class="icon ion-thumbsup"></i>' + $scope.getLikeText() },
         { text: '<i class="icon ion-share"></i> Share' },
         { text: '<i class="icon ion-arrow-move"></i> Move' },
       ],
@@ -463,6 +480,42 @@ angular.module('starter.controllers', ['ionic'])
         console.log('CANCELLED');
       },
       buttonClicked: function(index) {
+        //like/unlike
+        if (index === 0) {
+          if ($scope.guide._id in $scope.likedGuides) {
+            delete $scope.likedGuides[$scope.guide._id];
+            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {
+              $inc: { "likes" : -1}
+            });
+          }
+          else {
+            $scope.likedGuides[$scope.guide._id] = "1";
+            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {
+              $inc: { "likes" : 1}
+            });
+          }
+          $http.post(EC2.address + '/api/u/' + $scope.username, {
+            "likedGuides" : $scope.likedGuides
+          });
+        }
+
+        //share
+        if (index === 1) {
+          if ($scope.guide._id in $scope.sharedGuides) {
+            //has been shared by this user already, so do nothing
+          }
+          else {
+            var shared = $scope.guide.shares + 1;
+            $scope.sharedGuides[$scope.guide._id] = "1";
+            $http.post(EC2.address + '/api/u/' + $scope.username, {
+              "sharedGuides" : $scope.sharedGuides
+            });
+            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {
+              $inc: { "shares" : 1}
+            });
+          }
+        }
+
         console.log('BUTTON CLICKED', index);
         return true;
       },
