@@ -27,6 +27,7 @@
 </style>
 
 <ion-view>
+
   <ion-nav-bar class="bar-assertive">
     <ion-nav-title>
       {{username}}
@@ -67,15 +68,15 @@
   <script id="templates/edit-profile.html" type="text/ng-template">
     <ion-modal-view>
       <ion-header-bar class="bar bar-header bar-assertive">
-        <button class="button button-clear button-primary" ng-click="modal.hide()">
-          <i class="ion-close"></i>
+        <button class="button button-clear arrow-back-button" ng-click="modal.hide()">
+          <i class="icon ion-close"></i>
         </button>
         <h1 class="title">Edit Profile</h1>
-        <button class="button button-clear button-primary" side="right" ng-click="updateUserInfo()">
-          <i class="ion-checkmark"></i>
+        <button class="button button-clear arrow-back-button" ng-click="updateUserInfo()">
+          <i class="icon ion-checkmark"></i>
         </button>
       </ion-header-bar>
-      <ion-content class="padding">
+      <ion-content class="">
         <label class="item item-input">
           <i class="ion-android-person"></i>
           <input type="text" ng-readonly="true" value="{{username}}">

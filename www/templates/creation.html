@@ -64,19 +64,21 @@ textarea {
 </style>
 
 <ion-view>
-  <ion-nav-bar class="bar-assertive">
-    <ion-nav-back-button class="button-clear button-custom" ng-click="myGoBack()">
-      <i class="ion-ios-arrow-back"></i> Back
-    </ion-nav-back-button>
-    <ion-nav-title>
-      <i class="icon ion-ios-compose-outline"></i>
-    </ion-nav-title>
-    <ion-nav-buttons side="secondary">
-      <button class="button button-custom" ng-click="submitGuide()">
-        Submit! <i class="ion-ios-arrow-forward"></i> 
-      </button>
-    </ion-nav-buttons>
-  </ion-nav-bar>
+  <ion-nav-buttons side="left">
+    <button class="button button-clear arrow-back-button" ng-click="myGoBack()">
+      <i class="icon ion-arrow-left-c"></i>
+    </button>
+  </ion-nav-buttons>
+  
+  <ion-nav-title>
+    <i class="icon ion-ios-compose-outline"></i>
+  </ion-nav-title>
+  <ion-nav-buttons side="secondary">
+    <button class="button button-clear" ng-click="submitGuide()">
+      Submit!
+    </button>
+  </ion-nav-buttons>
+
   <ion-content>
    <div style="height: 10px"></div>
       <div ng-repeat="i in range(0,len)">
