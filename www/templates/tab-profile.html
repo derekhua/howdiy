@@ -50,16 +50,32 @@
     </div>
     
     <div class="button-bar">
-      <button class="button"><i class="icon ion-grid"></i></button>
-      <button class="button"><i class="icon ion-document"></i></button>
+      <button class="button" ng-click="getSubmittedGuides()"><i class="icon ion-grid"></i></button>
+      <button class="button" ng-click="getDrafts()"><i class="icon ion-document"></i></button>
       <button class="button" ng-click="getSavedGuides()"><i class="icon ion-ios-heart-outline"></i></button>
     </div>
     
+    <div ng-show="showSubmitted" class="list">
+      <div ng-repeat="thumbnail in thumbnailData" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+        <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
+        <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
+        <p>{{thumbnail.description}}</p>
+      </div>
+    </div>
+
+    <div ng-show="showDrafts" class="list">
+      <div ng-repeat="thumbnail in thumbnailData" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+        <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
+        <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
+        <p>{{thumbnail.description}}</p>
+      </div>
+    </div>
+
     <div ng-show="showSaved" class="list">
-      <div ng-repeat="guide in savedGuides" class="item item-thumbnail-left" ng-click="goToGuide({{guide.id}})">
-        <img ng-src="{{guide.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
-        <h2>{{guide.title}}</h2>
-        <p>{{guide.description}}</p>
+      <div ng-repeat="thumbnail in thumbnailData" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+        <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
+        <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
+        <p>{{thumbnail.description}}</p>
       </div>
     </div>
 

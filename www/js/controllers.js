@@ -326,21 +326,77 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.showSaved = false;
   $scope.showDrafts = false;
-  $scope.showOwn = true;
-
-  $scope.getSavedGuides = function() {
-    $scope.showSaved = true;
-    $scope.showDrafts = false;
-    $scope.showOwn = false;
-
-    $scope.savedGuides = [];
-
-    $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
-      $scope.savedGuides = result.data.savedGuides;
-      console.log($scope.savedGuides);
+  $scope.showSubmitted = false;
+  
+  var addThumbnail = function(guideId) {
+    $http.get(EC2.address + '/api/t/' + guideId).then(function successCallback(result) {
+      $scope.thumbnail = result.data;
+      $scope.thumbnailData.push({guideId:$scope.thumbnail.guideId, image: $scope.thumbnail.image, title: $scope.thumbnail.title, description: $scope.thumbnail.description, author: $scope.thumbnail.author});
     }).catch(function errorCallback(result) {
       console.log("get saved guides error");
     });
+  }
+
+  $scope.getSavedGuides = function() {
+    $scope.showSaved = false;
+    $scope.showDrafts = false;
+    $scope.showSubmitted = false;
+    $scope.savedGuides = [];
+    $scope.thumbnailData = [];
+
+    $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
+      $scope.savedGuides = result.data.savedGuides;
+
+      for (i = 0; i < $scope.savedGuides.length; i++) {
+        addThumbnail($scope.savedGuides[i].guideId);
+      }
+      $scope.showSaved = true;
+    }).catch(function errorCallback(result) {
+      console.log("get saved guides error");
+    });
+  };
+
+  $scope.getSubmittedGuides = function() {
+    $scope.showSaved = false;
+    $scope.showDrafts = false;
+    $scope.showSubmitted = false;
+    $scope.submittedGuides = [];
+    $scope.thumbnailData = [];
+
+    $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
+      $scope.submittedGuides = result.data.submittedGuides;
+
+      for (i = 0; i < $scope.submittedGuides.length; i++) {
+        addThumbnail($scope.submittedGuides[i].guideId);
+      }
+      $scope.showSubmitted = true;
+    }).catch(function errorCallback(result) {
+      console.log("get submitted guides error");
+    });
+  };
+
+  $scope.getDrafts = function() {
+    $scope.showSaved = false;
+    $scope.showDrafts = false;
+    $scope.showSubmitted = false;
+    $scope.drafts = [];
+    $scope.thumbnailData = [];
+
+    $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
+      $scope.drafts = result.data.drafts;
+
+      for (i = 0; i < $scope.drafts.length; i++) {
+        addThumbnail($scope.drafts[i].guideId);
+      }
+      $scope.showDrafts = true;
+    }).catch(function errorCallback(result) {
+      console.log("get drafts error");
+    });
+  };
+
+  $scope.goToGuide = function(guideId) {
+    console.log("t" + guideId);
+    $state.go('guide', { "guideId": guideId })
   };
 })
 
@@ -362,22 +418,13 @@ angular.module('starter.controllers', ['ionic'])
   $scope.savedGuides = ["0","1"];
   $scope.guideData = [];
 
-  var getSaved = function(i) {
-    $http.get(EC2.address + '/api/g/' + $scope.savedGuides[i]).then(function successCallback(result) {
-      $scope.guide = result.data;
-      $scope.guideData.push({id:$scope.guide.id, image: $scope.guide.steps[0].picturePath, title: $scope.guide.title, description: $scope.guide.description});
-    }).catch(function errorCallback(result) {
-      console.log("get saved guides error");
-    });
-  }
+
 
   for (i = 0; i < $scope.savedGuides.length; i++) {
     getSaved(i);
   }
 
-  $scope.goToGuide = function(guideId) {
-    $state.go('guide', { "guideId": guideId })
-  };
+
 })
 
 .controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading) {
