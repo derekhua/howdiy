@@ -12,6 +12,54 @@
     color: #ECF0F1;
     background-color: #111315;
   }
+
+
+  .mh-slide {
+    -webkit-transform: translate3d(0, 0, 0) scale(0);
+    transform: translate3d(0, 0, 0) scale(0);
+    opacity: 0
+  /*    transform: rotate(0deg) scale(0.761) skew(1deg) translate(0px);*/
+  }
+
+  .mh-slide.ng-enter, .mh-slide > .ng-enter {
+    -webkit-transition: all cubic-bezier(0.1, 0.7, 0.1, 1) 400ms;
+    transition: all cubic-bezier(0.1, 0.7, 0.1, 1) 400ms; }
+
+  .mh-slide.ng-enter-active, .mh-slide > .ng-enter-active {
+      -webkit-transform: translate3d(0, 0, 0) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+
+  .mh-slide.ng-leave, .mh-slide > .ng-leave {
+    -webkit-transition: all ease-in-out 250ms;
+    transition: all ease-in-out 250ms; }
+
+  ion-modal-view.smaller-modal {
+    width: 95%;
+    height: 30%;
+    top: 25%; 
+    left: 2.5%; 
+    right: 2.5%; 
+    bottom: 25%;
+    min-height: initial;
+    border-radius: 3%;
+  }
+
+  .modal-backdrop-bg {
+    transition: opacity 300ms ease-in-out;
+    -webkit-transition: opacity 300ms ease-in-out;
+    background-color: #000;
+    opacity: 0;
+}
+
+.active .modal-backdrop-bg {
+    opacity: 0.5;
+}
+
+button.button-half {
+  width: 49%;
+}
 </style>
 <!--
 Create tabs with an icon and label, using the tabs-positive style.
@@ -26,7 +74,7 @@ navigation history that also transitions its views in and out.
   </ion-tab>
 
   <!-- Create Tab -->
-  <ion-tab title="Create" icon-off="ion-ios-compose-outline" icon-on="ion-ios-compose" href="#/creation">
+  <ion-tab title="Create" icon-off="ion-ios-compose-outline" icon-on="ion-ios-compose" ng-click="modal.show()">
     <ion-nav-view name="creation"></ion-nav-view>
   </ion-tab>
   
@@ -39,6 +87,22 @@ navigation history that also transitions its views in and out.
   <ion-tab title="Profile" icon-off="ion-ios-person-outline" icon-on="ion-ios-person" href="#/tab/profile">
     <ion-nav-view name="tab-profile"></ion-nav-view>
   </ion-tab>
-
-
 </ion-tabs>
+
+<script id="templates/creation-start-modal.html" type="text/ng-template">
+  <ion-modal-view class="mh-slide smaller-modal" >
+   <ion-header-bar class="bar bar-header bar-assertive">
+      <h1 class="title">Add a title to your new guide!</h1>
+    </ion-header-bar>
+      <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+        <div>
+          <label class="item item-input">
+            <span class="input-label">How to</span>
+            <input type="text" id="title">
+          </label>
+        </div>
+        <button class="button button-half" ng-click="cancelCreation()">Cancel</button>
+        <button class="button button-half" ng-click="goToCreation()">Accept</button>
+      </ion-content>
+  </ion-modal-view>
+</script>

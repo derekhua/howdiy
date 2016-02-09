@@ -111,48 +111,16 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('CreationCtrl', function($scope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup) {
+.controller('CreationCtrl', function($scope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup, GuideTransferService) {
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     viewData.enableBack = true;
   });
   
+
   $scope.len = 0;
   $scope.step = 0;
   $scope.stepElements = [];
-  $scope.finishedGuide = {
-    "id": "",
-    "title": "",
-    "picturePath": "",
-    "author": "",
-    "category": "",
-    "meta": {
-        "favs": 0,
-        "createDate": {
-          "$date": ""
-        }
-    },
-    "comments": [
-        {
-          "date": {
-            "$date": ""
-          }
-        }
-    ],
-    "steps": [
-        {
-            "picturePath": "",
-            "comments": [
-                {
-                    "date": {
-                      "$date": ""
-                    }
-                }
-            ],
-            "body": ""
-        }
-    ],
-    "description": ""
-  };
+  $scope.finishedGuide = GuideTransferService.getGuideData();
   var showFlag = false;
 
   $scope.range = function(min, max, step) {
@@ -172,9 +140,9 @@ angular.module('starter.controllers', ['ionic'])
   
   $scope.createStep = function() {
     if( $scope.step < $scope.len )
-      $scope.stepElements[$scope.step] = { "picturePath": document.getElementById('old_step_pic').src,"comments": [{"date": {}}], "body": document.getElementById('description').value};
+      $scope.stepElements[$scope.step] = { "picturePath": document.getElementById('old_step_pic').src,"comments": [], "body": document.getElementById('description').value};
     else {
-      $scope.stepElements.push({ "picturePath": document.getElementById('new_step_pic').src, "comments": [{"date": {}}], "body": document.getElementById('description').value});
+      $scope.stepElements.push({ "picturePath": document.getElementById('new_step_pic').src, "comments": [], "body": document.getElementById('description').value});
       $scope.len = $scope.len + 1;
     }
     $scope.imgURI = undefined;
@@ -591,4 +559,51 @@ angular.module('starter.controllers', ['ionic'])
   $scope.slideChanged = function(index) {
     $scope.slideIndex = index;
   };
+})
+
+.controller('TabsCtrl', function($scope, $state, $ionicModal, GuideTransferService) {
+  $ionicModal.fromTemplateUrl('templates/creation-start-modal.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+
+  var guideSkeleton = {
+    "id": "",
+    "title": "",
+    "picturePath": "",
+    "author": "",
+    "category": "",
+    "meta": {
+        "favs": 0,
+        "createDate": {
+          "$date": ""
+        },
+        "likes": 0,
+        "shares": 0
+    },
+    "comments": [],
+    "steps": [
+        {
+            "picturePath": "",
+            "comments": [],
+            "body": ""
+        }
+    ],
+    "description": ""
+  };
+
+  $scope.cancelCreation = function() {
+    document.getElementById('title').value ='';
+    $scope.modal.hide();
+  }
+
+  $scope.goToCreation = function() {
+    guideSkeleton.title = document.getElementById('title').value;
+    GuideTransferService.putGuideData(guideSkeleton);
+    $state.go('creation');
+    document.getElementById('title').value ='';
+    $scope.modal.hide();
+  }
+
 });

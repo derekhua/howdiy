@@ -1,66 +1,132 @@
 <style type="text/css">
-  .card.repeating, .list-inset {
-    position:relative;
-    overflow: hidden;
-    margin: 0px 0px;
-    border-radius: 0px;
-    padding: 2px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    float:left; /* important */  
-    position:relative; /* important(so we can absolutely position the description div */  
-    min-height: 110px
+  button.icon-large:before {
+      font-size: 300px !important;
   }
-button.icon-large:before {
-    font-size: 300px !important;
-}
-.icon-larger {
-  font-size: 80px !important;
-}
-textarea {
-  height:auto;
-  width:100%;
-  overflow: hidden;
-  background:#fff;
-  border-radius:3px;
-  line-height:2em;
-  border:none;
-  resize: none;
-}
-.col-1 {
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 0.5%;
-  -moz-box-flex: 0;
-  -moz-flex: 0 0 0.5%;
-  -ms-flex: 0 0 0.5%;
-  flex: 0 0 0.5%;
-  max-width: 0.5%;
-  padding: 0px;
-}
+  .icon-larger {
+    font-size: 80px !important;
+  }
+  textarea {
+    height:auto;
+    width:100%;
+    overflow: hidden;
+    background:#fff;
+    border-radius:3px;
+    line-height:2em;
+    border:none;
+    resize: none;
+  }
 
-.col-24 {
-  -webkit-box-flex: 0;
-  -webkit-flex: 0 0 24.65%;
-  -moz-box-flex: 0;
-  -moz-flex: 0 0 24.65%;
-  -ms-flex: 0 0 24.65%;
-  flex: 0 0 24.65%;
-  max-width: 24.65%;
-  padding: 0px;
-}
+  .col-1 {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 0.33vw;
+    -moz-box-flex: 0;
+    -moz-flex: 0 0 0.33vw;
+    -ms-flex: 0 0 0.33vw;
+    flex: 0 0 0.33vw;
+    max-width: 0.33vw;
+    padding: 0px;
+  }
 
-.item {
-  border: 1;
-}
+  .col-25 {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 24.75vw;
+    -moz-box-flex: 0;
+    -moz-flex: 0 0 24.75vw;
+    -ms-flex: 0 0 24.75vw;
+    flex: 0 0 24.75vw;
+    max-width: 24.75vw;
+    padding: 0px;
+  }
 
-.thumbnailPic {
-  border-width: 1px;
-}
+  div.thumbnailSquare {
+    width: 24.8125vw;
+    height: 24.8125vw;
+    overflow: hidden;
+    position: relative;
+  }
 
-.button-custom {
-  font-size: 18px !important;
-}
+  div.focusedSquare {
+    width: 100vw;
+    height: 100vw;
+    overflow: hidden;
+    position: relative;
+  }
+
+  img.crop {
+    position: absolute;
+    margin: auto; 
+    min-height: 100%;
+    min-width: 100%;
+    /* For the following settings we set 100%, but it can be higher if needed 
+    See the answer's update */
+    left: -100%;
+    right: -100%;
+    top: -100%;
+    bottom: -100%;
+  } 
+
+  /*override*/
+  .row {
+    padding: 0px 0px 1.5vw;
+  }
+
+  .item {
+    border-width: 0px;
+    margin: 0px;
+  }
+
+  div.slider, div.slider-slides {
+    height: 100%;
+  }
+
+  ion-slide.slider-slide {
+    height: 100%;
+  }
+
+  .item-text-wrap {
+    padding: 5px 10px 5px;
+  }
+
+  .float-button {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+    font-size: 40px;
+    background: $warning;
+    position: fixed;
+    bottom: 0px; /* Adjust to where you want it */
+    right: 0px; /* Adjust to where you want it */
+    z-index: 9999;
+  }
+
+  .button-custom {
+    font-size: 18px !important;
+  }
+
+  .button-float{
+    background: $assertive !important;
+    color:white !important;
+    z-index: 12 !important;
+    position: absolute !important; 
+    bottom: 10px !important;
+    right: 10px !important;
+    border-radius: 50% !important;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26) !important;
+    -webkit-transform: translate3d(0, 0, 0) !important;
+    transform: translate3d(0, 0, 0) !important;
+    -webkit-transition: 0.2s linear !important;
+    transition: 0.2s linear !important;
+    -webkit-transition-property: -webkit-transform, all !important;
+    transition-property: transform, all !important;
+
+  }
+
+  .button-float:hover{
+    -webkit-transform: translate3d(0, -1px, 0)  !important;
+    transform: translate3d(0, -1px, 0) !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4) !important;
+      background: darken($assertive, 10%) !important;
+  }
 </style>
 
 <ion-view>
@@ -71,7 +137,7 @@ textarea {
   </ion-nav-buttons>
   
   <ion-nav-title>
-    <i class="icon ion-ios-compose-outline"></i>
+    {{finishedGuide.title}}
   </ion-nav-title>
   <ion-nav-buttons side="secondary">
     <button class="button button-clear" ng-click="submitGuide()">
@@ -79,39 +145,55 @@ textarea {
     </button>
   </ion-nav-buttons>
 
-  <ion-content>
-   <div style="height: 10px"></div>
-      <div ng-repeat="i in range(0,len)">
-        <div class = "card repeating col col-24" type="button" ng-show="$first && !$last" on-hold="deleteStep(i)" ng-click="showStep(i)">
-          <img ng-src="{{stepElements[i].picturePath}}" class="thumbnailPic" width="100%"/>
+  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+   <div style="height: 1px"></div>
+
+        <div class="row" ng-repeat="i in range(0,len)" ng-if="i % 4 === 0">
+        <div class="col col-25 thumbnailSquare" ng-if="i < len" ng-click="showStep(i)" type="button">
+            <img ng-src="{{stepElements[i].picturePath}}" width="100%" class="crop"/>
         </div>
-                <div class=" col col-1"></div>
-       <div class = "card repeating col col-24" type="button" ng-show="!$first && !$last" on-hold="deleteStep(i)" ng-click="showStep(i)">
-          <img ng-src="{{stepElements[i].picturePath}}" class="thumbnailPic" width="100%"/>
+
+        <div class="col col-1"></div>
+        
+        <div class="col col-25 thumbnailSquare" ng-if="i + 1 < len" ng-click="showStep(i+1)" type="button">
+            <img ng-src="{{stepElements[i+1].picturePath}}" width="100%" class="crop"/>
+            
         </div>
-                <div class=" col col-1"></div>
-         <div class = "list-inset col col-24 row row-center" type="button" ng-show="$last">
-          <button class="button button-icon ion-ios-plus icon-larger" width="100%" ng-click="showStep(i)" ></button>
+        
+        <div class="col col-1"></div>
+
+        <div class="col col-25 thumbnailSquare" ng-if="i + 2 < len" ng-click="showStep(i+2)" type="button">
+            <img ng-src="{{stepElements[i+2].picturePath}}" width="100%" class="crop"/>
+            
         </div>
-                <div class=" col col-1"></div>
-      </div>
+
+        <div class="col col-1"></div>
+
+        <div class="col col-25 thumbnailSquare" ng-if="i + 3 < len" ng-click="showStep(i+3)" type="button">
+            <img ng-src="{{stepElements[i+3].picturePath}}" width="100%" class="crop"/>
+            
+        </div>
+    </div>
 <!--       {{stepElements}}
 
       {{step}}
 
       {{finishedGuide}} -->
   </ion-content>
+    <button class="button button-assertive button-float" ng-click="showStep(len)">
+        <i class="icon ion-plus"></i>
+    </button>
   <script id="templates/creation-modal.html" type="text/ng-template">
     <ion-modal-view>
       <ion-header-bar class="bar bar-header bar-assertive">
         <button class="button button-clear button-primary" ng-click="cancelStep()">Cancel</button>
-        <h1 class="title">Step {{step}}</h1>
+        <h1 class="title">Step {{step+1}}</h1>
         <button class="button button-clear button-primary" ng-click="createStep()">Accept</button>
       </ion-header-bar>
       <ion-content>
         <div class="list card">
 
-        <div class="item item-image">
+        <div class="item item-image focusedSquare">
           <img ng-if="imgURI !== undefined" src="{{imgURI}}" ng-click="takePicture()" id = "new_step_pic" ></img>
           <img ng-if="imgURI === undefined && step < len" src="{{stepElements[step].picturePath}}" ng-click="takePicture()" id = "old_step_pic"></img>
           <button ng-if="imgURI === undefined && stepElements[step].picturePath === undefined" class="button button-icon ion-camera icon-large" ng-click="takePicture()" ></button>

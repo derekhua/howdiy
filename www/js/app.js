@@ -83,7 +83,8 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   .state('tab', {
     url: '/tab',
     abstract: true,
-    templateUrl: 'templates/tabs.html'
+    templateUrl: 'templates/tabs.html',
+    controller: 'TabsCtrl'
   })
 
   .state('tab.home', {

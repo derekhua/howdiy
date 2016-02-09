@@ -144,6 +144,23 @@ angular.module('starter.services', [])
     resizeAndConvert: resizeAndConvert
   };
 })
+
+.service('GuideTransferService', function(){
+  var guideData = {};
+
+  var putGuideData = function(transferGuide) {
+    guideData = transferGuide;
+  };
+
+  var getGuideData = function() {
+    return guideData;
+  };
+
+  return {
+    putGuideData: putGuideData,
+    getGuideData: getGuideData,
+  }
+})
         
  // Broadcast a message when returns 401 or 403
 .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
