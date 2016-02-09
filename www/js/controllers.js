@@ -301,71 +301,107 @@ angular.module('starter.controllers', ['ionic'])
   $scope.showSaved = false;
   $scope.showDrafts = false;
   $scope.showSubmitted = false;
-  
-  var addThumbnail = function(guideId) {
+  $scope.activeThumbnailRequests = false;
+
+  var addThumbnail = function(guideId, isLastRequest) {
     $http.get(EC2.address + '/api/t/' + guideId).then(function successCallback(result) {
       $scope.thumbnail = result.data;
       $scope.thumbnailData.push({guideId:$scope.thumbnail.guideId, image: $scope.thumbnail.image, title: $scope.thumbnail.title, description: $scope.thumbnail.description, author: $scope.thumbnail.author});
+      console.log('called');
+      if (isLastRequest) {
+        $scope.activeThumbnailRequests = false;
+      }
     }).catch(function errorCallback(result) {
       console.log("get saved guides error");
+      $scope.activeThumbnailRequests = false;
     });
   }
 
   $scope.getSavedGuides = function() {
-    $scope.showSaved = false;
-    $scope.showDrafts = false;
-    $scope.showSubmitted = false;
-    $scope.savedGuides = [];
-    $scope.thumbnailData = [];
+    if (!$scope.activeThumbnailRequests) {
+      $scope.showSaved = false;
+      $scope.showDrafts = false;
+      $scope.showSubmitted = false;
+      $scope.activeThumbnailRequests = true;
+      $scope.savedGuides = [];
+      $scope.thumbnailData = [];
 
-    $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
-      $scope.savedGuides = result.data.savedGuides;
-
-      for (i = 0; i < $scope.savedGuides.length; i++) {
-        addThumbnail($scope.savedGuides[i].guideId);
-      }
-      $scope.showSaved = true;
-    }).catch(function errorCallback(result) {
-      console.log("get saved guides error");
-    });
+      $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
+        $scope.savedGuides = result.data.savedGuides;
+        for (i = 0; i < $scope.savedGuides.length; i++) {
+          if (i === $scope.savedGuides.length - 1) {
+            addThumbnail($scope.savedGuides[i].guideId, true);
+          }
+          else {
+            addThumbnail($scope.savedGuides[i].guideId, false);
+          }
+        }
+        $scope.showSaved = true;
+      }).catch(function errorCallback(result) {
+        console.log("get saved guides error");
+      });
+    } 
+    else {
+      console.log("thumbnail http gets in progress");
+    }
   };
 
   $scope.getSubmittedGuides = function() {
-    $scope.showSaved = false;
-    $scope.showDrafts = false;
-    $scope.showSubmitted = false;
-    $scope.submittedGuides = [];
-    $scope.thumbnailData = [];
+    if (!$scope.activeThumbnailRequests) {
+      $scope.showSaved = false;
+      $scope.showDrafts = false;
+      $scope.showSubmitted = false;
+      $scope.activeThumbnailRequests = true;
+      $scope.submittedGuides = [];
+      $scope.thumbnailData = [];
 
-    $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
-      $scope.submittedGuides = result.data.submittedGuides;
-
-      for (i = 0; i < $scope.submittedGuides.length; i++) {
-        addThumbnail($scope.submittedGuides[i].guideId);
-      }
-      $scope.showSubmitted = true;
-    }).catch(function errorCallback(result) {
-      console.log("get submitted guides error");
-    });
+      $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
+        $scope.submittedGuides = result.data.submittedGuides;
+        for (i = 0; i < $scope.submittedGuides.length; i++) {
+          if (i === $scope.submittedGuides.length - 1) {
+            addThumbnail($scope.submittedGuides[i].guideId, true);
+          }
+          else {
+            addThumbnail($scope.submittedGuides[i].guideId, false);
+          }
+        }
+        $scope.showSubmitted = true;
+      }).catch(function errorCallback(result) {
+        console.log("get submitted guides error");
+      });
+    }
+    else {
+      console.log("thumbnail http gets in progress");
+    }
   };
 
   $scope.getDrafts = function() {
-    $scope.showSaved = false;
-    $scope.showDrafts = false;
-    $scope.showSubmitted = false;
-    $scope.drafts = [];
-    $scope.thumbnailData = [];
+    if (!$scope.activeThumbnailRequests) {
+      $scope.showSaved = false;
+      $scope.showDrafts = false;
+      $scope.showSubmitted = false;
+      $scope.activeThumbnailRequests = true;
+      $scope.drafts = [];
+      $scope.thumbnailData = [];
 
-    $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
-      $scope.drafts = result.data.drafts;
-
-      for (i = 0; i < $scope.drafts.length; i++) {
-        addThumbnail($scope.drafts[i].guideId);
-      }
-      $scope.showDrafts = true;
-    }).catch(function errorCallback(result) {
-      console.log("get drafts error");
-    });
+      $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
+        $scope.drafts = result.data.drafts;
+        for (i = 0; i < $scope.drafts.length; i++) {
+          if (i === $scope.drafts.length - 1) {
+            addThumbnail($scope.drafts[i].guideId, true);
+          }
+          else {
+            addThumbnail($scope.drafts[i].guideId, false);
+          }
+        }
+        $scope.showDrafts = true;
+      }).catch(function errorCallback(result) {
+        console.log("get drafts error");
+      });
+    }
+    else {
+      console.log("thumbnail http gets in progress");
+    }
   };
 
   $scope.goToGuide = function(guideId) {
