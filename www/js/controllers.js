@@ -1,10 +1,14 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory) {
+.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory, $http, EC2) {
   // if (ionic.Platform.isAndroid()) {
   //   $cordovaStatusbar.styleHex(COLORS.statusbar);
   // }
   $scope.username = AuthService.username();
+  $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
+    $scope.userInfo = result.data;
+  });
+
   // Handle broadcasted messages
   $scope.$on(AUTH_EVENTS.notAuthorized, function(event) {
     var alertPopup = $ionicPopup.alert({
@@ -378,12 +382,25 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
+
+
 .controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading, $ionicPopup) {
-  $scope.commentInput = "";
   $scope.images = [];
   $scope.stepNumber = 1;
-  $scope.userInfo = {};
 
+  // Get guide
+  $http.get(EC2.address + '/api/g/' + $stateParams.guideId).then(function successCallback(result) {
+    $scope.guide = result.data;
+    $ionicSlideBoxDelegate.update();
+    $scope.liked = (($scope.guide._id in $scope.userInfo.likedGuides) ? true : false);
+    for(i = 0; i < $scope.guide.steps.length; ++i) {
+      $scope.images.push({id: i, src: $scope.guide.steps[i].picturePath});
+    }
+  }).catch(function errorCallback(err) {
+    console.log("getGuides error");
+  });
+
+  // MODALS
   $ionicModal.fromTemplateUrl('templates/guide-modal.html', {
     scope: $scope,
     animation: 'fade-in'
@@ -401,25 +418,8 @@ angular.module('starter.controllers', ['ionic'])
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     viewData.enableBack = true;
   });
-  
-  $http.get(EC2.address + '/api/g/' + $stateParams.guideId).then(function successCallback(result) {
-    $scope.guide = result.data;
-    $ionicSlideBoxDelegate.update();
-    console.log($scope.guide.steps);
-    for(i = 0; i < $scope.guide.steps.length; ++i) {
-      $scope.images.push({id: i, src: $scope.guide.steps[i].picturePath});
-    }
-  }).catch(function errorCallback(result) {
-    console.log("getGuides error");
-  });
 
-  $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
-    console.log($scope.username);
-    $scope.userInfo = result.data;
-  }).catch(function(result) {
-    console.log("http get userInfo error");
-  });
-
+  // SLIDES
   $scope.slideHasChanged = function(index) {
     $scope.stepNumber = index + 1;
     $ionicSlideBoxDelegate.update();
@@ -464,57 +464,28 @@ angular.module('starter.controllers', ['ionic'])
     $ionicSlideBoxDelegate.update();
   };
 
+  // HANDLERS
+  $scope.likeHandler = function() {
+    if ($scope.liked) {
+      delete $scope.userInfo.likedGuides[$scope.guide._id];
+      $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : -1}});
+    } else {
+      $scope.userInfo.likedGuides[$scope.guide._id] = "1";
+      $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : 1}});
+    }
+    $http.post(EC2.address + '/api/u/' + $scope.username, {"likedGuides" : $scope.userInfo.likedGuides});
+    $scope.liked = !$scope.liked;
+  };
 
-  $scope.showActionsheet = function() {
-    $ionicActionSheet.show({
-      titleText: 'ActionSheet Example',
-      buttons: [
-        { text: '<i class="icon ion-thumbsup"></i>' + (($scope.guide._id in $scope.userInfo.likedGuides) ? "Unlike" : "Like") },
-        { text: '<i class="icon ion-chatbubble"></i> Comment' },
-        { text: '<i class="icon ion-share"></i> Share' },
-        { text: '<i class="icon ion-arrow-move"></i> Move' },
-      ],
-      destructiveText: 'Delete',
-      cancelText: 'Cancel',
-      cancel: function() {
-        console.log('CANCELLED');
-      },
-      buttonClicked: function(index) {
-        // Like/unlike
-        if (index === 0) {
-          if ($scope.guide._id in $scope.userInfo.likedGuides) {
-            delete $scope.userInfo.likedGuides[$scope.guide._id];
-            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : -1}});
-          } else {
-            $scope.userInfo.likedGuides[$scope.guide._id] = "1";
-            $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : 1}});
-          }
-          $http.post(EC2.address + '/api/u/' + $scope.username, {"likedGuides" : $scope.userInfo.likedGuides});
-        }
-
-        // Comment
-        else if (index === 1) {
-          $scope.commentModal.show();
-        }
-
-        // Share
-        else if (index === 2 && !($scope.guide._id in $scope.userInfo.sharedGuides)) {
-          var shared = $scope.guide.shares + 1;
-          $scope.userInfo.sharedGuides[$scope.guide._id] = "1";
-          $http.post(EC2.address + '/api/u/' + $scope.username, {
-            "sharedGuides" : $scope.userInfo.sharedGuides
-          });
-          $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.shares" : 1}});
-        }
-
-        console.log('BUTTON CLICKED', index);
-        return true;
-      },
-      destructiveButtonClicked: function() {
-        console.log('DESTRUCT');
-        return true;
-      }
-    });
+  $scope.shareHandler = function() {
+    if (!($scope.guide._id in $scope.userInfo.sharedGuides)) {
+      var shared = $scope.guide.shares + 1;
+      $scope.userInfo.sharedGuides[$scope.guide._id] = "1";
+      $http.post(EC2.address + '/api/u/' + $scope.username, {
+        "sharedGuides" : $scope.userInfo.sharedGuides
+      });
+      $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.shares" : 1}});
+    }
   };
 
   $scope.submitComment = function(comment) {
@@ -539,6 +510,28 @@ angular.module('starter.controllers', ['ionic'])
         title: 'Comment not posted!',
         template: 'Try again.'
       });
+    });
+  };
+
+  $scope.showActionsheet = function() {
+    $ionicActionSheet.show({
+      titleText: 'ActionSheet Example',
+      buttons: [
+        { text: '<i class="icon ion-alert"></i> Report' },
+      ],
+      destructiveText: ($scope.guide._id in $scope.userInfo.submittedGuides) ? 'Delete' : '',
+      cancelText: 'Cancel',
+      cancel: function() {
+        console.log('CANCELLED');
+      },
+      buttonClicked: function(index) {
+        console.log('BUTTON CLICKED', index);
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        console.log('DESTRUCT');
+        return true;
+      }
     });
   };
 })

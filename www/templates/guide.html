@@ -84,8 +84,14 @@
    </button>
   </ion-nav-buttons>
 
+  <ion-nav-buttons side="right">
+   <button class="button button-clear button-large button-primary" ng-click="showActionsheet()">
+      <i class="ion-android-more-vertical" style="font-size: 30px; padding-right: 8px;"></i>
+    </button>
+  </ion-nav-buttons>
 
-  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">    
+
+  <ion-content ng-cloak scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">    
     <div style="height: 1px"></div>
 
     <div class="row" ng-repeat="image in images" ng-if="$index % 4 === 0">
@@ -119,12 +125,19 @@
   </ion-content>
 
   <ion-footer-bar class="bar bar-footer bar-stable">
-    <button class="button button-clear button-primary">
-      <i class="ion-ios-list-outline" style="font-size: 30px;"></i>
+    <button class="button button-clear button-primary" ng-click="shareHandler()">
+      <i class="ion-ios-upload-outline" style="font-size: 30px;"></i>
     </button>
-    <h1 class="title">{{guide.steps.length}} Steps</h1>
-    <button class="button button-clear button-large button-primary" ng-click="showActionsheet()">
-      <i class="ion-more" style="font-size: 30px; padding-right: 8px;"></i>
+    
+    <h1 class="title">
+      <button class="button button-clear button-primary" side="center" style="margin-top: 5px;" ng-click="likeHandler()">
+        <i ng-hide="liked" class="ion-ios-heart-outline" style="font-size: 30px; color: #E9523B;"></i>
+        <i ng-show="liked" class="ion-ios-heart" style="font-size: 30px; color: #E9523B;"></i>
+      </button>
+    </h1>
+
+    <button class="button button-clear button-large button-primary" ng-click="commentModal.show()">
+      <i class="ion-ios-chatbubble-outline" style="font-size: 30px; padding-right: 8px;"></i>
     </button>
   </ion-footer-bar>
 
@@ -157,12 +170,19 @@
       </ion-content>
 
       <ion-footer-bar class="bar bar-footer bar-stable">
-        <button class="button button-clear button-primary">
-          <i class="ion-ios-list-outline" style="font-size: 30px;"></i>
+        <button class="button button-clear button-primary" ng-click="shareHandler()">
+          <i class="ion-ios-upload-outline" style="font-size: 30px;"></i>
         </button>
-        <h1 class="title"></h1>
-        <button class="button button-clear button-primary" ng-click="showActionsheet()">
-          <i class="ion-more" style="font-size: 30px; padding-right: 8px;"></i>
+        
+        <h1 class="title">
+          <button class="button button-clear button-primary" side="center" style="margin-top: 5px;" ng-click="likeHandler()">
+            <i ng-hide="liked" class="ion-ios-heart-outline" style="font-size: 30px; color: #E9523B;"></i>
+            <i ng-show="liked" class="ion-ios-heart" style="font-size: 30px; color: #E9523B;"></i>
+          </button>
+        </h1>
+
+        <button class="button button-clear button-large button-primary" ng-click="commentModal.show()">
+          <i class="ion-ios-chatbubble-outline" style="font-size: 30px; padding-right: 8px;"></i>
         </button>
       </ion-footer-bar>
 
@@ -180,7 +200,7 @@
         <h1 class="title">Comments</h1>
       </ion-header-bar>
 
-      <ion-content class="">  
+      <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">  
         <div class="list">
           <div class="item item-avatar" ng-repeat="comment in guide.comments">
             <img src="">
