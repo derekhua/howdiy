@@ -227,152 +227,131 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 .controller('ProfileCtrl', function($scope, $state, $ionicModal, $http, EC2, AuthService) {
+  $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
+  $scope.numberOfGuides = 0;
+  $scope.savedThumbnails = [];
+  $scope.draftThumbnails = [];
+  $scope.submittedThumbnails = [];
+  $scope.showSaved = false;
+  $scope.showDrafts = false;
+  $scope.showSubmitted = true;
+  var submittedLoading = false;
+  var savedLoading = false;
+  var draftLoading = false;
+
+  // MODAL
+  $ionicModal.fromTemplateUrl('templates/edit-profile.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.editProfileModal = modal;
+  });
+
   $scope.logout = function() {
     AuthService.logout();
     $state.go('login');
   }
 
-  $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
-  $scope.numberOfGuides = 0;
-
-  $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
-    $scope.userInfo = result.data;
-    $scope.website = $scope.userInfo.website;
-    $scope.bio = $scope.userInfo.bio;
-    $scope.email = $scope.userInfo.email;
-    $scope.phone = $scope.userInfo.phone;
-    $scope.genderValues = [ "Male", "Female", "Other", "Not Specified"];
-    $scope.gender = $scope.userInfo.gender;
-  }).catch(function(result) {
-    console.log("http get userInfo error");
-  });
-
-  $ionicModal.fromTemplateUrl('templates/edit-profile.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
-
-  $scope.editProfile = function() {
-    $scope.modal.show();
-  }
+  $scope.doRefresh = function() {
+    console.log('Refreshing!');
+    if ($scope.showSubmitted) {
+      $scope.submittedThumbnails = [];
+      $scope.showSubmittedGuides();
+    } else if ($scope.showDrafts) {
+      $scope.draftThumbnails = [];
+      $scope.showDraftGuides();
+    } else if ($scope.showSaved) {
+      $scope.savedThumbnails = [];
+      $scope.showSavedGuides();
+    }
+  };
 
   $scope.updateUserInfo = function() {
     $http.post(EC2.address + '/api/u/' + $scope.username, {
       "username": $scope.username, "email": document.getElementById("emailText").value, 
-      "bio" : document.getElementById("bioText").value, "website" : document.getElementById("websiteText").value, 
-      "phone" : document.getElementById("phoneText").value, "gender" : $scope.gender
+      "bio": document.getElementById("bioText").value, "website": document.getElementById("websiteText").value, 
+      "phone": document.getElementById("phoneText").value, "gender": $scope.gender
     });
-    $scope.modal.hide();
+    $scope.editProfileModal.hide();
   }
 
   $scope.changeGenderSelectValue = function(gender) {
     $scope.gender = gender;
   }
 
-  $scope.showSaved = false;
-  $scope.showDrafts = false;
-  $scope.showSubmitted = false;
-  $scope.activeThumbnailRequests = false;
-
-  var addThumbnail = function(guideId, isLastRequest) {
-    $http.get(EC2.address + '/api/t/' + guideId).then(function successCallback(result) {
-      $scope.thumbnail = result.data;
-      $scope.thumbnailData.push({guideId:$scope.thumbnail.guideId, image: $scope.thumbnail.image, title: $scope.thumbnail.title, description: $scope.thumbnail.description, author: $scope.thumbnail.author});
-      console.log('called');
-      if (isLastRequest) {
-        $scope.activeThumbnailRequests = false;
-      }
-    }).catch(function errorCallback(result) {
-      console.log("get saved guides error");
-      $scope.activeThumbnailRequests = false;
-    });
-  }
-
-  $scope.getSavedGuides = function() {
-    if (!$scope.activeThumbnailRequests) {
+  $scope.showSubmittedGuides = function() {
+    if (!submittedLoading) {
+      submittedLoading = true;
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
-      $scope.activeThumbnailRequests = true;
-      $scope.savedGuides = [];
-      $scope.thumbnailData = [];
-
-      $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
-        $scope.savedGuides = result.data.savedGuides;
-        for (i = 0; i < $scope.savedGuides.length; i++) {
-          if (i === $scope.savedGuides.length - 1) {
-            addThumbnail($scope.savedGuides[i].guideId, true);
-          }
-          else {
-            addThumbnail($scope.savedGuides[i].guideId, false);
-          }
-        }
-        $scope.showSaved = true;
-      }).catch(function errorCallback(result) {
-        console.log("get saved guides error");
-      });
-    } 
-    else {
-      console.log("thumbnail http gets in progress");
-    }
-  };
-
-  $scope.getSubmittedGuides = function() {
-    if (!$scope.activeThumbnailRequests) {
-      $scope.showSaved = false;
-      $scope.showDrafts = false;
-      $scope.showSubmitted = false;
-      $scope.activeThumbnailRequests = true;
-      $scope.submittedGuides = [];
-      $scope.thumbnailData = [];
-
-      $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
-        $scope.submittedGuides = result.data.submittedGuides;
-        for (i = 0; i < $scope.submittedGuides.length; i++) {
-          if (i === $scope.submittedGuides.length - 1) {
-            addThumbnail($scope.submittedGuides[i].guideId, true);
-          }
-          else {
-            addThumbnail($scope.submittedGuides[i].guideId, false);
-          }
-        }
+      if ($scope.submittedThumbnails.length != 0) {
+        submittedLoading = false;
         $scope.showSubmitted = true;
-      }).catch(function errorCallback(result) {
-        console.log("get submitted guides error");
-      });
-    }
-    else {
-      console.log("thumbnail http gets in progress");
+        return;
+      }
+
+      var count = 0;
+      for (var i = 0; i < $scope.userInfo.submittedGuides.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $scope.userInfo.submittedGuides[i].guideId).then(function(result) {
+          $scope.submittedThumbnails.push(result.data);
+          if (++count == $scope.userInfo.submittedGuides.length) {
+            submittedLoading = false;
+            $scope.showSubmitted = true;
+            $scope.$broadcast('scroll.refreshComplete');
+          }
+        });
+      }
     }
   };
 
-  $scope.getDrafts = function() {
-    if (!$scope.activeThumbnailRequests) {
+  $scope.showDraftGuides = function() {  
+    if (!draftLoading) {
+      draftLoading = true;   
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
-      $scope.activeThumbnailRequests = true;
-      $scope.drafts = [];
-      $scope.thumbnailData = [];
-
-      $http.get(EC2.address + '/api/u/' + $scope.username).then(function successCallback(result) {
-        $scope.drafts = result.data.drafts;
-        for (i = 0; i < $scope.drafts.length; i++) {
-          if (i === $scope.drafts.length - 1) {
-            addThumbnail($scope.drafts[i].guideId, true);
-          }
-          else {
-            addThumbnail($scope.drafts[i].guideId, false);
-          }
-        }
+      if ($scope.draftThumbnails.length != 0) {
+        draftLoading = false;
         $scope.showDrafts = true;
-      }).catch(function errorCallback(result) {
-        console.log("get drafts error");
-      });
+        return;
+      }
+      var count = 0;
+      for (var i = 0; i < $scope.userInfo.drafts.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $scope.userInfo.drafts[i].guideId).then(function(result) {
+          $scope.draftThumbnails.push(result.data);
+          if (++count == $scope.userInfo.drafts.length) {
+            draftLoading = false;
+            $scope.showDrafts = true;
+            $scope.$broadcast('scroll.refreshComplete');
+          }
+        });
+      }
     }
-    else {
-      console.log("thumbnail http gets in progress");
+  };
+
+  $scope.showSavedGuides = function() {
+    if (!savedLoading) {
+      savedLoading = true;
+      $scope.showSaved = false;
+      $scope.showDrafts = false;
+      $scope.showSubmitted = false;
+      if ($scope.savedThumbnails.length != 0) {
+        savedLoading = false;
+        $scope.showSaved = true;
+        return;
+      }
+
+      var count = 0;
+      for (var i = 0; i < $scope.userInfo.savedGuides.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $scope.userInfo.savedGuides[i].guideId).then(function(result) {
+          $scope.savedThumbnails.push(result.data);
+          if (++count == $scope.userInfo.savedGuides.length) {
+            savedLoading = false;
+            $scope.showSaved = true;
+            $scope.$broadcast('scroll.refreshComplete');
+          }
+        });
+      }
     }
   };
 

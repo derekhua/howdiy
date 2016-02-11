@@ -24,6 +24,10 @@
   .edit-button {
     width: 100%;
   }
+
+  .active {
+    color: #d93218;
+  }
 </style>
 
 <ion-view>
@@ -39,24 +43,26 @@
   </ion-nav-buttons>
 
   <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+    <ion-refresher on-refresh="doRefresh()" pulling-icon="ion-beaker" spinner="crescent" class="assertive"></ion-refresher>
+
     <div class="item item-thumbnail-left">
       <img class="profile-pic" src="{{profilePicture}}"> 
       <div class="profile-right">
         <div class="row"><h2> {{numberOfGuides}} Guides Submitted</h2></div>
-        <div class="row"><button class="button button-small button-stable edit-button" style="float:right" ng-click="editProfile()">
+        <div class="row"><button class="button button-small button-stable edit-button" style="float:right" ng-click="editProfileModal.show()">
           Edit Profile
         </button></div>      
       </div>
     </div>
     
     <div class="button-bar">
-      <button class="button" ng-click="getSubmittedGuides()"><i class="icon ion-grid"></i></button>
-      <button class="button" ng-click="getDrafts()"><i class="icon ion-document"></i></button>
-      <button class="button" ng-click="getSavedGuides()"><i class="icon ion-ios-heart-outline"></i></button>
+      <button class="button" ng-click="showSubmittedGuides()"><i class="icon ion-grid" ng-class="{active: showSubmitted}"></i></button>
+      <button class="button" ng-click="showDraftGuides()"><i class="icon ion-document" ng-class="{active: showDrafts}"></i></button>
+      <button class="button" ng-click="showSavedGuides()"><i class="icon ion-ios-heart-outline" ng-class="{active: showSaved}"></i></button>
     </div>
     
     <div ng-show="showSubmitted" class="list">
-      <div ng-repeat="thumbnail in thumbnailData" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+      <div ng-repeat="thumbnail in submittedThumbnails" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
@@ -64,7 +70,7 @@
     </div>
 
     <div ng-show="showDrafts" class="list">
-      <div ng-repeat="thumbnail in thumbnailData" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+      <div ng-repeat="thumbnail in draftThumbnails" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
@@ -72,7 +78,7 @@
     </div>
 
     <div ng-show="showSaved" class="list">
-      <div ng-repeat="thumbnail in thumbnailData" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+      <div ng-repeat="thumbnail in savedThumbnails" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
@@ -84,7 +90,7 @@
   <script id="templates/edit-profile.html" type="text/ng-template">
     <ion-modal-view>
       <ion-header-bar class="bar bar-header bar-assertive">
-        <button class="button button-clear arrow-back-button" ng-click="modal.hide()">
+        <button class="button button-clear arrow-back-button" ng-click="editProfileModal.hide()">
           <i class="icon ion-close"></i>
         </button>
         <h1 class="title">Edit Profile</h1>
