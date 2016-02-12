@@ -1,10 +1,14 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory, $http, EC2) {
+.controller('AppCtrl', function($scope, $rootScope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory, $http, EC2) {
   // if (ionic.Platform.isAndroid()) {
   //   $cordovaStatusbar.styleHex(COLORS.statusbar);
   // }
   $scope.username = AuthService.username();
+  $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
+    $rootScope.userInfo = result.data;
+    $rootScope.gender = result.data.gender;
+  });
 
   // Handle broadcasted messages
   $scope.$on(AUTH_EVENTS.notAuthorized, function(event) {
