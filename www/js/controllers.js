@@ -5,9 +5,6 @@ angular.module('starter.controllers', ['ionic'])
   //   $cordovaStatusbar.styleHex(COLORS.statusbar);
   // }
   $scope.username = AuthService.username();
-  $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
-    $scope.userInfo = result.data;
-  });
 
   // Handle broadcasted messages
   $scope.$on(AUTH_EVENTS.notAuthorized, function(event) {
@@ -37,12 +34,17 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService) {
+.controller('LoginCtrl', function($scope, $rootScope, $state, $http, $ionicPopup, AuthService, EC2) {
+  $scope.test = "test";
   $scope.data = {};
   $scope.login = function(data) {
     AuthService.login(data.username, data.password).then(function(authenticated) {
       $state.go('tab.home', {}, {reload: true});
       $scope.setCurrentUsername(data.username);
+      $http.get(EC2.address + '/api/u/' + data.username).then(function(result) {
+        $rootScope.userInfo = result.data;
+        $rootScope.gender = result.data.gender;
+      });
     }).catch(function(err) {
       var alertPopup = $ionicPopup.alert({
         title: 'Login failed!',
@@ -120,7 +122,6 @@ angular.module('starter.controllers', ['ionic'])
     viewData.enableBack = true;
   });
   
-
   $scope.len = 0;
   $scope.step = 0;
   $scope.stepElements = [];
@@ -226,9 +227,10 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope, $state, $ionicModal, $http, EC2, AuthService) {
+.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, EC2, AuthService) {
   $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
   $scope.numberOfGuides = 0;
+  $scope.genderValues = [ "Male", "Female", "Other", "Not Specified"];
   $scope.savedThumbnails = [];
   $scope.draftThumbnails = [];
   $scope.submittedThumbnails = [];
@@ -266,10 +268,19 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.updateUserInfo = function() {
-    $http.post(EC2.address + '/api/u/' + $scope.username, {
-      "username": $scope.username, "email": document.getElementById("emailText").value, 
-      "bio": document.getElementById("bioText").value, "website": document.getElementById("websiteText").value, 
-      "phone": document.getElementById("phoneText").value, "gender": $scope.gender
+    $http.post(EC2.address + '/api/u/' + $rootScope.userInfo.username, {
+      "username": $rootScope.userInfo.username,
+      "email": document.getElementsByClassName("emailText")[document.getElementsByClassName("emailText").length - 1].value,
+      "bio": document.getElementsByClassName("bioText")[document.getElementsByClassName("bioText").length - 1].value,
+      "website": document.getElementsByClassName("websiteText")[document.getElementsByClassName("websiteText").length - 1].value,
+      "phone": document.getElementsByClassName("phoneText")[document.getElementsByClassName("phoneText").length - 1].value,
+      "gender": $scope.gender
+    }).then(function() {
+      $rootScope.userInfo.email = document.getElementsByClassName("emailText")[document.getElementsByClassName("emailText").length - 1].value;
+      $rootScope.userInfo.bio = document.getElementsByClassName("bioText")[document.getElementsByClassName("bioText").length - 1].value;
+      $rootScope.userInfo.website = document.getElementsByClassName("phoneText")[document.getElementsByClassName("phoneText").length - 1].value;
+      $rootScope.userInfo.phone = document.getElementsByClassName("websiteText")[document.getElementsByClassName("websiteText").length - 1].value;
+      $rootScope.userInfo.gender = $scope.gender;
     });
     $scope.editProfileModal.hide();
   }
@@ -291,10 +302,10 @@ angular.module('starter.controllers', ['ionic'])
       }
 
       var count = 0;
-      for (var i = 0; i < $scope.userInfo.submittedGuides.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $scope.userInfo.submittedGuides[i].guideId).then(function(result) {
+      for (var i = 0; i < $rootScope.userInfo.submittedGuides.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.submittedGuides[i].guideId).then(function(result) {
           $scope.submittedThumbnails.push(result.data);
-          if (++count == $scope.userInfo.submittedGuides.length) {
+          if (++count == $rootScope.userInfo.submittedGuides.length) {
             submittedLoading = false;
             $scope.showSubmitted = true;
             $scope.$broadcast('scroll.refreshComplete');
@@ -316,10 +327,10 @@ angular.module('starter.controllers', ['ionic'])
         return;
       }
       var count = 0;
-      for (var i = 0; i < $scope.userInfo.drafts.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $scope.userInfo.drafts[i].guideId).then(function(result) {
+      for (var i = 0; i < $rootScope.userInfo.drafts.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.drafts[i].guideId).then(function(result) {
           $scope.draftThumbnails.push(result.data);
-          if (++count == $scope.userInfo.drafts.length) {
+          if (++count == $rootScope.userInfo.drafts.length) {
             draftLoading = false;
             $scope.showDrafts = true;
             $scope.$broadcast('scroll.refreshComplete');
@@ -342,10 +353,10 @@ angular.module('starter.controllers', ['ionic'])
       }
 
       var count = 0;
-      for (var i = 0; i < $scope.userInfo.savedGuides.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $scope.userInfo.savedGuides[i].guideId).then(function(result) {
+      for (var i = 0; i < $rootScope.userInfo.savedGuides.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.savedGuides[i].guideId).then(function(result) {
           $scope.savedThumbnails.push(result.data);
-          if (++count == $scope.userInfo.savedGuides.length) {
+          if (++count == $rootScope.userInfo.savedGuides.length) {
             savedLoading = false;
             $scope.showSaved = true;
             $scope.$broadcast('scroll.refreshComplete');
@@ -363,7 +374,7 @@ angular.module('starter.controllers', ['ionic'])
 
 
 
-.controller('GuideCtrl', function($scope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading, $ionicPopup) {
+.controller('GuideCtrl', function($scope, $rootScope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading, $ionicPopup) {
   $scope.images = [];
   $scope.stepNumber = 1;
 
@@ -371,7 +382,7 @@ angular.module('starter.controllers', ['ionic'])
   $http.get(EC2.address + '/api/g/' + $stateParams.guideId).then(function successCallback(result) {
     $scope.guide = result.data;
     $ionicSlideBoxDelegate.update();
-    $scope.liked = (($scope.guide._id in $scope.userInfo.likedGuides) ? true : false);
+    $scope.liked = (($scope.guide._id in $rootScope.userInfo.likedGuides) ? true : false);
     for(i = 0; i < $scope.guide.steps.length; ++i) {
       $scope.images.push({id: i, src: $scope.guide.steps[i].picturePath});
     }
@@ -446,22 +457,22 @@ angular.module('starter.controllers', ['ionic'])
   // HANDLERS
   $scope.likeHandler = function() {
     if ($scope.liked) {
-      delete $scope.userInfo.likedGuides[$scope.guide._id];
+      delete $rootScope.userInfo.likedGuides[$scope.guide._id];
       $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : -1}});
     } else {
-      $scope.userInfo.likedGuides[$scope.guide._id] = "1";
+      $rootScope.userInfo.likedGuides[$scope.guide._id] = "1";
       $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : 1}});
     }
-    $http.post(EC2.address + '/api/u/' + $scope.username, {"likedGuides" : $scope.userInfo.likedGuides});
+    $http.post(EC2.address + '/api/u/' + $scope.username, {"likedGuides" : $rootScope.userInfo.likedGuides});
     $scope.liked = !$scope.liked;
   };
 
   $scope.shareHandler = function() {
-    if (!($scope.guide._id in $scope.userInfo.sharedGuides)) {
+    if (!($scope.guide._id in $rootScope.userInfo.sharedGuides)) {
       var shared = $scope.guide.shares + 1;
-      $scope.userInfo.sharedGuides[$scope.guide._id] = "1";
+      $rootScope.userInfo.sharedGuides[$scope.guide._id] = "1";
       $http.post(EC2.address + '/api/u/' + $scope.username, {
-        "sharedGuides" : $scope.userInfo.sharedGuides
+        "sharedGuides" : $rootScope.userInfo.sharedGuides
       });
       $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.shares" : 1}});
     }
@@ -498,7 +509,7 @@ angular.module('starter.controllers', ['ionic'])
       buttons: [
         { text: '<i class="icon ion-alert"></i> Report' },
       ],
-      destructiveText: ($scope.guide._id in $scope.userInfo.submittedGuides) ? 'Delete' : '',
+      destructiveText: ($scope.guide._id in $rootScope.userInfo.submittedGuides) ? 'Delete' : '',
       cancelText: 'Cancel',
       cancel: function() {
         console.log('CANCELLED');

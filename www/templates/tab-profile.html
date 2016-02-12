@@ -106,23 +106,23 @@
 
         <label class="item item-input">
           <i class="ion-paper-airplane"></i>
-          <input id="websiteText" type="text" placeholder="Website URL" ng-readonly="false" value="{{website}}">
+          <input class="websiteText" type="text" placeholder="Website URL" ng-readonly="false" value="{{userInfo.website}}">
         </label>
 
         <label class="item item-input">
           <i class="ion-quote"></i>
-          <textarea id="bioText" placeholder="Bio" maxlength="160">{{bio}}</textarea>
+          <textarea class="bioText" placeholder="Bio" maxlength="160">{{userInfo.bio}}</textarea>
         </label>
 
         <br><b> Private Information </b>
         <label class="item item-input">
           <i class="ion-email"></i>
-          <input id="emailText" type="email" placeholder="Address" ng-readonly="false" value="{{email}}">
+          <input class="emailText" type="email" placeholder="Address" ng-readonly="false" value="{{userInfo.email}}">
         </label>
 
         <label class="item item-input">
           <i class="ion-android-phone-portrait"></i> 
-          <input id="phoneText" type="tel" placeholder="Add Phone Number" ng-readonly="false" value="{{phone}}">
+          <input class="phoneText" type="tel" placeholder="Add Phone Number" ng-readonly="false" value="{{userInfo.phone}}">
         </label>
 
         <div class="list">
