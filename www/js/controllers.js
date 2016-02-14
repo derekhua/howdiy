@@ -163,7 +163,7 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.createStep = function() {
     if( $scope.step < $scope.finishedGuide.steps.length && $scope.finishedGuide.steps !== undefined ) {
-      $scope.finishedGuide.steps[$scope.step].base64picture = document.getElementById('old_step_pic').src;
+      $scope.finishedGuide.steps[$scope.step].base64Picture = document.getElementById('old_step_pic').src;
       $scope.finishedGuide.steps[$scope.step].body = document.getElementById('description').value;
     }
     else {
@@ -267,15 +267,15 @@ angular.module('starter.controllers', ['ionic'])
            type: 'button-positive',
            onTap: function(e) {
               var options = {
-                quality: 50,
-                destinationType: Camera.DestinationType.FILE_URI,
+                quality: 100,
+                destinationType: Camera.DestinationType.DATA_URL,
                 sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-                targetWidth: 200,
-                targetHeight: 200
+                targetWidth: 400,
+                targetHeight: 400
               };
               $cordovaCamera.getPicture(options).then(function(imageUri) {
                 console.log('img', imageUri);
-                $scope.imgURI = imageUri;
+                $scope.imgURI = "data:image/jpeg;base64," + imageUri;
               }).catch(function(err) {
                 // error
               });
