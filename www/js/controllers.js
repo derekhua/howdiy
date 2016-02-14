@@ -167,7 +167,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.finishedGuide.steps[$scope.step].body = document.getElementById('description').value;
     }
     else {
-      $scope.finishedGuide.steps.push({ "picturePath": document.getElementById('new_step_pic').src, "body": document.getElementById('description').value});
+      $scope.finishedGuide.steps.push({ "picturePath": "", "base64Picture": document.getElementById('new_step_pic').src, "body": document.getElementById('description').value});
     }
     // 'http://i.imgur.com/iGq9TTF.png'
     $scope.imgURI = undefined;
