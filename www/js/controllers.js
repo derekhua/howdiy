@@ -163,11 +163,12 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.createStep = function() {
     if( $scope.step < $scope.finishedGuide.steps.length && $scope.finishedGuide.steps !== undefined ) {
-      $scope.finishedGuide.steps[$scope.step].picturePath = document.getElementById('old_step_pic').src;
+      $scope.finishedGuide.steps[$scope.step].base64picture = document.getElementById('old_step_pic').src;
       $scope.finishedGuide.steps[$scope.step].body = document.getElementById('description').value;
     }
     else {
       $scope.finishedGuide.steps.push({ "picturePath": "", "base64Picture": document.getElementById('new_step_pic').src, "body": document.getElementById('description').value});
+
     }
     // 'http://i.imgur.com/iGq9TTF.png'
     $scope.imgURI = undefined;
@@ -234,24 +235,60 @@ angular.module('starter.controllers', ['ionic'])
       });
   }
 
-  $scope.takePicture = function() {
-    var options = {
-      quality : 75,
-      destinationType : Camera.DestinationType.DATA_URL,
-      sourceType : Camera.PictureSourceType.CAMERA,
-      allowEdit : true,
-      encodingType: Camera.EncodingType.JPEG,
-      targetWidth: 350,
-      targetHeight: 400,
-      popoverOptions: CameraPopoverOptions,
-      saveToPhotoAlbum: false
-    };
-    $cordovaCamera.getPicture(options).then(function(imageData) {
-      $scope.imgURI = "data:image/jpeg;base64," + imageData;
-    }).catch(function(err) {
-      console.log(err);
-    });
-  };
+  $scope.pictureOption = function() {
+      var myPopup = $ionicPopup.show({
+       title: 'Upload or take a picture!',
+       scope: $scope,
+       cssClass: "popup-vertical-buttons",
+       buttons: [
+         { text: 'Take Picture',
+           type: 'button-positive',
+            onTap: function(e) {
+              var options = {
+                quality : 75,
+                destinationType : Camera.DestinationType.DATA_URL,
+                sourceType : Camera.PictureSourceType.CAMERA,
+                allowEdit : true,
+                encodingType: Camera.EncodingType.JPEG,
+                targetWidth: 350,
+                targetHeight: 400,
+                popoverOptions: CameraPopoverOptions,
+                saveToPhotoAlbum: false
+              };
+              $cordovaCamera.getPicture(options).then(function(imageData) {
+                $scope.imgURI = "data:image/jpeg;base64," + imageData;
+              }).catch(function(err) {
+                console.log(err);
+              });
+           }
+         },
+         {
+           text: 'Upload',
+           type: 'button-positive',
+           onTap: function(e) {
+              var options = {
+                quality: 50,
+                destinationType: Camera.DestinationType.FILE_URI,
+                sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+                targetWidth: 200,
+                targetHeight: 200
+              };
+              $cordovaCamera.getPicture(options).then(function(imageUri) {
+                console.log('img', imageUri);
+                $scope.imgURI = imageUri;
+              }).catch(function(err) {
+                // error
+              });
+           }
+         },
+         { text: 'Cancel',
+            onTap: function(e) {
+              showFlag = false;
+           }
+         },
+       ]
+     });
+  }
 
   $scope.expandText = function(){
     var element = document.getElementById("description");
