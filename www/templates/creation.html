@@ -127,6 +127,24 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4) !important;
       background: darken($assertive, 10%) !important;
   }
+
+  .modal-backdrop-bg {
+    transition: opacity 300ms ease-in-out;
+    -webkit-transition: opacity 300ms ease-in-out;
+    background-color: #000;
+    opacity: 0;
+  }
+
+  .active .modal-backdrop-bg {
+      opacity: 0.5;
+  }
+
+  .keyboard-open .tabs{
+    display:none;
+    }
+  .keyboard-open .has-tabs{
+    bottom:0;
+  }
 </style>
 
 <ion-view>
@@ -136,7 +154,7 @@
     </button>
   </ion-nav-buttons>
   
-  <ion-nav-title>
+  <ion-nav-title ng-click="titleModal.show()">
     {{finishedGuide.title}}
   </ion-nav-title>
   <ion-nav-buttons side="secondary">
@@ -148,39 +166,35 @@
   <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
    <div style="height: 1px"></div>
 
-        <div class="row" ng-repeat="i in range(0,len)" ng-if="i % 4 === 0">
-        <div class="col col-25 thumbnailSquare" ng-if="i < len" ng-click="showStep(i)" type="button">
-            <img ng-src="{{stepElements[i].picturePath}}" width="100%" class="crop"/>
+        <div class="row" ng-repeat="i in range(0, finishedGuide.steps.length)" ng-if="i % 4 === 0">
+        <div class="col col-25 thumbnailSquare" ng-if="i < finishedGuide.steps.length" on-hold="deleteStep(i)" ng-click="showStep(i)" type="button">
+            <img ng-src="{{finishedGuide.steps[i].picturePath}}" width="100%" class="crop"/>
         </div>
 
         <div class="col col-1"></div>
         
-        <div class="col col-25 thumbnailSquare" ng-if="i + 1 < len" ng-click="showStep(i+1)" type="button">
-            <img ng-src="{{stepElements[i+1].picturePath}}" width="100%" class="crop"/>
+        <div class="col col-25 thumbnailSquare" ng-if="i + 1 < finishedGuide.steps.length" on-hold="deleteStep(i+1)" ng-click="showStep(i+1)" type="button">
+            <img ng-src="{{finishedGuide.steps[i+1].picturePath}}" width="100%" class="crop"/>
             
         </div>
         
         <div class="col col-1"></div>
 
-        <div class="col col-25 thumbnailSquare" ng-if="i + 2 < len" ng-click="showStep(i+2)" type="button">
-            <img ng-src="{{stepElements[i+2].picturePath}}" width="100%" class="crop"/>
+        <div class="col col-25 thumbnailSquare" ng-if="i + 2 < finishedGuide.steps.length" on-hold="deleteStep(i+2)" ng-click="showStep(i+2)" type="button">
+            <img ng-src="{{finishedGuide.steps[i+2].picturePath}}" width="100%" class="crop"/>
             
         </div>
 
         <div class="col col-1"></div>
 
-        <div class="col col-25 thumbnailSquare" ng-if="i + 3 < len" ng-click="showStep(i+3)" type="button">
-            <img ng-src="{{stepElements[i+3].picturePath}}" width="100%" class="crop"/>
+        <div class="col col-25 thumbnailSquare" ng-if="i + 3 < finishedGuide.steps.length" on-hold="deleteStep(i+3)" ng-click="showStep(i+3)" type="button">
+            <img ng-src="{{finishedGuide.steps[i+3].picturePath}}" width="100%" class="crop"/>
             
         </div>
     </div>
-<!--       {{stepElements}}
 
-      {{step}}
-
-      {{finishedGuide}} -->
   </ion-content>
-    <button class="button button-assertive button-float" ng-click="showStep(len)">
+    <button class="button button-assertive button-float" ng-click="showStep(finishedGuide.steps.length)">
         <i class="icon ion-plus"></i>
     </button>
   <script id="templates/creation-modal.html" type="text/ng-template">
@@ -195,8 +209,8 @@
 
         <div class="item item-image focusedSquare">
           <img ng-if="imgURI !== undefined" src="{{imgURI}}" ng-click="takePicture()" id = "new_step_pic" ></img>
-          <img ng-if="imgURI === undefined && step < len" src="{{stepElements[step].picturePath}}" ng-click="takePicture()" id = "old_step_pic"></img>
-          <button ng-if="imgURI === undefined && stepElements[step].picturePath === undefined" class="button button-icon ion-camera icon-large" ng-click="takePicture()" ></button>
+          <img ng-if="imgURI === undefined && step < finishedGuide.steps.length" src="{{finishedGuide.steps[step].picturePath}}" ng-click="takePicture()" id = "old_step_pic"></img>
+          <button ng-if="imgURI === undefined && finishedGuide.steps[step].picturePath === undefined" class="button button-icon ion-camera icon-large" ng-click="takePicture()" ></button>
         </div>
 
         <div class="item item-image padding">
@@ -209,4 +223,33 @@
       </ion-content>
     </ion-modal-view>
   </script>
+
+  <script id="templates/title-modal.html" type="text/ng-template">
+  <ion-modal-view class="mh-slide smaller-modal" >
+   <ion-header-bar class="bar bar-header bar-assertive">
+      <h1 class="title">Add a title to your new guide!</h1>
+    </ion-header-bar>
+      <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+        <div>
+          <label class="item item-input">
+            <span class="input-label">How to</span>
+            <input type="text" id="guideTitle" value="{{finishedGuide.title}}">
+          </label>
+          <label class="item item-input">
+            <span class="input-label">Category</span>
+            <input type="text" id="guideCategory" value="{{finishedGuide.category}}">
+          </label>
+        </div>
+        <div class="row">
+          <div class="col">
+            <button class="button button-block" ng-click="changeCancel()">Cancel</button>
+          </div>
+          <div class="col col-1"></div>
+          <div class="col">
+            <button class="button button-block" ng-click="changeAccept()">Accept</button>
+          </div>
+        </div>
+      </ion-content>
+  </ion-modal-view>
+</script>
 </ion-view>

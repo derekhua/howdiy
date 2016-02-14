@@ -121,14 +121,12 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('CreationCtrl', function($scope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup, GuideTransferService) {
+.controller('CreationCtrl', function($scope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup, $http, EC2, GuideTransferService) {
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     viewData.enableBack = true;
   });
-  
-  $scope.len = 0;
+
   $scope.step = 0;
-  $scope.stepElements = [];
   $scope.finishedGuide = GuideTransferService.getGuideData();
   var showFlag = false;
 
@@ -143,26 +141,44 @@ angular.module('starter.controllers', ['ionic'])
   
   $ionicModal.fromTemplateUrl('templates/creation-modal.html', {
     scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
+  }).then(function(stepModal) {
+    $scope.stepModal = stepModal;
   });
-  
+
+  $ionicModal.fromTemplateUrl('templates/title-modal.html', {
+    scope: $scope
+  }).then(function(titleModal) {
+    $scope.titleModal = titleModal;
+  });
+
+  $scope.changeAccept = function() {
+    $scope.finishedGuide.title = document.getElementById('guideTitle').value;
+    $scope.finishedGuide.category = document.getElementById('guideCategory').value;
+    $scope.titleModal.hide();
+  };
+
+  $scope.changeCancel = function() {
+    $scope.titleModal.hide();
+  };
+
   $scope.createStep = function() {
-    if( $scope.step < $scope.len )
-      $scope.stepElements[$scope.step] = { "picturePath": document.getElementById('old_step_pic').src,"comments": [], "body": document.getElementById('description').value};
-    else {
-      $scope.stepElements.push({ "picturePath": document.getElementById('new_step_pic').src, "comments": [], "body": document.getElementById('description').value});
-      $scope.len = $scope.len + 1;
+    if( $scope.step < $scope.finishedGuide.steps.length && $scope.finishedGuide.steps !== undefined ) {
+      $scope.finishedGuide.steps[$scope.step].picturePath = document.getElementById('old_step_pic').src;
+      $scope.finishedGuide.steps[$scope.step].body = document.getElementById('description').value;
     }
+    else {
+      $scope.finishedGuide.steps.push({ "picturePath": document.getElementById('new_step_pic').src, "body": document.getElementById('description').value});
+    }
+    // 'http://i.imgur.com/iGq9TTF.png'
     $scope.imgURI = undefined;
     document.getElementById('description').value = "";
-    $scope.modal.hide();
+    $scope.stepModal.hide();
   };
   
   $scope.cancelStep = function() {
     $scope.imgURI = undefined;
     document.getElementById('description').value = "";
-    $scope.modal.hide();
+    $scope.stepModal.hide();
   }
 
   $scope.deleteStep = function(stepNum) {
@@ -181,8 +197,7 @@ angular.module('starter.controllers', ['ionic'])
            text: '<b>Delete</b>',
            type: 'button-positive',
            onTap: function(e) {
-              $scope.stepElements.splice(stepNum, 1);
-              $scope.len--;
+              $scope.finishedGuide.steps.splice(stepNum, 1);
               showFlag = false;
            }
          },
@@ -193,14 +208,32 @@ angular.module('starter.controllers', ['ionic'])
   $scope.showStep = function(stepNum) {
     if(showFlag === false) {
       $scope.step = stepNum;
-      if (stepNum < $scope.len)
-        document.getElementById('description').value = $scope.stepElements[stepNum].body;
-      $scope.modal.show();
+      if (stepNum < $scope.finishedGuide.steps.length)
+        document.getElementById('description').value = $scope.finishedGuide.steps[stepNum].body;
+      $scope.stepModal.show();
     }
   };
+  
   $scope.submitGuide = function () {
-    $scope.finishedGuide.steps = $scope.stepElements;
+    $scope.finishedGuide.createDate = Date.now;
+    $scope.finishedGuide.draft = false;
+    $http.post(EC2.address + '/api/g/', $scope.finishedGuide)
+      .then(function(response){
+        $scope.submittedGuideId = response.data._id;
+        $http.post(EC2.address + '/api/u/' + $scope.username, {$push : {
+          "submittedGuides" : {
+            "guideId" : $scope.submittedGuideId
+          }
+        }});
+        $scope.myGoBack();
+      }).catch(function(err){
+        var alertPopup = $ionicPopup.alert({
+          title: 'Guide submission failed!',
+          template: 'Try again.'
+        });
+      });
   }
+
   $scope.takePicture = function() {
     var options = {
       quality : 75,
@@ -548,37 +581,12 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('TabsCtrl', function($scope, $state, $ionicModal, GuideTransferService) {
+.controller('TabsCtrl', function($scope, $state, $ionicModal, AuthService, GuideTransferService) {
   $ionicModal.fromTemplateUrl('templates/creation-start-modal.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
   });
-
-  var guideSkeleton = {
-    "id": "",
-    "title": "",
-    "picturePath": "",
-    "author": "",
-    "category": "",
-    "meta": {
-        "favs": 0,
-        "createDate": {
-          "$date": ""
-        },
-        "likes": 0,
-        "shares": 0
-    },
-    "comments": [],
-    "steps": [
-        {
-            "picturePath": "",
-            "comments": [],
-            "body": ""
-        }
-    ],
-    "description": ""
-  };
 
   $scope.cancelCreation = function() {
     document.getElementById('title').value ='';
@@ -586,10 +594,28 @@ angular.module('starter.controllers', ['ionic'])
   }
 
   $scope.goToCreation = function() {
+    var guideSkeleton = {
+      "draft": true,
+      "id": "",
+      "title": "",
+      "picturePath": "",
+      "author": $scope.username,
+      "category": "",
+      "meta": {
+          "favs": 0,
+          "likes": 0,
+          "shares": 0
+      },
+      "comments": [],
+      "steps": [],
+      "description": ""
+    };
     guideSkeleton.title = document.getElementById('title').value;
+    guideSkeleton.category = document.getElementById('category').value;
     GuideTransferService.putGuideData(guideSkeleton);
     $state.go('creation');
     document.getElementById('title').value ='';
+    document.getElementById('category').value ='';
     $scope.modal.hide();
   }
 

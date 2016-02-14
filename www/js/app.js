@@ -106,6 +106,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   })
 
   .state('creation', {
+    cache: false,
     url: '/creation',
     templateUrl: 'templates/creation.html',
     controller: 'CreationCtrl'

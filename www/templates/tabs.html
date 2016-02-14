@@ -37,7 +37,7 @@
 
   ion-modal-view.smaller-modal {
     width: 95%;
-    height: 30%;
+    height: 13rem;
     top: 25%; 
     left: 2.5%; 
     right: 2.5%; 
@@ -51,15 +51,29 @@
     -webkit-transition: opacity 300ms ease-in-out;
     background-color: #000;
     opacity: 0;
-}
+  }
 
-.active .modal-backdrop-bg {
-    opacity: 0.5;
-}
+  .active .modal-backdrop-bg {
+      opacity: 0.5;
+  }
 
-button.button-half {
-  width: 49%;
-}
+  .keyboard-open .tabs{
+    display:none;
+    }
+  .keyboard-open .has-tabs{
+   bottom:0;
+   }
+     .col-1 {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 0.33vw;
+    -moz-box-flex: 0;
+    -moz-flex: 0 0 0.33vw;
+    -ms-flex: 0 0 0.33vw;
+    flex: 0 0 0.33vw;
+    max-width: 0.33vw;
+    padding: 0px;
+  }
+
 </style>
 <!--
 Create tabs with an icon and label, using the tabs-positive style.
@@ -100,9 +114,20 @@ navigation history that also transitions its views in and out.
             <span class="input-label">How to</span>
             <input type="text" id="title">
           </label>
+          <label class="item item-input">
+            <span class="input-label">Category</span>
+            <input type="text" id="category">
+          </label>
         </div>
-        <button class="button button-half" ng-click="cancelCreation()">Cancel</button>
-        <button class="button button-half" ng-click="goToCreation()">Accept</button>
+        <div class="row">
+          <div class="col">
+            <button class="button button-block" ng-click="cancelCreation()">Cancel</button>
+          </div>
+          <div class="col col-1"></div>
+          <div class="col">
+            <button class="button button-block" ng-click="goToCreation()">Accept</button>
+          </div>
+        </div>
       </ion-content>
   </ion-modal-view>
 </script>
