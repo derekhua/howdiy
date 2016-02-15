@@ -121,7 +121,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('CreationCtrl', function($scope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup, $http, EC2, GuideTransferService) {
+.controller('CreationCtrl', function($scope, $rootScope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup, $http, EC2, GuideTransferService) {
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     viewData.enableBack = true;
   });
@@ -163,11 +163,11 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.createStep = function() {
     if( $scope.step < $scope.finishedGuide.steps.length && $scope.finishedGuide.steps !== undefined ) {
-      $scope.finishedGuide.steps[$scope.step].base64Picture = document.getElementById('old_step_pic').src;
+      $scope.finishedGuide.steps[$scope.step].picturePath = document.getElementById('old_step_pic').src;
       $scope.finishedGuide.steps[$scope.step].body = document.getElementById('description').value;
     }
     else {
-      $scope.finishedGuide.steps.push({ "picturePath": "", "base64Picture": document.getElementById('new_step_pic').src, "body": document.getElementById('description').value});
+      $scope.finishedGuide.steps.push({"picturePath": document.getElementById('new_step_pic').src, "body": document.getElementById('description').value});
 
     }
     // 'http://i.imgur.com/iGq9TTF.png'
@@ -220,12 +220,10 @@ angular.module('starter.controllers', ['ionic'])
     $scope.finishedGuide.draft = false;
     $http.post(EC2.address + '/api/g/', $scope.finishedGuide)
       .then(function(response){
-        $scope.submittedGuideId = response.data._id;
-        $http.post(EC2.address + '/api/u/' + $scope.username, {$push : {
-          "submittedGuides" : {
-            "guideId" : $scope.submittedGuideId
-          }
-        }});
+        $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
+          $rootScope.userInfo = result.data;
+          console.log($rootScope.userInfo.submittedGuides);
+        });
         $scope.myGoBack();
       }).catch(function(err){
         var alertPopup = $ionicPopup.alert({
@@ -376,7 +374,9 @@ angular.module('starter.controllers', ['ionic'])
       }
 
       var count = 0;
+      console.log($rootScope.userInfo.submittedGuides);
       for (var i = 0; i < $rootScope.userInfo.submittedGuides.length; ++i) {
+
         $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.submittedGuides[i].guideId).then(function(result) {
           $scope.submittedThumbnails.push(result.data);
           if (++count == $rootScope.userInfo.submittedGuides.length) {

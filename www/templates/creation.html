@@ -177,27 +177,27 @@
 
         <div class="row" ng-repeat="i in range(0, finishedGuide.steps.length)" ng-if="i % 4 === 0">
         <div class="col col-25 thumbnailSquare" ng-if="i < finishedGuide.steps.length" on-hold="deleteStep(i)" ng-click="showStep(i)" type="button">
-            <img ng-src="{{finishedGuide.steps[i].base64Picture}}" width="100%" class="crop"/>
+            <img ng-src="{{finishedGuide.steps[i].picturePath}}" width="100%" class="crop"/>
         </div>
 
         <div class="col col-1"></div>
         
         <div class="col col-25 thumbnailSquare" ng-if="i + 1 < finishedGuide.steps.length" on-hold="deleteStep(i+1)" ng-click="showStep(i+1)" type="button">
-            <img ng-src="{{finishedGuide.steps[i+1].base64Picture}}" width="100%" class="crop"/>
+            <img ng-src="{{finishedGuide.steps[i+1].picturePath}}" width="100%" class="crop"/>
             
         </div>
         
         <div class="col col-1"></div>
 
         <div class="col col-25 thumbnailSquare" ng-if="i + 2 < finishedGuide.steps.length" on-hold="deleteStep(i+2)" ng-click="showStep(i+2)" type="button">
-            <img ng-src="{{finishedGuide.steps[i+2].base64Picture}}" width="100%" class="crop"/>
+            <img ng-src="{{finishedGuide.steps[i+2].picturePath}}" width="100%" class="crop"/>
             
         </div>
 
         <div class="col col-1"></div>
 
         <div class="col col-25 thumbnailSquare" ng-if="i + 3 < finishedGuide.steps.length" on-hold="deleteStep(i+3)" ng-click="showStep(i+3)" type="button">
-            <img ng-src="{{finishedGuide.steps[i+3].base64Picture}}" width="100%" class="crop"/>
+            <img ng-src="{{finishedGuide.steps[i+3].picturePath}}" width="100%" class="crop"/>
             
         </div>
     </div>
@@ -219,8 +219,8 @@
 
         <div class="item item-image focusedSquare">
           <img ng-if="imgURI !== undefined" src="{{imgURI}}" ng-click="pictureOption()" id = "new_step_pic" ></img>
-          <img ng-if="imgURI === undefined && step < finishedGuide.steps.length" src="{{finishedGuide.steps[step].base64Picture}}" ng-click="pictureOption()" id = "old_step_pic"></img>
-          <button ng-if="imgURI === undefined && finishedGuide.steps[step].base64Picture === undefined" class="button button-icon ion-camera icon-large" ng-click="pictureOption()" ></button>
+          <img ng-if="imgURI === undefined && step < finishedGuide.steps.length" src="{{finishedGuide.steps[step].picturePath}}" ng-click="pictureOption()" id = "old_step_pic"></img>
+          <button ng-if="imgURI === undefined && finishedGuide.steps[step].picturePath === undefined" class="button button-icon ion-camera icon-large" ng-click="pictureOption()" ></button>
         </div>
 
         <div class="item item-image padding">
