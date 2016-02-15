@@ -28,6 +28,15 @@
   .active {
     color: #d93218;
   }
+
+  .popup-vertical-buttons button {
+    min-width: 100%;
+    margin-bottom: 5px;
+  }
+
+  .popup-vertical-buttons .popup-buttons {
+    display: block;
+  }
 </style>
 
 <ion-view>
@@ -46,9 +55,9 @@
     <ion-refresher on-refresh="doRefresh()" pulling-icon="ion-beaker" spinner="crescent" class="assertive"></ion-refresher>
 
     <div class="item item-thumbnail-left">
-      <img class="profile-pic" src="{{profilePicture}}"> 
+      <img class="profile-pic" src="{{userInfo.profilePicture}}" ng-click="showProfilePicturePopup()"> 
       <div class="profile-right">
-        <div class="row"><h2> {{numberOfGuides}} Guides Submitted</h2></div>
+        <div class="row"><h2> {{userInfo.submittedGuides.length}} Guides Submitted</h2></div>
         <div class="row"><button class="button button-small button-stable edit-button" style="float:right" ng-click="editProfileModal.show()">
           Edit Profile
         </button></div>      

@@ -234,58 +234,58 @@ angular.module('starter.controllers', ['ionic'])
   }
 
   $scope.pictureOption = function() {
-      var myPopup = $ionicPopup.show({
-       title: 'Upload or take a picture!',
-       scope: $scope,
-       cssClass: "popup-vertical-buttons",
-       buttons: [
-         { text: 'Take Picture',
-           type: 'button-positive',
-            onTap: function(e) {
-              var options = {
-                quality : 75,
-                destinationType : Camera.DestinationType.DATA_URL,
-                sourceType : Camera.PictureSourceType.CAMERA,
-                allowEdit : true,
-                encodingType: Camera.EncodingType.JPEG,
-                targetWidth: 350,
-                targetHeight: 400,
-                popoverOptions: CameraPopoverOptions,
-                saveToPhotoAlbum: false
-              };
-              $cordovaCamera.getPicture(options).then(function(imageData) {
-                $scope.imgURI = "data:image/jpeg;base64," + imageData;
-              }).catch(function(err) {
-                console.log(err);
-              });
-           }
-         },
-         {
-           text: 'Upload',
-           type: 'button-positive',
-           onTap: function(e) {
-              var options = {
-                quality: 100,
-                destinationType: Camera.DestinationType.DATA_URL,
-                sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-                targetWidth: 400,
-                targetHeight: 400
-              };
-              $cordovaCamera.getPicture(options).then(function(imageUri) {
-                console.log('img', imageUri);
-                $scope.imgURI = "data:image/jpeg;base64," + imageUri;
-              }).catch(function(err) {
-                // error
-              });
-           }
-         },
-         { text: 'Cancel',
-            onTap: function(e) {
-              showFlag = false;
-           }
-         },
-       ]
-     });
+    var myPopup = $ionicPopup.show({
+      title: 'Upload or take a picture!',
+      scope: $scope,
+      cssClass: "popup-vertical-buttons",
+      buttons: [{ 
+        text: 'Take Picture',
+        type: 'button-positive',
+        onTap: function(e) {
+          var options = {
+            quality : 75,
+            destinationType : Camera.DestinationType.DATA_URL,
+            sourceType : Camera.PictureSourceType.CAMERA,
+            allowEdit : true,
+            encodingType: Camera.EncodingType.JPEG,
+            targetWidth: 350,
+            targetHeight: 400,
+            popoverOptions: CameraPopoverOptions,
+            saveToPhotoAlbum: false
+          };
+          $cordovaCamera.getPicture(options).then(function(imageData) {
+            $scope.imgURI = "data:image/jpeg;base64," + imageData;
+          }).catch(function(err) {
+            console.log(err);
+          });
+        }
+      },
+      {
+        text: 'Upload',
+        type: 'button-positive',
+        onTap: function(e) {
+          var options = {
+            quality: 100,
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            targetWidth: 400,
+            targetHeight: 400
+          };
+          $cordovaCamera.getPicture(options).then(function(imageUri) {
+            console.log('img', imageUri);
+            $scope.imgURI = "data:image/jpeg;base64," + imageUri;
+          }).catch(function(err) {
+            // error
+          });
+        }
+      },
+      { 
+        text: 'Cancel',
+        onTap: function(e) {
+          showFlag = false;
+        }
+      }],
+    });
   }
 
   $scope.expandText = function(){
@@ -299,9 +299,7 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, EC2, AuthService) {
-  $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
-  $scope.numberOfGuides = 0;
+.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService) {
   $scope.genderValues = [ "Male", "Female", "Other", "Not Specified"];
   $scope.savedThumbnails = [];
   $scope.draftThumbnails = [];
@@ -374,9 +372,7 @@ angular.module('starter.controllers', ['ionic'])
       }
 
       var count = 0;
-      console.log($rootScope.userInfo.submittedGuides);
       for (var i = 0; i < $rootScope.userInfo.submittedGuides.length; ++i) {
-
         $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.submittedGuides[i].guideId).then(function(result) {
           $scope.submittedThumbnails.push(result.data);
           if (++count == $rootScope.userInfo.submittedGuides.length) {
@@ -444,6 +440,77 @@ angular.module('starter.controllers', ['ionic'])
     console.log("t" + guideId);
     $state.go('guide', { "guideId": guideId })
   };
+
+  $scope.showProfilePicturePopup = function() {
+    var myPopup = $ionicPopup.show({
+      title: 'Upload or take a picture!',
+      scope: $scope,
+      cssClass: "popup-vertical-buttons",
+      buttons: [{ 
+        text: 'Take Picture',
+        type: 'button-positive',
+        onTap: function(e) {
+          var options = {
+            quality : 75,
+            destinationType : Camera.DestinationType.DATA_URL,
+            sourceType : Camera.PictureSourceType.CAMERA,
+            allowEdit : true,
+            encodingType: Camera.EncodingType.JPEG,
+            targetWidth: 350,
+            targetHeight: 400,
+            popoverOptions: CameraPopoverOptions,
+            saveToPhotoAlbum: false
+          };
+          $cordovaCamera.getPicture(options).then(function(imageData) {
+            $scope.imgURI = "data:image/jpeg;base64," + imageData;
+            $scope.uploadProfilePicture($scope.imgURI);
+          }).catch(function(err) {
+            console.log(err);
+          });
+        }
+      },
+      {
+        text: 'Upload',
+        type: 'button-positive',
+        onTap: function(e) {
+          var options = {
+            quality: 100,
+            destinationType: Camera.DestinationType.DATA_URL,
+            sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            targetWidth: 400,
+            targetHeight: 400
+          };
+          $cordovaCamera.getPicture(options).then(function(imageUri) {
+            console.log('img', imageUri);
+            $scope.imgURI = "data:image/jpeg;base64," + imageUri;
+            console.log($scope.imgURI);
+            $scope.uploadProfilePicture($scope.imgURI);
+          }).catch(function(err) {
+            // error
+          });
+        }
+      },
+      { 
+        text: 'Cancel',
+        onTap: function(e) {
+          showFlag = false;
+        }
+      }],
+    });
+  }
+
+  $scope.uploadProfilePicture = function(imageUri) {
+    $http.post(EC2.address + '/api/u/' + $scope.username, {"profilePicture" : imageUri}).then(function(result) {
+      //concatenates image link with timestamp to force refresh
+      $rootScope.userInfo.profilePicture = result.data.profilePicture + "?" + new Date().getTime();
+    }).catch(function(err) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Profile picture update error',
+        template: 'Try again.'
+      });
+    });;
+
+  }
 })
 
 
