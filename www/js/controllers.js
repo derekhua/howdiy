@@ -360,7 +360,7 @@ angular.module('starter.controllers', ['ionic'])
   }
 
   $scope.showSubmittedGuides = function() {
-    if (!submittedLoading) {
+    if (!submittedLoading && $rootScope.userInfo.submittedGuides.length !== 0) {
       submittedLoading = true;
       $scope.showSaved = false;
       $scope.showDrafts = false;
@@ -371,11 +371,10 @@ angular.module('starter.controllers', ['ionic'])
         return;
       }
 
-      var count = 0;
       for (var i = 0; i < $rootScope.userInfo.submittedGuides.length; ++i) {
         $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.submittedGuides[i].guideId).then(function(result) {
           $scope.submittedThumbnails.push(result.data);
-          if (++count == $rootScope.userInfo.submittedGuides.length) {
+          if ($scope.submittedThumbnails.length == $rootScope.userInfo.submittedGuides.length) {
             submittedLoading = false;
             $scope.showSubmitted = true;
             $scope.$broadcast('scroll.refreshComplete');
@@ -386,7 +385,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.showDraftGuides = function() {  
-    if (!draftLoading) {
+    if (!draftLoading && $rootScope.userInfo.drafts.length !== 0) {
       draftLoading = true;   
       $scope.showSaved = false;
       $scope.showDrafts = false;
@@ -396,11 +395,11 @@ angular.module('starter.controllers', ['ionic'])
         $scope.showDrafts = true;
         return;
       }
-      var count = 0;
+
       for (var i = 0; i < $rootScope.userInfo.drafts.length; ++i) {
         $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.drafts[i].guideId).then(function(result) {
           $scope.draftThumbnails.push(result.data);
-          if (++count == $rootScope.userInfo.drafts.length) {
+          if ($scope.draftThumbnails.length == rootScope.userInfo.drafts.length) {
             draftLoading = false;
             $scope.showDrafts = true;
             $scope.$broadcast('scroll.refreshComplete');
@@ -411,7 +410,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.showSavedGuides = function() {
-    if (!savedLoading) {
+    if (!savedLoading && $rootScope.userInfo.savedGuides.length !== 0) {
       savedLoading = true;
       $scope.showSaved = false;
       $scope.showDrafts = false;
@@ -422,11 +421,10 @@ angular.module('starter.controllers', ['ionic'])
         return;
       }
 
-      var count = 0;
       for (var i = 0; i < $rootScope.userInfo.savedGuides.length; ++i) {
         $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.savedGuides[i].guideId).then(function(result) {
           $scope.savedThumbnails.push(result.data);
-          if (++count == $rootScope.userInfo.savedGuides.length) {
+          if ($scope.savedThumbnails.length == $rootScope.userInfo.savedGuides.length) {
             savedLoading = false;
             $scope.showSaved = true;
             $scope.$broadcast('scroll.refreshComplete');
