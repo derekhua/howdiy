@@ -114,6 +114,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.$broadcast('scroll.refreshComplete');
     });
   };
+  $scope.doRefresh();
 })
 
 .controller('CreationCtrl', function($scope, $rootScope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup, $http, EC2, GuideTransferService) {

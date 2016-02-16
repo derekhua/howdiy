@@ -16,7 +16,6 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
 
 	  // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard for form inputs)
     if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-      console.log('keyboard');
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       // On iOS, if there is an input in your footer, you will need to set
       cordova.plugins.Keyboard.disableScroll(true);
