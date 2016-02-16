@@ -55,14 +55,14 @@
     <ion-refresher on-refresh="doRefresh()" pulling-icon="ion-beaker" spinner="crescent" class="assertive"></ion-refresher>
     
     <div ng-hide="search" class="list">
-      <div class="home-list-item" ng-repeat="guide in guides"> 
+      <div class="home-list-item" ng-repeat="guide in guides" ng-click="goTo('guide', {guideId: guide._id})"> 
         <div class="item">
-          <a ui-sref="tab.home.guide({guideId: '{{guide._id}}'})">{{guide.title}}</a>
+          <h2>{{guide.title}}</h2>
         </div>
         
-        <div class="item item-avatar-left">
+        <div class="item item-avatar-left" ng-click="goTo('profile', {username: guide.author}); $event.stopPropagation();">
           <img src="{{guide.steps[0].picturePath}}">
-          <a ui-sref="tab.home.profile({username: '{{guide.author}}'})">{{guide.author}}</a>
+          <h2>{{guide.author}}</h2>
         </div>
 
         <div class="item item-body">

@@ -36,6 +36,11 @@ angular.module('starter.controllers', ['ionic'])
     console.log('back');
   };
 
+  $scope.goTo = function(next, options) {
+    var currentSplitState = $state.current.name.split('.');
+    $state.go(currentSplitState[0] + '.' + currentSplitState[1] + '.' + next, options);
+  };
+
 })
 
 .controller('LoginCtrl', function($scope, $rootScope, $state, $http, $ionicPopup, AuthService, EC2) {
@@ -311,7 +316,7 @@ angular.module('starter.controllers', ['ionic'])
     }
     console.log(param);
     $http.post(EC2.address + param, $scope.finishedGuide)
-      .then(function(response){
+      .then(function(response) {
         $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
           $rootScope.userInfo = result.data;
         });
@@ -331,7 +336,7 @@ angular.module('starter.controllers', ['ionic'])
 
 .controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, GuideTransferService, $stateParams) {
   $scope.profileInfo = {};
-  if ($stateParams.username === undefined) {
+  if ($stateParams.username === $scope.username || $stateParams.username === undefined) {
     $scope.profileInfo = $rootScope.userInfo;
     $scope.isOwnProfile = true;
   } else {

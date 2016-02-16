@@ -138,6 +138,16 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
         controller: 'GuideCtrl'
       }
     }
+  })
+
+  .state('tab.profile.profile', {
+    url: '/profile/:username',
+    views: {
+      'tab-profile@tab': {
+        templateUrl: 'templates/tab-profile.html',
+        controller: 'ProfileCtrl'
+      }
+    }
   });
 
   // If none of the above states are matched, use this as the fallback
