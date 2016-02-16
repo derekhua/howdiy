@@ -95,11 +95,6 @@ angular.module('starter.controllers', ['ionic'])
     $scope.search = false;
   };
 
-  // go to guide testing purposes
-  $scope.goToGuide = function(guideId) {
-    $state.go('guide', { "guideId": guideId });
-  };
-
   $scope.getGuides = function() {
     $http.get(EC2.address + '/api/g').then(function(result) {
       $scope.response = result;
@@ -299,14 +294,25 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService) {
+.controller('ProfileCtrl', function($rootScope, $scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, $stateParams) {
+  $scope.profileInfo = {};
+  if ($stateParams.username === undefined) {
+    $scope.profileInfo = $rootScope.userInfo;
+    $scope.isOwnProfile = true;
+  } else {
+    $http.get(EC2.address + '/api/u/' + $stateParams.username).then(function(result) {
+      $scope.profileInfo = result.data;   
+      $scope.isOwnProfile = false;   
+    });  
+  }
+
   $scope.genderValues = [ "Male", "Female", "Other", "Not Specified"];
   $scope.savedThumbnails = [];
   $scope.draftThumbnails = [];
   $scope.submittedThumbnails = [];
   $scope.showSaved = false;
   $scope.showDrafts = false;
-  $scope.showSubmitted = true;
+  $scope.showSubmitted = false;
   var submittedLoading = false;
   var savedLoading = false;
   var draftLoading = false;
@@ -334,6 +340,8 @@ angular.module('starter.controllers', ['ionic'])
     } else if ($scope.showSaved) {
       $scope.savedThumbnails = [];
       $scope.showSavedGuides();
+    } else {
+      $scope.$broadcast('scroll.refreshComplete');
     }
   };
 
@@ -360,7 +368,7 @@ angular.module('starter.controllers', ['ionic'])
   }
 
   $scope.showSubmittedGuides = function() {
-    if (!submittedLoading && $rootScope.userInfo.submittedGuides.length !== 0) {
+    if (!submittedLoading && $scope.profileInfo.submittedGuides.length !== 0) {
       submittedLoading = true;
       $scope.showSaved = false;
       $scope.showDrafts = false;
@@ -371,10 +379,10 @@ angular.module('starter.controllers', ['ionic'])
         return;
       }
 
-      for (var i = 0; i < $rootScope.userInfo.submittedGuides.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.submittedGuides[i].guideId).then(function(result) {
+      for (var i = 0; i < $scope.profileInfo.submittedGuides.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $scope.profileInfo.submittedGuides[i].guideId).then(function(result) {
           $scope.submittedThumbnails.push(result.data);
-          if ($scope.submittedThumbnails.length == $rootScope.userInfo.submittedGuides.length) {
+          if ($scope.submittedThumbnails.length == $scope.profileInfo.submittedGuides.length) {
             submittedLoading = false;
             $scope.showSubmitted = true;
             $scope.$broadcast('scroll.refreshComplete');
@@ -385,7 +393,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.showDraftGuides = function() {  
-    if (!draftLoading && $rootScope.userInfo.drafts.length !== 0) {
+    if (!draftLoading && $scope.profileInfo.drafts.length !== 0) {
       draftLoading = true;   
       $scope.showSaved = false;
       $scope.showDrafts = false;
@@ -396,10 +404,10 @@ angular.module('starter.controllers', ['ionic'])
         return;
       }
 
-      for (var i = 0; i < $rootScope.userInfo.drafts.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.drafts[i].guideId).then(function(result) {
+      for (var i = 0; i < $scope.profileInfo.drafts.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $scope.profileInfo.drafts[i].guideId).then(function(result) {
           $scope.draftThumbnails.push(result.data);
-          if ($scope.draftThumbnails.length == rootScope.userInfo.drafts.length) {
+          if ($scope.draftThumbnails.length == $scope.profileInfo.drafts.length) {
             draftLoading = false;
             $scope.showDrafts = true;
             $scope.$broadcast('scroll.refreshComplete');
@@ -410,7 +418,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.showSavedGuides = function() {
-    if (!savedLoading && $rootScope.userInfo.savedGuides.length !== 0) {
+    if (!savedLoading && $scope.profileInfo.savedGuides.length !== 0) {
       savedLoading = true;
       $scope.showSaved = false;
       $scope.showDrafts = false;
@@ -421,10 +429,10 @@ angular.module('starter.controllers', ['ionic'])
         return;
       }
 
-      for (var i = 0; i < $rootScope.userInfo.savedGuides.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $rootScope.userInfo.savedGuides[i].guideId).then(function(result) {
+      for (var i = 0; i < $scope.profileInfo.savedGuides.length; ++i) {
+        $http.get(EC2.address + '/api/t/' + $scope.profileInfo.savedGuides[i].guideId).then(function(result) {
           $scope.savedThumbnails.push(result.data);
-          if ($scope.savedThumbnails.length == $rootScope.userInfo.savedGuides.length) {
+          if ($scope.savedThumbnails.length == $scope.profileInfo.savedGuides.length) {
             savedLoading = false;
             $scope.showSaved = true;
             $scope.$broadcast('scroll.refreshComplete');
@@ -432,11 +440,6 @@ angular.module('starter.controllers', ['ionic'])
         });
       }
     }
-  };
-
-  $scope.goToGuide = function(guideId) {
-    console.log("t" + guideId);
-    $state.go('guide', { "guideId": guideId })
   };
 
   $scope.showProfilePicturePopup = function() {
@@ -518,6 +521,7 @@ angular.module('starter.controllers', ['ionic'])
   $scope.stepNumber = 1;
 
   // Get guide
+  $scope.guide = {};
   $http.get(EC2.address + '/api/g/' + $stateParams.guideId).then(function successCallback(result) {
     $scope.guide = result.data;
     $ionicSlideBoxDelegate.update();

@@ -64,19 +64,6 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     controller: 'SignupCtrl'
   })
 
-  .state('guide', {
-    cache: false,
-    url: '/guide/:guideId',
-    templateUrl: 'templates/guide.html',
-    controller: 'GuideCtrl'
-  })
-
-  .state('saved', {
-    url: '/saved',
-    templateUrl: 'templates/saved.html',
-    controller: 'SavedCtrl'
-  })
-
   // Setup an abstract state for the tabs directive
   .state('tab', {
     url: '/tab',
@@ -95,12 +82,23 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   })
 
-  .state('tab.search', {
-    url: '/search',
+  .state('tab.home.guide', {
+    cache: false,
+    url: '/guide/:guideId',
     views: {
-      'tab-search': {
-        templateUrl: 'templates/tab-search.html',
-        controller: 'SearchCtrl'
+      'tab-home@tab': {
+        templateUrl: 'templates/guide.html',
+        controller: 'GuideCtrl'
+      }
+    }
+  })
+
+  .state('tab.home.profile', {
+    url: '/profile/:username',
+    views: {
+      'tab-home@tab': {
+        templateUrl: 'templates/tab-profile.html',
+        controller: 'ProfileCtrl'
       }
     }
   })
@@ -129,6 +127,16 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
       'tab-profile': {
         templateUrl: 'templates/tab-profile.html',
         controller: 'ProfileCtrl'
+      }
+    }
+  })
+
+  .state('tab.profile.guide', {
+    url: '/guide/:guideId',
+    views: {
+      'tab-profile@tab': {
+        templateUrl: 'templates/guide.html',
+        controller: 'GuideCtrl'
       }
     }
   });
