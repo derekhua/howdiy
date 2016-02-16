@@ -79,7 +79,7 @@
     </div>
 
     <div ng-show="showDrafts" class="list">
-      <div ng-repeat="thumbnail in draftThumbnails" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+      <div ng-repeat="thumbnail in draftThumbnails" class="item item-thumbnail-left" ng-click="editDraft('{{thumbnail.guideId}}')">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
