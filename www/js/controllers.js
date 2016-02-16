@@ -333,13 +333,7 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-<<<<<<< Updated upstream
-.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService) {
-=======
-.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, EC2, AuthService, GuideTransferService) {
-  $scope.profilePicture = "http://i.imgur.com/Iq6YOgl.jpg";
-  $scope.numberOfGuides = 0;
->>>>>>> Stashed changes
+.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, GuideTransferService) {
   $scope.genderValues = [ "Male", "Female", "Other", "Not Specified"];
   $scope.savedThumbnails = [];
   $scope.draftThumbnails = [];
@@ -481,7 +475,6 @@ angular.module('starter.controllers', ['ionic'])
     $state.go('guide', { "guideId": guideId })
   };
 
-<<<<<<< Updated upstream
   $scope.showProfilePicturePopup = function() {
     var myPopup = $ionicPopup.show({
       title: 'Upload or take a picture!',
@@ -552,7 +545,6 @@ angular.module('starter.controllers', ['ionic'])
     });;
 
   }
-=======
   $scope.editDraft = function(guideId) {
       $http.get(EC2.address + '/api/g/' + guideId).then(function successCallback(result) {
         var guide = result.data;
@@ -562,7 +554,6 @@ angular.module('starter.controllers', ['ionic'])
         console.log("getGuides error");
       });
   };
->>>>>>> Stashed changes
 })
 
 
