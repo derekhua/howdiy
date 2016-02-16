@@ -121,6 +121,7 @@ angular.module('starter.controllers', ['ionic'])
     viewData.enableBack = true;
   });
 
+
   $scope.step = 0;
   $scope.finishedGuide = GuideTransferService.getGuideData();
   var showFlag = false;
@@ -158,22 +159,21 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.createStep = function() {
     if( $scope.step < $scope.finishedGuide.steps.length && $scope.finishedGuide.steps !== undefined ) {
-      $scope.finishedGuide.steps[$scope.step].picturePath = document.getElementById('old_step_pic').src;
-      $scope.finishedGuide.steps[$scope.step].body = document.getElementById('description').value;
+      $scope.finishedGuide.steps[$scope.step].picturePath = $scope.imgURI;
+      $scope.finishedGuide.steps[$scope.step].body = document.getElementsByClassName('stepDescription')[document.getElementsByClassName('stepDescription').length - 1].value;
     }
     else {
-      $scope.finishedGuide.steps.push({"picturePath": document.getElementById('new_step_pic').src, "body": document.getElementById('description').value});
-
+      $scope.finishedGuide.steps.push({"picturePath": $scope.imgURI, 
+                                       "body": document.getElementsByClassName('stepDescription')[document.getElementsByClassName('stepDescription').length - 1].value});
     }
-    // 'http://i.imgur.com/iGq9TTF.png'
     $scope.imgURI = undefined;
-    document.getElementById('description').value = "";
+    document.getElementsByClassName('stepDescription')[document.getElementsByClassName('stepDescription').length - 1].value = "";
     $scope.stepModal.hide();
   };
   
   $scope.cancelStep = function() {
     $scope.imgURI = undefined;
-    document.getElementById('description').value = "";
+    document.getElementsByClassName('stepDescription')[document.getElementsByClassName('stepDescription').length - 1].value = "";
     $scope.stepModal.hide();
   }
 
@@ -204,28 +204,16 @@ angular.module('starter.controllers', ['ionic'])
   $scope.showStep = function(stepNum) {
     if(showFlag === false) {
       $scope.step = stepNum;
-      if (stepNum < $scope.finishedGuide.steps.length)
-        document.getElementById('description').value = $scope.finishedGuide.steps[stepNum].body;
       $scope.stepModal.show();
+      if (stepNum < $scope.finishedGuide.steps.length)
+        document.getElementsByClassName('stepDescription')[document.getElementsByClassName('stepDescription').length - 1].value = $scope.finishedGuide.steps[stepNum].body;
     }
   };
   
   $scope.submitGuide = function () {
     $scope.finishedGuide.createDate = Date.now;
     $scope.finishedGuide.draft = false;
-    $http.post(EC2.address + '/api/g/', $scope.finishedGuide)
-      .then(function(response){
-        $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
-          $rootScope.userInfo = result.data;
-          console.log($rootScope.userInfo.submittedGuides);
-        });
-        $scope.myGoBack();
-      }).catch(function(err){
-        var alertPopup = $ionicPopup.alert({
-          title: 'Guide submission failed!',
-          template: 'Try again.'
-        });
-      });
+    postFunction();
   }
 
   $scope.pictureOption = function() {
@@ -283,18 +271,64 @@ angular.module('starter.controllers', ['ionic'])
     });
   }
 
+  $scope.leaveCreation = function() {
+      var myPopup = $ionicPopup.show({
+       title: 'Save this guide to drafts?',
+       scope: $scope,
+       cssClass: "popup-vertical-buttons",
+       buttons: [
+         { text: 'Yes',
+           type: 'button-positive',
+            onTap: function(e) {
+              postFunction();
+           }
+         },
+         {
+           text: 'No',
+           type: 'button-assertive',
+           onTap: function(e) {
+            $scope.myGoBack();
+           }
+         },
+         { text: 'Cancel',
+            onTap: function(e) {
+           }
+         },
+       ]
+     });
+  }
+
   $scope.expandText = function(){
-    var element = document.getElementById("description");
+    var element = document.getElementsByClassName('stepDescription')[document.getElementsByClassName('stepDescription').length - 1].value
     element.style.height =  element.scrollHeight + "px";
   }
 
+  var postFunction = function() {
+    var param = '/api/g';
+    if ("_id" in $scope.finishedGuide){
+      param = '/api/g/' + $scope.finishedGuide._id;
+    }
+    console.log(param);
+    $http.post(EC2.address + param, $scope.finishedGuide)
+      .then(function(response){
+        $http.get(EC2.address + '/api/u/' + $scope.username).then(function(result) {
+          $rootScope.userInfo = result.data;
+        });
+        $scope.myGoBack();
+      }).catch(function(err){
+        var alertPopup = $ionicPopup.alert({
+          title: 'Guide submission failed!',
+          template: 'Try again.'
+        });
+      });
+  }
 })
 
 .controller('ActivityCtrl', function($scope) {
 
 })
 
-.controller('ProfileCtrl', function($rootScope, $scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, $stateParams) {
+.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, GuideTransferService, $stateParams) {
   $scope.profileInfo = {};
   if ($stateParams.username === undefined) {
     $scope.profileInfo = $rootScope.userInfo;
@@ -512,6 +546,15 @@ angular.module('starter.controllers', ['ionic'])
     });;
 
   }
+  $scope.editDraft = function(guideId) {
+      $http.get(EC2.address + '/api/g/' + guideId).then(function successCallback(result) {
+        var guide = result.data;
+        GuideTransferService.putGuideData(guide);
+        $state.go('creation');
+      }).catch(function errorCallback(err) {
+        console.log("getGuides error");
+      });
+  };
 })
 
 
@@ -579,7 +622,7 @@ angular.module('starter.controllers', ['ionic'])
       text: 'You pinched out!'
     }];
 
-    angular.forEach(events, function(obj){
+    angular.forEach(events, function(obj) {
       for (i = 0; i < elements.length; i++) {
         $ionicGesture.on(obj.event, function (event) {
           $scope.$apply(function () {
@@ -650,6 +693,10 @@ angular.module('starter.controllers', ['ionic'])
     $ionicActionSheet.show({
       titleText: 'ActionSheet Example',
       buttons: [
+        { text: '<i class="icon ion-ios-upload-outline"></i> Share' },
+        { text: (($scope.liked) ? '<i ng-hide="liked" class="icon ion-ios-heart" style="color: #E9523B;"></i> Unlike' : 
+                                 '<i ng-hide="liked" class="icon ion-ios-heart-outline" style="color: #E9523B;"></i> Like')} ,
+        { text: '<i class="icon ion-ios-chatbubble-outline"></i> Comment'}, 
         { text: '<i class="icon ion-alert"></i> Report' },
       ],
       destructiveText: ($scope.guide._id in $rootScope.userInfo.submittedGuides) ? 'Delete' : '',
@@ -658,6 +705,15 @@ angular.module('starter.controllers', ['ionic'])
         console.log('CANCELLED');
       },
       buttonClicked: function(index) {
+        if (index === 0) {
+          $scope.shareHandler();
+        } else if (index === 1) {
+          $scope.likeHandler();
+        } else if (index === 2) {
+          $scope.commentModal.show();
+        } else if (index === 3) {
+          console.log('report');
+        }
         console.log('BUTTON CLICKED', index);
         return true;
       },
@@ -703,10 +759,10 @@ angular.module('starter.controllers', ['ionic'])
     var guideSkeleton = {
       "draft": true,
       "id": "",
-      "title": "",
+      "title": document.getElementById('title').value,
       "picturePath": "",
       "author": $scope.username,
-      "category": "",
+      "category": document.getElementById('category').value,
       "meta": {
           "favs": 0,
           "likes": 0,
@@ -716,8 +772,6 @@ angular.module('starter.controllers', ['ionic'])
       "steps": [],
       "description": ""
     };
-    guideSkeleton.title = document.getElementById('title').value;
-    guideSkeleton.category = document.getElementById('category').value;
     GuideTransferService.putGuideData(guideSkeleton);
     $state.go('creation');
     document.getElementById('title').value ='';

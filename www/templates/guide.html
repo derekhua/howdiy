@@ -76,7 +76,7 @@
   }
 </style>
 
-<ion-view view-title="{{guide.title}}">
+<ion-view view-title="{{guide.title}}" hide-tabs>
   
   <ion-nav-buttons side="left">
    <button class="button button-clear arrow-back-button" ng-click="myGoBack()">
@@ -123,23 +123,6 @@
     </div>
 
   </ion-content>
-
-  <ion-footer-bar class="bar bar-footer bar-stable">
-    <button class="button button-clear button-primary" ng-click="shareHandler()">
-      <i class="ion-ios-upload-outline" style="font-size: 30px;"></i>
-    </button>
-    
-    <h1 class="title">
-      <button class="button button-clear button-primary" side="center" style="margin-top: 5px;" ng-click="likeHandler()">
-        <i ng-hide="liked" class="ion-ios-heart-outline" style="font-size: 30px; color: #E9523B;"></i>
-        <i ng-show="liked" class="ion-ios-heart" style="font-size: 30px; color: #E9523B;"></i>
-      </button>
-    </h1>
-
-    <button class="button button-clear button-large button-primary" ng-click="commentModal.show()">
-      <i class="ion-ios-chatbubble-outline" style="font-size: 30px; padding-right: 8px;"></i>
-    </button>
-  </ion-footer-bar>
 
   <!-- Step Modal -->
   <script id="templates/guide-modal.html" type="text/ng-template" >

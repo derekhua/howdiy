@@ -158,7 +158,7 @@
 
 <ion-view>
   <ion-nav-buttons side="left">
-    <button class="button button-clear arrow-back-button" ng-click="myGoBack()">
+    <button class="button button-clear arrow-back-button" ng-click="leaveCreation()">
       <i class="icon ion-arrow-left-c"></i>
     </button>
   </ion-nav-buttons>
@@ -218,8 +218,8 @@
         <div class="list card">
 
         <div class="item item-image focusedSquare">
-          <img ng-if="imgURI !== undefined" src="{{imgURI}}" ng-click="pictureOption()" id = "new_step_pic" ></img>
-          <img ng-if="imgURI === undefined && step < finishedGuide.steps.length" src="{{finishedGuide.steps[step].picturePath}}" ng-click="pictureOption()" id = "old_step_pic"></img>
+          <img ng-if="imgURI !== undefined" src="{{imgURI}}" ng-click="pictureOption()" id="new_step_pic" ></img>
+          <img ng-if="imgURI === undefined && step < finishedGuide.steps.length" src="{{finishedGuide.steps[step].picturePath}}" ng-click="pictureOption()" id="old_step_pic"></img>
           <button ng-if="imgURI === undefined && finishedGuide.steps[step].picturePath === undefined" class="button button-icon ion-camera icon-large" ng-click="pictureOption()" ></button>
         </div>
 
@@ -227,7 +227,7 @@
           <textarea placeholder="Describe this step here!"
                     ng-keyup="expandText()" 
                     ng-keydown="expandText()"
-                    id = "description"></textarea>
+                    class = "stepDescription"></textarea>
         </div>
       </div>
       </ion-content>

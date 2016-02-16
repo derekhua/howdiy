@@ -87,7 +87,7 @@
     </div>
 
     <div ng-show="showDrafts" class="list">
-      <div ng-repeat="thumbnail in draftThumbnails track by $index" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+      <div ng-repeat="thumbnail in draftThumbnails" class="item item-thumbnail-left" ng-click="editDraft('{{thumbnail.guideId}}')">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
@@ -95,11 +95,11 @@
     </div>
 
     <div ng-show="showSaved" class="list">
-      <div ng-repeat="thumbnail in savedThumbnails track by $index" class="item item-thumbnail-left" ng-click="goToGuide('{{thumbnail.guideId}}')">
+      <a ng-repeat="thumbnail in savedThumbnails track by $index" class="item item-thumbnail-left" ui-sref="tab.profile.guide({guideId: '{{thumbnail.guideId}}'})">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
-      </div>
+      </a>
     </div>
 
   </ion-content>
