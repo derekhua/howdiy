@@ -381,18 +381,21 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.doRefresh = function() {
     console.log('Refreshing!');
-    if ($scope.showSubmitted) {
-      $scope.submittedThumbnails = [];
-      $scope.showSubmittedGuides();
-    } else if ($scope.showDrafts) {
-      $scope.draftThumbnails = [];
-      $scope.showDraftGuides();
-    } else if ($scope.showSaved) {
-      $scope.savedThumbnails = [];
-      $scope.showSavedGuides();
-    } else {
-      $scope.$broadcast('scroll.refreshComplete');
-    }
+    $http.get(EC2.address + '/api/u/' + $scope.profileInfo.username).then(function(result) {
+      $scope.profileInfo = result.data;   
+      if ($scope.showSubmitted) {
+        $scope.submittedThumbnails = [];
+        $scope.showSubmittedGuides();
+      } else if ($scope.showDrafts) {
+        $scope.draftThumbnails = [];
+        $scope.showDraftGuides();
+      } else if ($scope.showSaved) {
+        $scope.savedThumbnails = [];
+        $scope.showSavedGuides();
+      } else {
+        $scope.$broadcast('scroll.refreshComplete');
+      }
+    });  
   };
 
   $scope.updateUserInfo = function() {
@@ -423,7 +426,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
-      $http.get(EC2.address + '/api/u/' + $scope.username + '/guides', {
+      $http.get(EC2.address + '/api/u/' + $scope.profileInfo.username + '/guides', {
         params: { 
           "projection": "title picturePath author description catergory meta",
           "type": "submittedGuides"
@@ -442,7 +445,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
-      $http.get(EC2.address + '/api/u/' + $scope.username + '/guides', {
+      $http.get(EC2.address + '/api/u/' + $scope.profileInfo.username + '/guides', {
         params: { 
           "projection": "title picturePath author description catergory meta",
           "type": "drafts"
@@ -461,7 +464,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
-      $http.get(EC2.address + '/api/u/' + $scope.username + '/guides', {
+      $http.get(EC2.address + '/api/u/' + $scope.profileInfo.username + '/guides', {
         params: { 
           "projection": "title picturePath author description catergory meta",
           "type": "savedGuides"
