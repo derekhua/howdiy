@@ -430,7 +430,8 @@ angular.module('starter.controllers', ['ionic'])
       }
 
       for (var i = 0; i < $scope.profileInfo.submittedGuides.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $scope.profileInfo.submittedGuides[i].guideId).then(function(result) {
+        $http.get(EC2.address + '/api/g/' + $scope.profileInfo.submittedGuides[i].guideId, 
+        {params: { "projection": "title picturePath author description catergory meta"}}).then(function(result) {
           $scope.submittedThumbnails.push(result.data);
           if ($scope.submittedThumbnails.length == $scope.profileInfo.submittedGuides.length) {
             submittedLoading = false;
@@ -455,7 +456,8 @@ angular.module('starter.controllers', ['ionic'])
       }
 
       for (var i = 0; i < $scope.profileInfo.drafts.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $scope.profileInfo.drafts[i].guideId).then(function(result) {
+        $http.get(EC2.address + '/api/g/' + $scope.profileInfo.drafts[i].guideId, 
+        {params: { "projection": "title picturePath author description catergory meta"}}).then(function(result) {
           $scope.draftThumbnails.push(result.data);
           if ($scope.draftThumbnails.length == $scope.profileInfo.drafts.length) {
             draftLoading = false;
@@ -480,7 +482,8 @@ angular.module('starter.controllers', ['ionic'])
       }
 
       for (var i = 0; i < $scope.profileInfo.savedGuides.length; ++i) {
-        $http.get(EC2.address + '/api/t/' + $scope.profileInfo.savedGuides[i].guideId).then(function(result) {
+        $http.get(EC2.address + '/api/g/' + $scope.profileInfo.savedGuides[i].guideId, 
+        {params: { "projection": "title picturePath author description catergory meta"}}).then(function(result) {
           $scope.savedThumbnails.push(result.data);
           if ($scope.savedThumbnails.length == $scope.profileInfo.savedGuides.length) {
             savedLoading = false;

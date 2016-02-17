@@ -80,7 +80,7 @@
     
     <div ng-show="showSubmitted" class="list">
       <a ng-repeat="thumbnail in submittedThumbnails track by $index" class="item item-thumbnail-left"
-      ng-click="goTo('guide', {guideId: '{{thumbnail.guideId}}'})">
+      ng-click="goTo('guide', {guideId: '{{thumbnail._id}}'})">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
@@ -88,7 +88,7 @@
     </div>
 
     <div ng-show="showDrafts" class="list">
-      <div ng-repeat="thumbnail in draftThumbnails" class="item item-thumbnail-left" ng-click="editDraft('{{thumbnail.guideId}}')">
+      <div ng-repeat="thumbnail in draftThumbnails" class="item item-thumbnail-left" ng-click="editDraft('{{thumbnail._id}}')">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
@@ -97,7 +97,7 @@
 
     <div ng-show="showSaved" class="list">
       <a ng-repeat="thumbnail in savedThumbnails track by $index" class="item item-thumbnail-left" 
-      ng-click="goTo('guide', {guideId: '{{thumbnail.guideId}}'})">
+      ng-click="goTo('guide', {guideId: '{{thumbnail._id}}'})">
         <img ng-src="{{thumbnail.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
         <p>{{thumbnail.description}}</p>
