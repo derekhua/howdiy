@@ -423,23 +423,16 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
-      if ($scope.submittedThumbnails.length != 0) {
-        submittedLoading = false;
-        $scope.showSubmitted = true;
-        return;
-      }
-
-      for (var i = 0; i < $scope.profileInfo.submittedGuides.length; ++i) {
-        $http.get(EC2.address + '/api/g/' + $scope.profileInfo.submittedGuides[i].guideId, 
-        {params: { "projection": "title picturePath author description catergory meta"}}).then(function(result) {
-          $scope.submittedThumbnails.push(result.data);
-          if ($scope.submittedThumbnails.length == $scope.profileInfo.submittedGuides.length) {
-            submittedLoading = false;
-            $scope.showSubmitted = true;
-            $scope.$broadcast('scroll.refreshComplete');
-          }
+      $http.get(EC2.address + '/api/u/' + $scope.username + '/guides', {
+        params: { 
+          "projection": "title picturePath author description catergory meta",
+          "type": "submittedGuides"
+        }}).then(function(result) {
+          $scope.submittedThumbnails = result.data;    
+          submittedLoading = false;
+          $scope.showSubmitted = true;
+          $scope.$broadcast('scroll.refreshComplete');
         });
-      }
     }
   };
 
@@ -449,23 +442,16 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
-      if ($scope.draftThumbnails.length != 0) {
-        draftLoading = false;
-        $scope.showDrafts = true;
-        return;
-      }
-
-      for (var i = 0; i < $scope.profileInfo.drafts.length; ++i) {
-        $http.get(EC2.address + '/api/g/' + $scope.profileInfo.drafts[i].guideId, 
-        {params: { "projection": "title picturePath author description catergory meta"}}).then(function(result) {
-          $scope.draftThumbnails.push(result.data);
-          if ($scope.draftThumbnails.length == $scope.profileInfo.drafts.length) {
-            draftLoading = false;
-            $scope.showDrafts = true;
-            $scope.$broadcast('scroll.refreshComplete');
-          }
+      $http.get(EC2.address + '/api/u/' + $scope.username + '/guides', {
+        params: { 
+          "projection": "title picturePath author description catergory meta",
+          "type": "drafts"
+        }}).then(function(result) {
+          $scope.draftThumbnails = result.data;    
+          draftLoading = false;
+          $scope.showDrafts = true;
+          $scope.$broadcast('scroll.refreshComplete');
         });
-      }
     }
   };
 
@@ -475,23 +461,16 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
-      if ($scope.savedThumbnails.length != 0) {
-        savedLoading = false;
-        $scope.showSaved = true;
-        return;
-      }
-
-      for (var i = 0; i < $scope.profileInfo.savedGuides.length; ++i) {
-        $http.get(EC2.address + '/api/g/' + $scope.profileInfo.savedGuides[i].guideId, 
-        {params: { "projection": "title picturePath author description catergory meta"}}).then(function(result) {
-          $scope.savedThumbnails.push(result.data);
-          if ($scope.savedThumbnails.length == $scope.profileInfo.savedGuides.length) {
-            savedLoading = false;
-            $scope.showSaved = true;
-            $scope.$broadcast('scroll.refreshComplete');
-          }
+      $http.get(EC2.address + '/api/u/' + $scope.username + '/guides', {
+        params: { 
+          "projection": "title picturePath author description catergory meta",
+          "type": "savedGuides"
+        }}).then(function(result) {
+          $scope.savedThumbnails = result.data;    
+          savedLoading = false;
+          $scope.showSaved = true;
+          $scope.$broadcast('scroll.refreshComplete');
         });
-      }
     }
   };
 
