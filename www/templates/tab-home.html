@@ -31,7 +31,7 @@
   
   <ion-nav-buttons side="left">
     <button class="button button-clear" ng-click="searchOff()">
-      <i ng-class="search ? 'icon ion-arrow-left-c' : 'icon ion-erlenmeyer-flask light'"></i>
+      <i ng-class="searchFlag ? 'icon ion-arrow-left-c' : 'icon ion-erlenmeyer-flask light'"></i>
     </button> 
   </ion-nav-buttons>
 
@@ -39,7 +39,8 @@
     <div class="bar item-input-inset-opaque search-bar">
       <label class="item-input-wrapper-opaque"  ng-click="searchOn()" style="background-color: rgb(90, 31, 22);">
         <i class="icon ion-ios-search-strong" style="color: #DDD"></i>
-        <input type="search" placeholder="Howdiy?" autofocus="false" style="color: #DDD;"/>
+        <input type="search" placeholder="Howdiy?" autofocus="false" style="color: #DDD;"
+        ng-model="query" ng-keyup="search(query)"/>
       </label>
     </div>
   </ion-nav-title>
@@ -54,7 +55,7 @@
   <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
     <ion-refresher on-refresh="doRefresh()" pulling-icon="ion-beaker" spinner="crescent" class="assertive"></ion-refresher>
     
-    <div ng-hide="search" class="list">
+    <div ng-hide="searchFlag" class="list">
       <div class="home-list-item" ng-repeat="guide in guides" ng-click="goTo('guide', {guideId: guide._id})"> 
         <div class="item">
           <h2>{{guide.title}}</h2>
@@ -84,10 +85,13 @@
       </div>
     </div>    
 
-    <div ng-show="search">
-      <button class="button button-full button-positive" ng-click="goToGuide('569436a3df23154845fe5c4c')">
-        Go to db guide
-      </button>
+    <div ng-show="searchFlag" class="list">
+      <a ng-repeat="result in searchResults" class="item item-thumbnail-left" 
+      ng-click="goTo('guide', {guideId: '{{result._id}}'})">
+        <img ng-src="{{result.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
+        <h2>{{result.title}} by {{result.author}}</h2>
+        <p>{{result.description}}</p>
+      </a>
     </div>
     
   </ion-content>

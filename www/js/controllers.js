@@ -91,14 +91,24 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 .controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2, $timeout, ImageService) {
-  $scope.search = false;
+  $scope.searchFlag = false;
   $scope.searchOn = function() {
-    $scope.search = true;
+    $scope.searchFlag = true;
+  };
+  $scope.searchOff = function() {
+    $scope.searchFlag = false;
   };
 
-  $scope.searchOff = function() {
-    $scope.search = false;
-  };
+  $scope.search = function(query) {
+    if (query.trim()) {
+      $http.get(EC2.address + '/api/search/', { params: { "q": query.trim() }}).then(function(result) {
+        console.log(result);
+        $scope.searchResults = result.data;
+      }).catch(function(result) {
+        console.log("search error");
+      });
+    }
+  }
 
   $scope.getGuides = function() {
     $http.get(EC2.address + '/api/g').then(function(result) {
@@ -785,4 +795,15 @@ angular.module('starter.controllers', ['ionic'])
     $scope.modal.hide();
   }
 
+})
+
+.controller('SearchCtrl', function($scope) {
+  $scope.searchResults = [];
+
+  
 });
+
+
+
+
+
