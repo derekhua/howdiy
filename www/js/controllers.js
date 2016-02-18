@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('AppCtrl', function($scope, $rootScope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory, $http, EC2) {
+.controller('AppCtrl', function($scope, $rootScope, $state, $ionicPopup, AuthService, AUTH_EVENTS, $ionicHistory, $ionicLoading, $http, EC2) {
   // if (ionic.Platform.isAndroid()) {
   //   $cordovaStatusbar.styleHex(COLORS.statusbar);
   // }
@@ -30,6 +30,14 @@ angular.module('starter.controllers', ['ionic'])
   $scope.setCurrentUsername = function(name) {
     $scope.username = name;
   };
+
+  $scope.triggerLoader = function () {
+      $ionicLoading.show({
+        template: '<ion-spinner icon="crescent"></ion-spinner>',
+        showBackdrop: false,
+        animation: 'fade-in'
+      });
+  }
 
   $scope.myGoBack = function() {
     $ionicHistory.goBack();
@@ -132,15 +140,19 @@ angular.module('starter.controllers', ['ionic'])
   $scope.doRefresh();
 })
 
-.controller('CreationCtrl', function($scope, $rootScope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService,  $cordovaVibration, $ionicPopup, $http, EC2, GuideTransferService) {
+.controller('CreationCtrl', function($scope, $rootScope, $ionicHistory, $state, $ionicModal, $timeout, $cordovaCamera, ImageService, $ionicLoading, $cordovaVibration, $ionicPopup, $ionicPlatform, $http, EC2, GuideTransferService) {
   $scope.$on('$ionicView.beforeEnter', function (event, viewData) {
     viewData.enableBack = true;
   });
 
-
   $scope.step = 0;
   $scope.finishedGuide = GuideTransferService.getGuideData();
   var showFlag = false;
+
+  $scope.doneLoading = false;
+  if ( $scope.finishedGuide.steps.length !== 0) {
+    $scope.triggerLoader();
+  };
 
   $scope.range = function(min, max, step) {
    step = step || 1;
@@ -151,6 +163,14 @@ angular.module('starter.controllers', ['ionic'])
    return input;
   };
   
+  var loadCount = 0;
+  $scope.hideLoader = function () {
+    if (++loadCount === $scope.finishedGuide.steps.length) {
+      $scope.doneLoading = true;
+      $ionicLoading.hide();
+    }
+  };
+
   $ionicModal.fromTemplateUrl('templates/creation-modal.html', {
     scope: $scope
   }).then(function(stepModal) {
@@ -191,7 +211,18 @@ angular.module('starter.controllers', ['ionic'])
     $scope.imgURI = undefined;
     document.getElementsByClassName('stepDescription')[document.getElementsByClassName('stepDescription').length - 1].value = "";
     $scope.stepModal.hide();
+  };
+
+ var creationBack = function() {
+      $scope.leaveCreation();
   }
+  var deregisterHardBack = $ionicPlatform.registerBackButtonAction(
+    creationBack, 101
+  );
+
+  $scope.$on('$destroy', function() {
+    deregisterHardBack();
+  });
 
   $scope.deleteStep = function(stepNum) {
     $cordovaVibration.vibrate(300);
@@ -242,12 +273,12 @@ angular.module('starter.controllers', ['ionic'])
         type: 'button-positive',
         onTap: function(e) {
           var options = {
-            quality : 75,
+            quality : 100,
             destinationType : Camera.DestinationType.DATA_URL,
             sourceType : Camera.PictureSourceType.CAMERA,
             allowEdit : true,
             encodingType: Camera.EncodingType.JPEG,
-            targetWidth: 350,
+            targetWidth: 400,
             targetHeight: 400,
             popoverOptions: CameraPopoverOptions,
             saveToPhotoAlbum: false
@@ -267,6 +298,8 @@ angular.module('starter.controllers', ['ionic'])
             quality: 100,
             destinationType: Camera.DestinationType.DATA_URL,
             sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+            correctOrientation: true,
+            allowEdit: true,
             targetWidth: 400,
             targetHeight: 400
           };
@@ -344,8 +377,10 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, GuideTransferService, $stateParams) {
+.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, GuideTransferService, $stateParams, $ionicLoading) {
   $scope.profileInfo = {};
+  $scope.doneLoading = false;
+  $scope.triggerLoader();
   if ($stateParams.username === $scope.username || $stateParams.username === undefined) {
     $scope.profileInfo = $rootScope.userInfo;
     $scope.isOwnProfile = true;
@@ -355,6 +390,10 @@ angular.module('starter.controllers', ['ionic'])
       $scope.isOwnProfile = false;   
     });  
   }
+  $scope.onProfileLoad = function () {
+    $scope.doneLoading = true;
+    $ionicLoading.hide();
+  };
 
   $scope.genderValues = [ "Male", "Female", "Other", "Not Specified"];
   $scope.savedThumbnails = [];
@@ -426,6 +465,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
+      $scope.triggerLoader();
       $http.get(EC2.address + '/api/u/' + $scope.profileInfo.username + '/guides', {
         params: { 
           "projection": "title picturePath author description catergory meta",
@@ -436,7 +476,9 @@ angular.module('starter.controllers', ['ionic'])
         submittedLoading = false;
         $scope.showSubmitted = true;
         $scope.$broadcast('scroll.refreshComplete');
-      });
+      }).finally( function(){
+            $ionicLoading.hide();
+        });
     }
   };
 
@@ -446,6 +488,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
+      $scope.triggerLoader();
       $http.get(EC2.address + '/api/u/' + $scope.profileInfo.username + '/guides', {
         params: { 
           "projection": "title picturePath author description catergory meta",
@@ -455,7 +498,9 @@ angular.module('starter.controllers', ['ionic'])
         draftLoading = false;
         $scope.showDrafts = true;
         $scope.$broadcast('scroll.refreshComplete');
-      });
+      }).finally( function(){
+            $ionicLoading.hide();
+        });
     }
   };
 
@@ -465,6 +510,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.showSaved = false;
       $scope.showDrafts = false;
       $scope.showSubmitted = false;
+      $scope.triggerLoader();
       $http.get(EC2.address + '/api/u/' + $scope.profileInfo.username + '/guides', {
         params: { 
           "projection": "title picturePath author description catergory meta",
@@ -474,7 +520,9 @@ angular.module('starter.controllers', ['ionic'])
         savedLoading = false;
         $scope.showSaved = true;
         $scope.$broadcast('scroll.refreshComplete');
-      });
+      }).finally( function(){
+            $ionicLoading.hide();
+        });
     }
   };
 
@@ -592,11 +640,13 @@ angular.module('starter.controllers', ['ionic'])
 .controller('GuideCtrl', function($scope, $rootScope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading, $ionicPopup) {
   $scope.images = [];
   $scope.stepNumber = 1;
+
   $scope.liked = (($rootScope.userInfo.likedGuides.indexOf($stateParams.guideId) != -1) ? true : false);
   console.log($scope.liked);
-
+  $scope.doneLoading = false;
   // Get guide
   $scope.guide = {};
+  $scope.triggerLoader();
   $http.get(EC2.address + '/api/g/' + $stateParams.guideId).then(function successCallback(result) {
     $scope.guide = result.data;
     $ionicSlideBoxDelegate.update();
@@ -609,7 +659,19 @@ angular.module('starter.controllers', ['ionic'])
     }
   }).catch(function errorCallback(err) {
     console.log("getGuides error");
+  }).finally( function(){
+    if ( $scope.images.length === 0 ) {
+      $ionicLoading.hide();
+    } 
   });
+  
+  var loadCount = 0;
+  $scope.hideLoader = function () {
+    if (++loadCount === $scope.images.length) {
+      $scope.doneLoading = true;
+      $ionicLoading.hide();
+    }
+  }
 
   // MODALS
   $ionicModal.fromTemplateUrl('templates/guide-modal.html', {
@@ -783,10 +845,10 @@ angular.module('starter.controllers', ['ionic'])
   }).then(function(modal) {
     $scope.modal = modal;
   });
-
-  $scope.cancelCreation = function() {
-    document.getElementById('title').value ='';
-    $scope.modal.hide();
+   
+  $scope.showModal = function () {
+    $scope.modal.show();
+    document.getElementById('title').value = "How to ";
   }
 
   $scope.goToCreation = function() {
@@ -817,11 +879,4 @@ angular.module('starter.controllers', ['ionic'])
 
 .controller('SearchCtrl', function($scope) {
   $scope.searchResults = [];
-
-  
 });
-
-
-
-
-

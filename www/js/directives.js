@@ -18,6 +18,18 @@ angular.module('starter.directives', ['ionic'])
   }
 })
 
+.directive('imgLoad', function($parse) {
+  return {
+        restrict: 'A',
+        scope: {
+            loadHandler: '&imgLoad' // 'imgLoad'
+        },
+        link: function (scope, element, attr) {
+            element.on('load', scope.loadHandler);
+        }
+    };
+})
+
 .filter('trusted', ['$sce', function ($sce) {
     return function(url) {
         return $sce.trustAsResourceUrl(url);

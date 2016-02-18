@@ -139,20 +139,15 @@
       opacity: 0.5;
   }
 
-  .keyboard-open .tabs {
-    display:none;
-  }
-
-  .keyboard-open .has-tabs {
-    bottom:0;
-  }
-
   .popup-vertical-buttons button {
     min-width: 100%;
     margin-bottom: 5px;
   }
   .popup-vertical-buttons .popup-buttons {
     display: block;
+  }
+  .loading{
+    background-color: rgba(240, 50, 50, 0.0) !important;
   }
 </style>
 
@@ -172,32 +167,32 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+  <ion-content ng-show="doneLoading" scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
    <div style="height: 1px"></div>
 
         <div class="row" ng-repeat="i in range(0, finishedGuide.steps.length)" ng-if="i % 4 === 0">
         <div class="col col-25 thumbnailSquare" ng-if="i < finishedGuide.steps.length" on-hold="deleteStep(i)" ng-click="showStep(i)" type="button">
-            <img ng-src="{{finishedGuide.steps[i].picturePath}}" width="100%" class="crop"/>
+            <img img-load="hideLoader()" ng-src="{{finishedGuide.steps[i].picturePath}}" width="100%" class="crop"/>
         </div>
 
         <div class="col col-1"></div>
         
         <div class="col col-25 thumbnailSquare" ng-if="i + 1 < finishedGuide.steps.length" on-hold="deleteStep(i+1)" ng-click="showStep(i+1)" type="button">
-            <img ng-src="{{finishedGuide.steps[i+1].picturePath}}" width="100%" class="crop"/>
+            <img img-load="hideLoader()" ng-src="{{finishedGuide.steps[i+1].picturePath}}" width="100%" class="crop"/>
             
         </div>
         
         <div class="col col-1"></div>
 
         <div class="col col-25 thumbnailSquare" ng-if="i + 2 < finishedGuide.steps.length" on-hold="deleteStep(i+2)" ng-click="showStep(i+2)" type="button">
-            <img ng-src="{{finishedGuide.steps[i+2].picturePath}}" width="100%" class="crop"/>
+            <img img-load="hideLoader()" ng-src="{{finishedGuide.steps[i+2].picturePath}}" width="100%" class="crop"/>
             
         </div>
 
         <div class="col col-1"></div>
 
         <div class="col col-25 thumbnailSquare" ng-if="i + 3 < finishedGuide.steps.length" on-hold="deleteStep(i+3)" ng-click="showStep(i+3)" type="button">
-            <img ng-src="{{finishedGuide.steps[i+3].picturePath}}" width="100%" class="crop"/>
+            <img img-load="hideLoader()" ng-src="{{finishedGuide.steps[i+3].picturePath}}" width="100%" class="crop"/>
             
         </div>
     </div>

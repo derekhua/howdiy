@@ -189,3 +189,5 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   });
 });
+
+
