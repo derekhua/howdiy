@@ -688,7 +688,7 @@ angular.module('starter.controllers', ['ionic'])
   $scope.shareHandler = function() {
     if ($rootScope.userInfo.sharedGuides.indexOf($scope.guide._id) == -1) {
       var shared = $scope.guide.shares + 1;
-      $rootScope.userInfo.sharedGuides.push($scope.guider._id);
+      $rootScope.userInfo.sharedGuides.push($scope.guide._id);
       $http.post(EC2.address + '/api/u/' + $scope.username, { $push: {"sharedGuides" : $scope.guide._id}});
       $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.shares" : 1}});
     }
