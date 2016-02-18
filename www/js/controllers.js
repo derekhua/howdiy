@@ -430,12 +430,13 @@ angular.module('starter.controllers', ['ionic'])
         params: { 
           "projection": "title picturePath author description catergory meta",
           "type": "submittedGuides"
-        }}).then(function(result) {
-          $scope.submittedThumbnails = result.data;    
-          submittedLoading = false;
-          $scope.showSubmitted = true;
-          $scope.$broadcast('scroll.refreshComplete');
-        });
+      }}).then(function(result) {
+        $scope.submittedThumbnails = result.data;
+        console.log($scope.submittedThumbnails);
+        submittedLoading = false;
+        $scope.showSubmitted = true;
+        $scope.$broadcast('scroll.refreshComplete');
+      });
     }
   };
 
@@ -449,12 +450,12 @@ angular.module('starter.controllers', ['ionic'])
         params: { 
           "projection": "title picturePath author description catergory meta",
           "type": "drafts"
-        }}).then(function(result) {
-          $scope.draftThumbnails = result.data;    
-          draftLoading = false;
-          $scope.showDrafts = true;
-          $scope.$broadcast('scroll.refreshComplete');
-        });
+      }}).then(function(result) {
+        $scope.draftThumbnails = result.data;    
+        draftLoading = false;
+        $scope.showDrafts = true;
+        $scope.$broadcast('scroll.refreshComplete');
+      });
     }
   };
 
@@ -468,12 +469,12 @@ angular.module('starter.controllers', ['ionic'])
         params: { 
           "projection": "title picturePath author description catergory meta",
           "type": "savedGuides"
-        }}).then(function(result) {
-          $scope.savedThumbnails = result.data;    
-          savedLoading = false;
-          $scope.showSaved = true;
-          $scope.$broadcast('scroll.refreshComplete');
-        });
+      }}).then(function(result) {
+        $scope.savedThumbnails = result.data;    
+        savedLoading = false;
+        $scope.showSaved = true;
+        $scope.$broadcast('scroll.refreshComplete');
+      });
     }
   };
 
@@ -517,7 +518,6 @@ angular.module('starter.controllers', ['ionic'])
             targetHeight: 400
           };
           $cordovaCamera.getPicture(options).then(function(imageUri) {
-            console.log('img', imageUri);
             $scope.imgURI = "data:image/jpeg;base64," + imageUri;
             console.log($scope.imgURI);
             $scope.uploadProfilePicture($scope.imgURI);
@@ -547,6 +547,7 @@ angular.module('starter.controllers', ['ionic'])
     });;
 
   }
+
   $scope.editDraft = function(guideId) {
       $http.get(EC2.address + '/api/g/' + guideId).then(function successCallback(result) {
         var guide = result.data;
@@ -556,6 +557,34 @@ angular.module('starter.controllers', ['ionic'])
         console.log("getGuides error");
       });
   };
+
+  $scope.followText = ($rootScope.userInfo.followings.indexOf($stateParams.username) != -1) ? "Unfollow" : "Follow";
+
+  $scope.follow = function(userId) {
+    if ($scope.followText === "Follow") {
+      $scope.followText = "Unfollow";
+      $http.post(EC2.address + '/api/u/' + $rootScope.userInfo.username, {$push : {"followings": $stateParams.username}})
+      .then(function(result) {
+        console.log("Unfollow - self.followings updated");
+      });
+      $http.post(EC2.address + '/api/u/' + $stateParams.username, {$push : {"followers" : $rootScope.userInfo.username}})
+      .then(function(result) {
+        console.log("Unfollow - other user followers updated");
+      });
+    }
+    else {
+      $scope.followText = "Follow";
+      $http.post(EC2.address + '/api/u/' + $rootScope.userInfo.username, {$pull : {"followings": $stateParams.username}})
+      .then(function(result) {
+        console.log("Follow - self.followings updated");
+      });
+      $http.post(EC2.address + '/api/u/' + $stateParams.username, {$pull : {"followers" : $rootScope.userInfo.username}})
+      .then(function(result) {
+        console.log("Follow - other user followers updated")
+      });
+    }
+  };
+
 })
 
 
@@ -563,13 +592,14 @@ angular.module('starter.controllers', ['ionic'])
 .controller('GuideCtrl', function($scope, $rootScope, $ionicSlideBoxDelegate, $http, $stateParams, EC2, $state, $ionicHistory, $ionicModal, $ionicActionSheet, $ionicGesture, $ionicLoading, $ionicPopup) {
   $scope.images = [];
   $scope.stepNumber = 1;
+  $scope.liked = (($rootScope.userInfo.likedGuides.indexOf($stateParams.guideId) != -1) ? true : false);
+  console.log($scope.liked);
 
   // Get guide
   $scope.guide = {};
   $http.get(EC2.address + '/api/g/' + $stateParams.guideId).then(function successCallback(result) {
     $scope.guide = result.data;
     $ionicSlideBoxDelegate.update();
-    $scope.liked = (($scope.guide._id in $rootScope.userInfo.likedGuides) ? true : false);
     for(i = 0; i < $scope.guide.steps.length; ++i) {
       $scope.images.push({
         id: i, 
@@ -648,23 +678,22 @@ angular.module('starter.controllers', ['ionic'])
   // HANDLERS
   $scope.likeHandler = function() {
     if ($scope.liked) {
-      delete $rootScope.userInfo.likedGuides[$scope.guide._id];
       $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : -1}});
+      $http.post(EC2.address + '/api/u/' + $scope.username, { $pull: {"likedGuides" :$scope.guide._id}});
+      $rootScope.userInfo.likedGuides.splice($rootScope.userInfo.likedGuides.indexOf($scope.guide._id), 1);
     } else {
-      $rootScope.userInfo.likedGuides[$scope.guide._id] = "1";
       $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.likes" : 1}});
+      $http.post(EC2.address + '/api/u/' + $scope.username, { $push: {"likedGuides" : $scope.guide._id}});
+      $rootScope.userInfo.likedGuides.push($scope.guide._id);
     }
-    $http.post(EC2.address + '/api/u/' + $scope.username, {"likedGuides" : $rootScope.userInfo.likedGuides});
     $scope.liked = !$scope.liked;
   };
 
   $scope.shareHandler = function() {
-    if (!($scope.guide._id in $rootScope.userInfo.sharedGuides)) {
+    if ($rootScope.userInfo.sharedGuides.indexOf($scope.guide._id) == -1) {
       var shared = $scope.guide.shares + 1;
-      $rootScope.userInfo.sharedGuides[$scope.guide._id] = "1";
-      $http.post(EC2.address + '/api/u/' + $scope.username, {
-        "sharedGuides" : $rootScope.userInfo.sharedGuides
-      });
+      $rootScope.userInfo.sharedGuides.push($scope.guide._id);
+      $http.post(EC2.address + '/api/u/' + $scope.username, { $push: {"sharedGuides" : $scope.guide._id}});
       $http.post(EC2.address + '/api/g/' + $scope.guide._id, {$inc: { "meta.shares" : 1}});
     }
   };
