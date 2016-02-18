@@ -571,7 +571,11 @@ angular.module('starter.controllers', ['ionic'])
     $ionicSlideBoxDelegate.update();
     $scope.liked = (($scope.guide._id in $rootScope.userInfo.likedGuides) ? true : false);
     for(i = 0; i < $scope.guide.steps.length; ++i) {
-      $scope.images.push({id: i, src: $scope.guide.steps[i].picturePath});
+      $scope.images.push({
+        id: i, 
+        src: $scope.guide.steps[i].picturePath, 
+        sub: $scope.guide.steps[i].body,
+      });
     }
   }).catch(function errorCallback(err) {
     console.log("getGuides error");

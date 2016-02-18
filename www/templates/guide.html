@@ -33,19 +33,6 @@
     height: 100vw;
     overflow: hidden;
     position: relative;
-  }
-
-  img.crop {
-    position: absolute;
-    margin: auto; 
-    min-height: 100%;
-    min-width: 100%;
-    /* For the following settings we set 100%, but it can be higher if needed 
-    See the answer's update */
-    left: -100%;
-    right: -100%;
-    top: -100%;
-    bottom: -100%;
   } 
 
   /*override*/
@@ -74,6 +61,21 @@
     border-width: 0px;
     background: none;
   }
+
+  .image-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .image-container img {
+    position: absolute;
+    top: -9999px;
+    bottom: -9999px;
+    left: -9999px;
+    right: -9999px;
+    margin: auto;
+  }
+
 </style>
 
 <ion-view view-title="{{guide.title}}">
@@ -95,30 +97,26 @@
     <div style="height: 1px"></div>
 
     <div class="row" ng-repeat="image in images" ng-if="$index % 4 === 0">
-        <div class="col col-25 thumbnailSquare" ng-if="$index < images.length" ng-click="goToSlide($index)" type="button">
-            <img ng-src="{{images[$index].src}}" width="100%" class="crop"/>
-            
+        <div class="col col-25 thumbnailSquare image-container" ng-if="$index < images.length" ng-click="goToSlide($index)" type="button">
+            <thumbnail class="thumbnail" ng-src="{{images[$index].src | trusted}}"></thumbnail>
         </div>
 
         <div class="col col-1"></div>
         
-        <div class="col col-25 thumbnailSquare" ng-if="$index + 1 < images.length" ng-click="goToSlide($index+1)" type="button">
-            <img ng-src="{{images[$index + 1].src}}" width="100%" class="crop"/>
-            
+        <div class="col col-25 thumbnailSquare image-container" ng-if="$index + 1 < images.length" ng-click="goToSlide($index+1)" type="button">
+            <thumbnail class="thumbnail" ng-src="{{images[$index + 1].src | trusted}}"></thumbnail>
         </div>
         
         <div class="col col-1"></div>
-
-        <div class="col col-25 thumbnailSquare" ng-if="$index + 2 < images.length" ng-click="goToSlide($index+2)" type="button">
-            <img ng-src="{{images[$index + 2].src}}" width="100%" class="crop"/>
-            
+ 
+        <div class="col col-25 thumbnailSquare image-container" ng-if="$index + 2 < images.length" ng-click="goToSlide($index+2)" type="button">
+            <thumbnail class="thumbnail" ng-src="{{images[$index + 2].src | trusted}}"></thumbnail>
         </div>
 
         <div class="col col-1"></div>
 
-        <div class="col col-25 thumbnailSquare" ng-if="$index + 3 < images.length" ng-click="goToSlide($index+3)" type="button">
-            <img ng-src="{{images[$index + 3].src}}" width="100%" class="crop"/>
-            
+        <div class="col col-25 thumbnailSquare image-container" ng-if="$index + 3 < images.length" ng-click="goToSlide($index+3)" type="button">
+            <thumbnail class="thumbnail" ng-src="{{images[$index + 3].src | trusted}}"></thumbnail>
         </div>
     </div>
 
