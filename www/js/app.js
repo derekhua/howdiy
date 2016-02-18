@@ -189,3 +189,15 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   });
 })
+
+.directive('imgLoad', function($parse) {
+  return {
+        restrict: 'A',
+        scope: {
+            loadHandler: '&imgLoad' // 'imgLoad'
+        },
+        link: function (scope, element, attr) {
+            element.on('load', scope.loadHandler);
+        }
+    };
+});

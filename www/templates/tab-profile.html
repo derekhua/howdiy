@@ -9,7 +9,7 @@
     margin-left: 45px;
   }
 
-  span.input-label {
+  span.input-label.gender-label {
     margin-right: -130px;
   }
 
@@ -37,6 +37,9 @@
   .popup-vertical-buttons .popup-buttons {
     display: block;
   }
+  .loading{
+    background-color: rgba(240, 50, 50, 0.0) !important;
+  }
 </style>
 
 <ion-view>
@@ -57,11 +60,11 @@
     <button class="button icon-left ion-log-out button-stable" ng-show="isOwnProfile" ng-click="logout()">Logout</button>
   </ion-nav-buttons>
 
-  <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+  <ion-content ng-show="doneLoading" scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
     <ion-refresher on-refresh="doRefresh()" pulling-icon="ion-beaker" spinner="crescent" class="assertive"></ion-refresher>
 
     <div class="item item-thumbnail-left">
-      <img class="profile-pic" src="{{profileInfo.profilePicture}}" ng-click="isOwnProfile && showProfilePicturePopup()"> 
+      <img class="profile-pic" img-load="onProfileLoad()" src="{{profileInfo.profilePicture}}" ng-click="isOwnProfile && showProfilePicturePopup()"> 
       <div class="profile-right">
         <div class="row"><h2> {{profileInfo.submittedGuides.length}} Guides Submitted</h2></div>
         <div class="row"><button class="button button-small button-stable edit-button" style="float:right" 
@@ -152,7 +155,7 @@
 
         <div class="list">
           <label class="item item-input item-select">
-          <span class="input-label">
+          <span class="input-label gender-label">
             <i class="ion-transgender"></i>
           </span>
           <select name="genderSelect" ng-model="gender" ng-options="v for v in genderValues" ng-change="changeGenderSelectValue(gender)">

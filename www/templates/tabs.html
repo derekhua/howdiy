@@ -82,7 +82,7 @@ navigation history that also transitions its views in and out.
   </ion-tab>
 
   <!-- Create Tab -->
-  <ion-tab title="Create" icon-off="ion-ios-compose-outline" icon-on="ion-ios-compose" ng-click="modal.show()">
+  <ion-tab title="Create" icon-off="ion-ios-compose-outline" icon-on="ion-ios-compose" ng-click="showModal()">
     <ion-nav-view name="creation"></ion-nav-view>
   </ion-tab>
   
@@ -105,17 +105,17 @@ navigation history that also transitions its views in and out.
       <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
         <div>
           <label class="item item-input">
-            <span class="input-label">How to</span>
-            <input type="text" id="title">
+            <span class="input-label">Title:</span>
+            <input type="text" id="title" value="How To ">
           </label>
           <label class="item item-input">
-            <span class="input-label">Category</span>
+            <span class="input-label">Category:</span>
             <input type="text" id="category">
           </label>
         </div>
         <div class="row">
           <div class="col">
-            <button class="button button-block" ng-click="cancelCreation()">Cancel</button>
+            <button class="button button-block" ng-click="modal.hide()">Cancel</button>
           </div>
           <div class="col col-1"></div>
           <div class="col">
