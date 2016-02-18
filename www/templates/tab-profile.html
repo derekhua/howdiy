@@ -68,7 +68,13 @@
         ng-click="editProfileModal.show()"
         ng-show="isOwnProfile">
           Edit Profile
-        </button></div>      
+        </button></div>
+
+        <div class="row"><button class="button button-small button-stable edit-button" style="float:right" 
+        ng-click="follow()"
+        ng-show="!isOwnProfile">
+          {{followText}}
+        </button></div> 
       </div>
     </div>
     
