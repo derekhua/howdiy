@@ -3,7 +3,6 @@
   padding: 0.5px;
 }
 
-
 .fade-in {
   -webkit-transform: scale(0.0);
   transform: scale(0.0);
@@ -23,4 +22,18 @@
 .fade-in.ng-leave, .fade-in > .ng-leave {
   -webkit-transition: all ease-in-out 250ms;
   transition: all ease-in-out 250ms;
+}
+
+ion-tabs.tabs-color-active-positive .tab-item.tab-item-active, ion-tabs.tabs-color-active-positive .tab-item.active, ion-tabs.tabs-color-active-positive .tab-item.activated, .tabs-striped.tabs-stable .tab-item.tab-item-active, .tabs-striped.tabs-stable .tab-item.active, .tabs-striped.tabs-stable .tab-item.activated {
+  padding-bottom: 10px;
+}
+
+
+.tabs {
+  padding-top: 0px !important; 
+  border-top: none !important;
+  border-bottom: none;
+  background-position: top;
+  background-size: 100% 0px !important; 
+  background-repeat: no-repeat;
 }

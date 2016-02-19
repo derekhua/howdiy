@@ -35,6 +35,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
 .config(function($ionicConfigProvider) {
     $ionicConfigProvider.navBar.alignTitle('center');
     $ionicConfigProvider.tabs.position('bottom');
+    $ionicConfigProvider.tabs.style('standard');
 })
 
 .config(function($stateProvider, $urlRouterProvider, $compileProvider) {
