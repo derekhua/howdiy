@@ -437,7 +437,7 @@ angular.module('starter.controllers', ['ionic'])
     });  
   };
 
-  $scope.updateUserInfo = function() {
+  $scope.updateProfileInfo = function() {
     $http.post(EC2.address + '/api/u/' + $rootScope.userInfo.username, {
       "username": $rootScope.userInfo.username,
       "email": document.getElementsByClassName("emailText")[document.getElementsByClassName("emailText").length - 1].value,
@@ -613,22 +613,26 @@ angular.module('starter.controllers', ['ionic'])
       $scope.followText = "Unfollow";
       $http.post(EC2.address + '/api/u/' + $rootScope.userInfo.username, {$push : {"followings": $stateParams.username}})
       .then(function(result) {
-        console.log("Unfollow - self.followings updated");
+        $rootScope.userInfo.followings.push($stateParams.username);
+        console.log("Follow - self.followings updated");
       });
       $http.post(EC2.address + '/api/u/' + $stateParams.username, {$push : {"followers" : $rootScope.userInfo.username}})
       .then(function(result) {
-        console.log("Unfollow - other user followers updated");
+        console.log("Follow - other user followers updated");
       });
     }
     else {
       $scope.followText = "Follow";
       $http.post(EC2.address + '/api/u/' + $rootScope.userInfo.username, {$pull : {"followings": $stateParams.username}})
       .then(function(result) {
-        console.log("Follow - self.followings updated");
+        if ($rootScope.userInfo.followings.indexOf($stateParams.username) !== -1) {
+          $rootScope.userInfo.followings.splice($rootScope.userInfo.followings.indexOf($stateParams.username), 1);
+        }
+        console.log("Unfollow - self.followings updated");
       });
       $http.post(EC2.address + '/api/u/' + $stateParams.username, {$pull : {"followers" : $rootScope.userInfo.username}})
       .then(function(result) {
-        console.log("Follow - other user followers updated")
+        console.log("Unfollow - other user followers updated")
       });
     }
   };
