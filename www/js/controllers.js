@@ -377,9 +377,10 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
-.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, GuideTransferService, $stateParams, $ionicLoading) {
+.controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, GuideTransferService, $stateParams, $ionicLoading, $cordovaVibration) {
   $scope.profileInfo = {};
   $scope.doneLoading = false;
+  $scope.hold = false;
   $scope.triggerLoader();
   if ($stateParams.username === $scope.username || $stateParams.username === undefined) {
     $scope.profileInfo = $rootScope.userInfo;
@@ -468,7 +469,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.triggerLoader();
       $http.get(EC2.address + '/api/u/' + $scope.profileInfo.username + '/guides', {
         params: { 
-          "projection": "title picturePath author description catergory meta",
+          "projection": "title picturePath author description category meta",
           "type": "submittedGuides"
       }}).then(function(result) {
         $scope.submittedThumbnails = result.data;
@@ -524,6 +525,36 @@ angular.module('starter.controllers', ['ionic'])
             $ionicLoading.hide();
         });
     }
+  };
+
+  $scope.deleteGuide = function(index, type, id) {
+    $cordovaVibration.vibrate(300);
+    var myPopup = $ionicPopup.show({
+       title: 'Delete this guide?',
+       scope: $scope,
+       buttons: [
+         { text: 'Cancel',
+            onTap: function(e) {
+              showFlag = false;
+           }
+         },
+         {
+           text: '<b>Delete</b>',
+           type: 'button-positive',
+           onTap: function(e) {
+            console.log(id);
+            $http.post(EC2.address + '/api/g/' + id + "/delete", {username: $rootScope.userInfo.username, guideType: type})
+            .catch(function(err) {
+              console.log(err);
+            });
+            if(type == 'submitted')
+              $scope.submittedThumbnails.splice(index, 1);
+            else
+              $scope.draftThumbnails.splice(index, 1);
+           }
+         },
+       ]
+     });
   };
 
   $scope.showProfilePicturePopup = function() {
