@@ -99,6 +99,7 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 .controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, EC2, $timeout, ImageService) {
+  $scope.guides = [];
   $scope.searchFlag = false;
   $scope.searchOn = function() {
     $scope.searchFlag = true;
@@ -118,19 +119,28 @@ angular.module('starter.controllers', ['ionic'])
     }
   }
 
-  $scope.getGuides = function() {
-    $http.get(EC2.address + '/api/g').then(function(result) {
-      $scope.response = result;
-      $scope.guides = result.data;
-    }).catch(function(result) {
-      console.log("getGuides error");
-    });
+  $scope.loadMore = function() {
+    if (!$scope.searchFlag) {
+      $http.get(EC2.address + '/api/g').then(function(result) {
+        $scope.response = result;
+        $scope.guides = $scope.guides.concat(result.data);
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+        console.log(result.data);
+      }).catch(function(result) {
+        console.log("getGuides error");
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+      });
+    }
   };
+
+  $scope.$on('$stateChangeSuccess', function() {
+    $scope.loadMore();
+  });
 
   $scope.doRefresh = function() {
     console.log('Refreshing!');
     $http.get(EC2.address + '/api/g').then(function(result) {
-      $scope.guides = result.data;
+      // $scope.guides = result.data;
       $scope.$broadcast('scroll.refreshComplete');
     }).catch(function(result) {
       console.log("Refresh error");

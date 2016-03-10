@@ -63,16 +63,16 @@
   <ion-content overflow-scroll="false" >
     <ion-refresher on-refresh="doRefresh()" pulling-icon="ion-beaker" spinner="crescent" class="assertive"></ion-refresher>
 
-    <div class="list card home-card" ng-repeat="guide in guides" ng-hide="searchFlag">
+    <div class="list card home-card" ng-repeat="guide in guides track by $index" ng-hide="searchFlag">
 
         <div class="item item-avatar author-item" ion-affix data-affix-within-parent-with-class="card"
         ng-click="goTo('profile', {username: guide.author})"
         ng-hide="searchFlag">
             <img src="{{guide.steps[0].picturePath}}">
 
-            <h2>{{guide.author}}</h2>
+            <h2>{{guide.title}}</h2>
 
-            <p>{{guide.meta.createDate}}</p>
+            <p>By: {{guide.author}} {{guide.meta.createDate}}</p>
         </div>
 
         <div class="item item-body" ng-click="goTo('guide', {guideId: guide._id})">
@@ -100,6 +100,12 @@
         <p>{{result.description}}</p>
       </a>
     </div>
+
+    <ion-infinite-scroll
+      ng-if="!searchFlag"
+      on-infinite="loadMore()"
+      distance="1%">
+    </ion-infinite-scroll>
     
   </ion-content>
 </ion-view>
