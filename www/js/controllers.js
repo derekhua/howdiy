@@ -235,7 +235,7 @@ angular.module('starter.controllers', ['ionic'])
   });
 
   $scope.deleteStep = function(stepNum) {
-    $cordovaVibration.vibrate(300);
+    //$cordovaVibration.vibrate(300);
     showFlag = true;
     var myPopup = $ionicPopup.show({
        title: 'Delete this step?',
@@ -383,8 +383,14 @@ angular.module('starter.controllers', ['ionic'])
   }
 })
 
-.controller('ActivityCtrl', function($scope) {
-
+.controller('ActivityCtrl', function($rootScope, $scope, $http, EC2) {
+  $http.get(EC2.address + '/api/u/' + $rootScope.userInfo.username, {
+    params: { 
+      "projection": "activityFeed",
+      "type": "activityFeed"
+  }}).then(function(result) {
+    $scope.activityFeed = result.data.activityFeed;
+  });  
 })
 
 .controller('ProfileCtrl', function($scope, $rootScope, $state, $ionicModal, $http, $cordovaCamera, $ionicPopup, ImageService, EC2, AuthService, GuideTransferService, $stateParams, $ionicLoading, $cordovaVibration) {
@@ -538,7 +544,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.deleteGuide = function(index, type, id) {
-    $cordovaVibration.vibrate(300);
+    //$cordovaVibration.vibrate(300);
     var myPopup = $ionicPopup.show({
        title: 'Delete this guide?',
        scope: $scope,
