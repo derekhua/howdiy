@@ -210,10 +210,10 @@
       <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">  
         <div class="list">
           <div class="item item-avatar" ng-repeat="comment in guide.comments">
-            <img src="">
+            <img ng-src="{{bucketURL + 'profilepicture_' + comment.username + '.jpg'}}">
             <h2>{{comment.username}}</h2>
             <p class="comment-body">{{comment.body}}</p>
-            <p>{{comment.date}}</p>
+            <p>{{timeDifference(comment.date)}}</p>
           </div>
         </div>
       </ion-content>

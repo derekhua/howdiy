@@ -161,7 +161,42 @@ angular.module('starter.services', [])
     getGuideData: getGuideData,
   }
 })
-        
+
+.service('TimeService', function() {
+  var timeDifference = function (previous) {
+    var msPerMinute = 60 * 1000;
+    var msPerHour = msPerMinute * 60;
+    var msPerDay = msPerHour * 24;
+
+    var current = Date.now();
+    var elapsed = current - previous;
+
+    if (elapsed < 0) {
+      return 'Just now';
+    }
+    if (elapsed < msPerMinute) {
+      return Math.round(elapsed/1000) + ' seconds ago';   
+    }
+
+    else if (elapsed < msPerHour) {
+      return Math.round(elapsed/msPerMinute) + ' minutes ago';   
+    }
+
+    else if (elapsed < msPerDay ) {
+      return Math.round(elapsed/msPerHour ) + ' hours ago';   
+    }
+
+    else {
+      var time = new Date(previous);
+      return time.toString().substring(4,21);   
+    }
+  };
+
+  return {
+    timeDifference: timeDifference
+  }
+})
+
  // Broadcast a message when returns 401 or 403
 .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
   return {

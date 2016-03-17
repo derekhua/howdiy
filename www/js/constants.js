@@ -14,6 +14,10 @@ angular.module('starter')
   public: 'public_role'
 })
 
+.constant('S3', {
+  bucketURL : 'https://s3.amazonaws.com/howdiy/'
+})
+
 // .constant('COLORS', {
 //   statusbar: '#FF6600'
 // });

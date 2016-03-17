@@ -111,6 +111,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   })
 
   .state('tab.activity', {
+    cache: false,
     url: '/activity',
     views: {
       'tab-activity': {
