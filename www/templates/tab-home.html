@@ -102,7 +102,7 @@
     </div>
 
     <ion-infinite-scroll
-      ng-if="!searchFlag"
+    ng-if="!searchFlag && guideIndex > 0"
       on-infinite="loadMore()"
       distance="1%">
     </ion-infinite-scroll>
