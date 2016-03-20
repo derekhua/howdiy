@@ -825,14 +825,15 @@ angular.module('starter.controllers', ['ionic'])
     $http.post($scope.ec2Address + '/api/g/' + $scope.guide._id, {$push: { 
       "comments": {
         "username": $scope.username, 
-        "body": comment
+        "body": comment,
+        "date": Date.now()
       }
     }}).then(function(result) {
       // Mock update view
       $scope.guide.comments.push({
         "username": $scope.username, 
         "body": comment,
-        "date": "Just now"
+        "date": Date.now()
       });
       var alertPopup = $ionicPopup.alert({
         title: 'Success!',
@@ -867,7 +868,15 @@ angular.module('starter.controllers', ['ionic'])
         } else if (index === 1) {
           $scope.likeHandler();
         } else if (index === 2) {
-          $scope.commentModal.show();
+          $http.get($scope.ec2Address + '/api/g/' + $stateParams.guideId, {
+            params: { 
+              "projection": "comments",
+              "type": "comments"
+          }}).then(function(result) {
+            $scope.guide.comments = result.data.comments;
+            console.log($scope.guide.comments);
+            $scope.commentModal.show();
+          });
         } else if (index === 3) {
           console.log('report');
         }
