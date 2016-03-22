@@ -838,7 +838,6 @@ angular.module('starter.controllers', ['ionic'])
       "comments": {
         "username": $scope.username, 
         "body": comment,
-        "date": Date.now()
       }
     }}).then(function(result) {
       // Mock update view
@@ -886,7 +885,6 @@ angular.module('starter.controllers', ['ionic'])
               "type": "comments"
           }}).then(function(result) {
             $scope.guide.comments = result.data.comments;
-            console.log($scope.guide.comments);
             $scope.commentModal.show();
           });
         } else if (index === 3) {
