@@ -88,7 +88,7 @@
     </div>
     
     <div ng-show="showSubmitted" class="list">
-      <a ng-repeat="thumbnail in submittedThumbnails track by $index" class="item item-thumbnail-left"
+      <a ng-repeat="thumbnail in submittedThumbnails" class="item item-thumbnail-left"
       ng-click="hold ? ( hold = false ) : goTo('guide', {guideId: '{{thumbnail._id}}'})" on-hold="deleteGuide($index, 'submitted', '{{thumbnail._id}}'); hold=true;">
         <img ng-src="{{thumbnail.picturePath}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
@@ -97,7 +97,7 @@
     </div>
 
     <div ng-show="showDrafts" class="list">
-      <div ng-repeat="thumbnail in draftThumbnails track by $index" class="item item-thumbnail-left" ng-click="hold ? ( hold = false ) : editDraft('{{thumbnail._id}}')"
+      <div ng-repeat="thumbnail in draftThumbnails" class="item item-thumbnail-left" ng-click="hold ? ( hold = false ) : editDraft('{{thumbnail._id}}')"
       on-hold="deleteGuide($index, 'draft', '{{thumbnail._id}}'); hold=true;">
         <img ng-src="{{thumbnail.picturePath}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>
@@ -106,7 +106,7 @@
     </div>
 
     <div ng-show="showSaved" class="list">
-      <a ng-repeat="thumbnail in savedThumbnails track by $index" class="item item-thumbnail-left" 
+      <a ng-repeat="thumbnail in savedThumbnails" class="item item-thumbnail-left" 
       ng-click="goTo('guide', {guideId: '{{thumbnail._id}}'})">
         <img ng-src="{{thumbnail.picturePath}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{thumbnail.title}} by {{thumbnail.author}}</h2>

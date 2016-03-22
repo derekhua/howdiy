@@ -517,7 +517,7 @@ angular.module('starter.controllers', ['ionic'])
         $scope.$broadcast('scroll.refreshComplete');
       }).finally( function(){
             $ionicLoading.hide();
-        });
+      });
     }
   };
 
@@ -539,7 +539,7 @@ angular.module('starter.controllers', ['ionic'])
         $scope.$broadcast('scroll.refreshComplete');
       }).finally( function(){
             $ionicLoading.hide();
-        });
+      });
     }
   };
 
@@ -561,12 +561,13 @@ angular.module('starter.controllers', ['ionic'])
         $scope.$broadcast('scroll.refreshComplete');
       }).finally( function(){
             $ionicLoading.hide();
-        });
+      });
     }
   };
 
   $scope.deleteGuide = function(index, type, id) {
     //$cordovaVibration.vibrate(300);
+    console.log($scope.submittedThumbnails);
     var myPopup = $ionicPopup.show({
        title: 'Delete this guide?',
        scope: $scope,

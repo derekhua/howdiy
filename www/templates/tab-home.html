@@ -76,11 +76,11 @@
         </div>
 
         <div class="item item-body" ng-click="goTo('guide', {guideId: guide._id})">
-            <img class="full-image" ng-src="{{guide.steps[0].picturePath}}">
+            <img class="full-image" ng-src="{{guide.picturePath}}">
 
             <div class="item-body-text">
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed porttitor auctor eros, a congue nunc dignissim sit amet. Donec quis eros volutpat, lacinia mauris id, luctus leo. Morbi semper dolor eget quam facilisis lobortis. Suspendisse congue ex nec est hendrerit fringilla. Integer non rhoncus leo.
+                {{guide.description}}
               </p>
 
               <p>
@@ -95,7 +95,7 @@
     <div ng-show="searchFlag" class="list">
       <a ng-repeat="result in searchResults" class="item item-thumbnail-left" 
       ng-click="goTo('guide', {guideId: '{{result._id}}'})">
-        <img ng-src="{{result.image}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
+        <img ng-src="{{result.picturePath}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
         <h2>{{result.title}} by {{result.author}}</h2>
         <p>{{result.description}}</p>
       </a>
