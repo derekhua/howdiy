@@ -67,7 +67,32 @@
     max-width: 0.33vw;
     padding: 0px;
   }
-
+  .full-width {
+    width: 100%;
+    height: 30vw;
+  }
+  div.focusedSquare {
+    width: 100vw;
+    height: 100vw;
+    overflow: hidden;
+    position: relative;
+  }
+  button.icon-large:before {
+      font-size: 300px !important;
+  }
+  .popup-vertical-buttons button {
+    min-width: 100%;
+    margin-bottom: 5px;
+  }
+  .popup-vertical-buttons .popup-buttons {
+    display: block;
+  }
+  div > textarea:focus + span {
+    display: block;
+  }
+  .character-count {
+    display: none;
+  }
 </style>
 <!--
 Create tabs with an icon and label, using the tabs-positive style.
@@ -98,7 +123,7 @@ navigation history that also transitions its views in and out.
 </ion-tabs>
 
 <script id="templates/creation-start-modal.html" type="text/ng-template">
-  <ion-modal-view class="mh-slide smaller-modal" >
+  <ion-modal-view class="mh-slide" >
    <ion-header-bar class="bar bar-header bar-assertive">
       <h1 class="title">Add a title to your new guide!</h1>
     </ion-header-bar>
@@ -112,14 +137,28 @@ navigation history that also transitions its views in and out.
             <span class="input-label">Category:</span>
             <input type="text" id="category">
           </label>
+          <div class="item item-image padding">
+            <textarea class="full-width description"
+                      ng-model="descrip"
+                      ng-keypress="showCount=true" 
+                      ng-trim="false"
+                      maxlength="200"
+                      placeholder="Add your description here!"
+                      id = "description"></textarea>
+            <span ng-if="showCount" class="character-count">{{200-descrip.length}}</span>
+          </div>
+          <div class="item item-image focusedSquare">
+            <img ng-if="imgPicURI !== undefined" src="{{imgPicURI}}" ng-click="pictureOption()" ></img>
+            <button ng-if="imgPicURI === undefined" class="button button-icon ion-camera icon-large" ng-click="pictureOption()" ></button>
+          </div>
         </div>
         <div class="row">
           <div class="col">
-            <button class="button button-block" ng-click="modal.hide()">Cancel</button>
+            <button class="button button-block" ng-click="hideModal(); showCount=false;">Cancel</button>
           </div>
           <div class="col col-1"></div>
           <div class="col">
-            <button class="button button-block" ng-click="goToCreation()">Accept</button>
+            <button class="button button-block" ng-click="goToCreation(); showCount=false;">Accept</button>
           </div>
         </div>
       </ion-content>

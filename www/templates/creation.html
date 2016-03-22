@@ -149,6 +149,16 @@
   .loading{
     background-color: rgba(240, 50, 50, 0.0) !important;
   }
+  .full-width {
+    width: 100%;
+    height: 30vw;
+  }  
+  div > textarea:focus .character-count {
+    display: block;
+  }
+  .character-count {
+    display: none;
+  }
 </style>
 
 <ion-view>
@@ -158,7 +168,7 @@
     </button>
   </ion-nav-buttons>
   
-  <ion-nav-title ng-click="titleModal.show()">
+  <ion-nav-title ng-click="showTitleEdit()">
     {{finishedGuide.title}}
   </ion-nav-title>
   <ion-nav-buttons side="secondary">
@@ -167,7 +177,7 @@
     </button>
   </ion-nav-buttons>
 
-  <ion-content ng-show="doneLoading" scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
+  <ion-content  scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
    <div style="height: 1px"></div>
 
         <div class="row" ng-repeat="i in range(0, finishedGuide.steps.length)" ng-if="i % 4 === 0">
@@ -195,13 +205,12 @@
             <img img-load="hideLoader()" ng-src="{{finishedGuide.steps[i+3].picturePath}}" width="100%" class="crop"/>
             
         </div>
+        {{finishedGuide.category}}
     </div>
-
   </ion-content>
     <button class="button button-assertive button-float" ng-click="showStep(finishedGuide.steps.length)">
         <i class="icon ion-plus"></i>
     </button>
-
   <script id="templates/creation-modal.html" type="text/ng-template">
     <ion-modal-view>
       <ion-header-bar class="bar bar-header bar-assertive">
@@ -230,7 +239,7 @@
   </script>
 
   <script id="templates/title-modal.html" type="text/ng-template">
-  <ion-modal-view class="mh-slide smaller-modal" >
+  <ion-modal-view class="mh-slide" >
    <ion-header-bar class="bar bar-header bar-assertive">
       <h1 class="title">Add a title to your new guide!</h1>
     </ion-header-bar>
@@ -238,20 +247,34 @@
         <div>
           <label class="item item-input">
             <span class="input-label">How to</span>
-            <input type="text" id="guideTitle" value="{{finishedGuide.title}}">
+            <input type="text" class="guideTitle" value="{{finishedGuide.title}}">
           </label>
           <label class="item item-input">
             <span class="input-label">Category</span>
-            <input type="text" id="guideCategory" value="{{finishedGuide.category}}">
+            <input type="text" class="guideCategory" value="{{finishedGuide.category}}">
           </label>
+          <div class="item item-image padding">
+          <textarea class="full-width description"
+                    ng-model="descrip"                      
+                    ng-keypress="showCount=true" 
+                    ng-trim="false"
+                    ng-trim="false"
+                    maxlength="200" 
+                    placeholder="Add your description here!"></textarea>
+          <span ng-if="showCount" class="character-count">{{200-descrip.length}}</span>
+          </div>
+          <div class="item item-image focusedSquare">
+            <img ng-if="finishedGuide.picturePath !== undefined && imgURI === undefined" src="{{finishedGuide.picturePath}}" ng-click="pictureOption()" ></img>
+            <img ng-if="finishedGuide.picturePath !== undefined && imgURI !== undefined" src="{{imgURI}}" ng-click="pictureOption()" ></img>
+            <button ng-if="finishedGuide.picturePath === undefined && imgURI === undefined" class="button button-icon ion-camera icon-large" ng-click="pictureOption()" ></button>
         </div>
         <div class="row">
           <div class="col">
-            <button class="button button-block" ng-click="changeCancel()">Cancel</button>
+            <button class="button button-block" ng-click="changeCancel(); showCount=false;">Cancel</button>
           </div>
           <div class="col col-1"></div>
           <div class="col">
-            <button class="button button-block" ng-click="changeAccept()">Accept</button>
+            <button class="button button-block" ng-click="changeAccept(); showCount=false;">Accept</button>
           </div>
         </div>
       </ion-content>

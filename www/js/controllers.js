@@ -173,6 +173,8 @@ angular.module('starter.controllers', ['ionic'])
     $scope.triggerLoader();
   };
 
+  $scope.descrip = $scope.finishedGuide.description;
+  $scope.showCount = false;
   $scope.range = function(min, max, step) {
    step = step || 1;
    var input = [];
@@ -202,9 +204,19 @@ angular.module('starter.controllers', ['ionic'])
     $scope.titleModal = titleModal;
   });
 
+  $scope.showTitleEdit = function() {
+    $scope.titleModal.show();
+    document.getElementsByClassName('description')[document.getElementsByClassName('description').length - 1].value = $scope.finishedGuide.description;
+  };
+
   $scope.changeAccept = function() {
-    $scope.finishedGuide.title = document.getElementById('guideTitle').value;
-    $scope.finishedGuide.category = document.getElementById('guideCategory').value;
+    $scope.finishedGuide.title = document.getElementsByClassName('guideTitle')[document.getElementsByClassName('guideTitle').length - 1].value;
+    $scope.finishedGuide.category = document.getElementsByClassName('guideCategory')[document.getElementsByClassName('guideCategory').length - 1].value
+    if ($scope.imgURI !== undefined ) {
+      $scope.finishedGuide.picturePath = $scope.imgURI;
+    }
+    $scope.finishedGuide.description = document.getElementsByClassName('description')[document.getElementsByClassName('description').length - 1].value;
+    $scope.imgURI = undefined;
     $scope.titleModal.hide();
   };
 
@@ -909,24 +921,88 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('TabsCtrl', function($scope, $state, $ionicModal, AuthService, GuideTransferService) {
+.controller('TabsCtrl', function($scope, $state, $ionicModal, AuthService, GuideTransferService, $cordovaCamera, ImageService, $ionicPopup) {
   $ionicModal.fromTemplateUrl('templates/creation-start-modal.html', {
     scope: $scope
   }).then(function(modal) {
     $scope.modal = modal;
   });
-   
+
+  $scope.showCount = false;
+
   $scope.showModal = function () {
     $scope.modal.show();
+    $scope.imgPicURI = undefined;
+    document.getElementById('category').value ='';
+    document.getElementById("description").value = '';
     document.getElementById('title').value = "How to ";
   }
+  $scope.hideModal = function() {
+    $scope.modal.hide();
+  }
+  $scope.pictureOption = function() {
+      var myPopup = $ionicPopup.show({
+        title: 'Upload or take a picture!',
+        scope: $scope,
+        cssClass: "popup-vertical-buttons",
+        buttons: [{ 
+          text: 'Take Picture',
+          type: 'button-positive',
+          onTap: function(e) {
+            var options = {
+              quality : 100,
+              destinationType : Camera.DestinationType.DATA_URL,
+              sourceType : Camera.PictureSourceType.CAMERA,
+              allowEdit : true,
+              encodingType: Camera.EncodingType.JPEG,
+              targetWidth: 400,
+              targetHeight: 400,
+              popoverOptions: CameraPopoverOptions,
+              saveToPhotoAlbum: false
+            };
+            $cordovaCamera.getPicture(options).then(function(imageData) {
+              $scope.imgPicURI = "data:image/jpeg;base64," + imageData;
+            }).catch(function(err) {
+              console.log(err);
+            });
+          }
+        },
+        {
+          text: 'Upload',
+          type: 'button-positive',
+          onTap: function(e) {
+            var options = {
+              quality: 100,
+              destinationType: Camera.DestinationType.DATA_URL,
+              sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+              correctOrientation: true,
+              allowEdit: true,
+              targetWidth: 400,
+              targetHeight: 400
+            };
+            $cordovaCamera.getPicture(options).then(function(imageUri) {
+              console.log('img', imageUri);
+              $scope.imgPicURI = "data:image/jpeg;base64," + imageUri;
+            }).catch(function(err) {
+              // error
+            });
+          }
+        },
+        { 
+          text: 'Cancel',
+          onTap: function(e) {
+            showFlag = false;
+          }
+        }],
+      });
+    }
 
   $scope.goToCreation = function() {
     var guideSkeleton = {
       "draft": true,
       "id": "",
       "title": document.getElementById('title').value,
-      "picturePath": "",
+      "picturePath": $scope.imgPicURI,
       "author": $scope.username,
       "category": document.getElementById('category').value,
       "meta": {
@@ -936,13 +1012,12 @@ angular.module('starter.controllers', ['ionic'])
       },
       "comments": [],
       "steps": [],
-      "description": ""
+      "description": document.getElementById("description").value
     };
     GuideTransferService.putGuideData(guideSkeleton);
     $state.go('creation');
-    document.getElementById('title').value ='';
-    document.getElementById('category').value ='';
     $scope.modal.hide();
+    document.getElementById('title').value ='';
   }
 
 })
