@@ -38,7 +38,7 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     $ionicConfigProvider.tabs.style('standard');
 })
 
-.config(function($stateProvider, $urlRouterProvider, $compileProvider) {
+.config(function($stateProvider, $urlRouterProvider, $compileProvider, TOKEN_KEY) {
 
   // Ionic uses AngularUI Router which uses the concept of states
   // Learn more here: https://github.com/angular-ui/ui-router
@@ -156,9 +156,13 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   $urlRouterProvider.otherwise(function ($injector, $location) {
     var $state = $injector.get("$state");
     // If seen intro already
-    if (window.localStorage['intro']) {
+    if (window.localStorage.getItem(TOKEN_KEY.name)) {
+      $state.go("tab.home");
+    }
+    else if (window.localStorage['intro']) {
       $state.go("login");
-    } else {
+    } 
+    else {
       $state.go("intro");
       // Set intro to true
       window.localStorage['intro'] = true;
@@ -166,8 +170,13 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   });
 })
 
-.run(function ($rootScope, $state, AuthService, AUTH_EVENTS) {
+.run(function ($rootScope, $state, AuthService, AUTH_EVENTS, TOKEN_KEY) {
   $rootScope.$on('$stateChangeStart', function (event, next, nextParams, fromState) {
+    if (window.localStorage.getItem(TOKEN_KEY.name) && next.name === 'login') {
+      console.log("You are attempting to access the login page while a token already exists");
+      $state.go("tab.home");
+    }
+
     // Authorization
     if ('data' in next && 'authorizedRoles' in next.data) {
       var authorizedRoles = next.data.authorizedRoles;

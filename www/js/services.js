@@ -1,7 +1,7 @@
 angular.module('starter.services', [])
 
-.service('AuthService', function($q, $http, USER_ROLES, EC2) {
-  var LOCAL_TOKEN_KEY = 'yourTokenKey';
+.service('AuthService', function($q, $http, USER_ROLES, EC2, TOKEN_KEY) {
+  var LOCAL_TOKEN_KEY = TOKEN_KEY.name;
   var username = '';
   var isAuthenticated = false;
   var role = '';
