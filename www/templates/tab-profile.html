@@ -40,6 +40,10 @@
   .loading{
     background-color: rgba(240, 50, 50, 0.0) !important;
   }
+
+  .edit-inputs {
+    padding: 10px;
+  }
 </style>
 
 <ion-view>
@@ -127,43 +131,48 @@
           <i class="icon ion-checkmark"></i>
         </button>
       </ion-header-bar>
+
+
       <ion-content class="">
-        <label class="item item-input">
-          <i class="ion-android-person"></i>
-          <input type="text" ng-readonly="true" value="{{username}}">
-        </label>
-
-        <label class="item item-input">
-          <i class="ion-paper-airplane"></i>
-          <input class="websiteText" type="text" placeholder="Website URL" ng-readonly="false" value="{{profileInfo.website}}">
-        </label>
-
-        <label class="item item-input">
-          <i class="ion-quote"></i>
-          <textarea class="bioText" placeholder="Bio" maxlength="160">{{profileInfo.bio}}</textarea>
-        </label>
-
-        <br><b> Private Information </b>
-        <label class="item item-input">
-          <i class="ion-email"></i>
-          <input class="emailText" type="email" placeholder="Address" ng-readonly="false" value="{{profileInfo.email}}">
-        </label>
-
-        <label class="item item-input">
-          <i class="ion-android-phone-portrait"></i> 
-          <input class="phoneText" type="tel" placeholder="Add Phone Number" ng-readonly="false" value="{{profileInfo.phone}}">
-        </label>
-
+        
         <div class="list">
-          <label class="item item-input item-select">
-          <span class="input-label gender-label">
-            <i class="ion-transgender"></i>
-          </span>
-          <select name="genderSelect" ng-model="gender" ng-options="v for v in genderValues" ng-change="changeGenderSelectValue(gender)">
-          </select>
+          <label class="item item-input">
+            <i class="icon ion-android-person placeholder-icon"></i>
+            <input type="text" placeholder="Username" value="{{username}}">
           </label>
-        </div>
 
+          <label class="item item-input">
+            <i class="icon ion-paper-airplane placeholder-icon"></i>
+            <input type="text" placeholder="Website URL" ng-readonly="false" value="{{profileInfo.website}}">
+          </label>
+         
+          <label class="item item-input">
+            <i class="icon ion-quote placeholder-icon"></i>
+            <textarea placeholder="Bio" maxlength="160"{{profileInfo.bio}}></textarea>
+          </label>
+         
+
+          <label class="item item-input">
+            <i class="icon ion-email placeholder-icon"></i>
+            <input type="email" placeholder="Address" ng-readonly="false" value="{{profileInfo.email}}">
+          </label>
+         
+          <label class="item item-input">
+            <i class="icon ion-android-phone-portrait placeholder-icon"></i>
+            <input type="text" type="tel" placeholder="Add Phone Number" ng-readonly="false" value="{{profileInfo.phone}}">
+          </label>
+          
+          <div class="list">
+            <label class="item item-input item-select">
+            <span class="input-label gender-label">
+              <i class="ion-transgender"></i>
+            </span>
+            <select name="genderSelect" ng-model="gender" ng-options="v for v in genderValues" ng-change="changeGenderSelectValue(gender)">
+            </select>
+            </label>
+          </div>
+  
+        </div>  
       </ion-content>
     </ion-modal-view>
   </script>

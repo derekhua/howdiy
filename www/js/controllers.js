@@ -933,8 +933,8 @@ angular.module('starter.controllers', ['ionic'])
     $scope.modal.show();
     $scope.imgPicURI = undefined;
     document.getElementById('category').value ='';
-    document.getElementById("description").value = '';
-    document.getElementById('title').value = "How to ";
+    document.getElementById('description').value = '';
+    document.getElementById('title').value = '';
   }
   $scope.hideModal = function() {
     $scope.modal.hide();
@@ -997,6 +997,16 @@ angular.module('starter.controllers', ['ionic'])
     }
 
   $scope.goToCreation = function() {
+    // Check fields
+    if (!document.getElementById('title').value || 
+        !document.getElementById('category').value ||
+        !document.getElementById('description').value) {
+      var alertPopup = $ionicPopup.alert({
+        title: 'Fields Empty!',
+        template: 'Please fill out the empty fields.'
+      });
+      return;
+    }
     var guideSkeleton = {
       "draft": true,
       "id": "",

@@ -159,6 +159,11 @@
   .character-count {
     display: none;
   }
+
+  .add-button {
+    min-width: 52px;
+    min-height: 52px;
+  }
 </style>
 
 <ion-view>
@@ -207,7 +212,7 @@
         </div>
     </div>
   </ion-content>
-    <button class="button button-assertive button-float" ng-click="showStep(finishedGuide.steps.length)">
+    <button class="button button-assertive button-float add-button" ng-click="showStep(finishedGuide.steps.length)">
         <i class="icon ion-plus"></i>
     </button>
   <script id="templates/creation-modal.html" type="text/ng-template">
