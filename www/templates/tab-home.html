@@ -94,9 +94,11 @@
 
     <div ng-show="searchFlag" class="list">
       <a ng-repeat="result in searchResults" class="item item-thumbnail-left" 
-      ng-click="goTo('guide', {guideId: '{{result._id}}'})">
-        <img ng-src="{{result.picturePath}}" alt="test" title="test" width="100%" class="thumbnailPic"/>
-        <h2>{{result.title}} by {{result.author}}</h2>
+        ng-click="(result.title && goTo('guide', {guideId: '{{result._id}}'})) || 
+                  (result.username && goTo('profile', {username: '{{result.username}}'}))">
+        <img ng-src="{{result.picturePath || result.profilePicture}}" alt="https://d30y9cdsu7xlg0.cloudfront.net/png/275465-200.png" title="thumbnail" width="100%" class="thumbnailPic"/>
+        <h2>{{result.title || result.username}}</h2>
+        <p>{{result.author}}</p>
         <p>{{result.description}}</p>
       </a>
     </div>
