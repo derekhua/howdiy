@@ -141,16 +141,13 @@ angular.module('starter.controllers', ['ionic'])
     }
   };
 
-  $scope.$on('$stateChangeSuccess', function() {
-    $scope.loadMore();
-  });
-
   $scope.doRefresh = function() {
     console.log('Refreshing!');
     $http.post($scope.ec2Address + '/api/u/' + $scope.username + '/updateNewsFeed').then(function(result) {
       $scope.guides = [];
       $scope.guideIndex = result.data;
       $scope.$broadcast('scroll.refreshComplete');
+      $scope.loadMore();
     }).catch(function(result) {
       console.log("Refresh error");
       $scope.$broadcast('scroll.refreshComplete');
