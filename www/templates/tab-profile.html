@@ -143,23 +143,23 @@
 
           <label class="item item-input">
             <i class="icon ion-paper-airplane placeholder-icon"></i>
-            <input type="text" placeholder="Website URL" ng-readonly="false" value="{{profileInfo.website}}">
+            <input type="text" class="websiteText" placeholder="Website URL" ng-readonly="false" value="{{profileInfo.website}}">
           </label>
          
           <label class="item item-input">
             <i class="icon ion-quote placeholder-icon"></i>
-            <textarea placeholder="Bio" maxlength="160"{{profileInfo.bio}}></textarea>
+            <textarea placeholder="Bio" class="bioText" maxlength="160">{{profileInfo.bio}}</textarea>
           </label>
          
 
           <label class="item item-input">
             <i class="icon ion-email placeholder-icon"></i>
-            <input type="email" placeholder="Address" ng-readonly="false" value="{{profileInfo.email}}">
+            <input type="email" class="emailText"placeholder="Address" ng-readonly="false" value="{{profileInfo.email}}">
           </label>
          
           <label class="item item-input">
             <i class="icon ion-android-phone-portrait placeholder-icon"></i>
-            <input type="text" type="tel" placeholder="Add Phone Number" ng-readonly="false" value="{{profileInfo.phone}}">
+            <input type="text" type="tel" class="phoneText" placeholder="Add Phone Number" ng-readonly="false" value="{{profileInfo.phone}}">
           </label>
           
           <div class="list">
