@@ -6,7 +6,7 @@
 
   <ion-content scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">  
     <div class="list">
-      <div class="item item-avatar" ng-repeat="activity in activityFeed">
+      <div class="item item-avatar" ng-repeat="activity in activityFeed" ng-click="goTo('guide', {guideId: '{{activity.guideId}}'})">
         <img src="{{activity.image}}">
         <h2>{{activity.userId}}</h2>
         <p class="body">{{activity.activityInfo}}</p>

@@ -48,6 +48,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.goTo = function(next, options) {
+    console.log(options);
     var currentSplitState = $state.current.name.split('.');
     $state.go(currentSplitState[0] + '.' + currentSplitState[1] + '.' + next, options);
   };
@@ -716,13 +717,13 @@ angular.module('starter.controllers', ['ionic'])
   $scope.stepNumber = 1;
 
   $scope.liked = (($rootScope.userInfo.likedGuides.indexOf($stateParams.guideId) != -1) ? true : false);
-  console.log($scope.liked);
   $scope.doneLoading = false;
   // Get guide
   $scope.guide = {};
   $scope.triggerLoader();
   $http.get($scope.ec2Address + '/api/g/' + $stateParams.guideId).then(function successCallback(result) {
     $scope.guide = result.data;
+    console.log($scope.guide.title);
     $ionicSlideBoxDelegate.update();
     for(i = 0; i < $scope.guide.steps.length; ++i) {
       $scope.images.push({

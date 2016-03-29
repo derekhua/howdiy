@@ -102,8 +102,12 @@
 
 </style>
 
-<ion-view view-title="{{guide.title}}">
+<ion-view>
   
+  <ion-nav-title>
+    {{guide.title}}
+  </ion-nav-title>
+
   <ion-nav-buttons side="left">
    <button class="button button-clear arrow-back-button" ng-click="myGoBack()">
       <i class="icon ion-arrow-left-c"></i>
@@ -157,7 +161,7 @@
         <h1 class="title">Step {{stepNumber}}</h1>
       </ion-header-bar>
 
-      <ion-content class="guide-step" crollbar-x="false" scrollbar-y="false" overflow-scroll="false">  
+      <ion-content class="guide-step" scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">  
         <ion-slide-box on-slide-changed="slideHasChanged($index)" show-pager="false" >
           <ion-slide ng-repeat="step in guide.steps" scrollbar-x="false" scrollbar-y="false" overflow-scroll="false">
             <div overflow-scroll="true">

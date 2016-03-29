@@ -121,6 +121,27 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
     }
   })
 
+  .state('tab.activity.guide', {
+    cache: false,
+    url: '/guide/:guideId',
+    views: {
+      'tab-activity@tab': {
+        templateUrl: 'templates/guide.html',
+        controller: 'GuideCtrl'
+      }
+    }
+  })
+
+  .state('tab.activity.profile', {
+    url: '/profile/:username',
+    views: {
+      'tab-activity@tab': {
+        templateUrl: 'templates/tab-profile.html',
+        controller: 'ProfileCtrl'
+      }
+    }
+  })
+
   .state('tab.profile', {
     cache: false,
     url: '/profile',
