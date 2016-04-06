@@ -34,19 +34,23 @@
     padding: 0px 16px 16px;
   }
 
+  .categoriesDropdown {
+    width: 100vw;
+    left: 0px !important;
+  }
 </style>
 
 <ion-view>
   
   <ion-nav-buttons side="left">
-    <button class="button button-clear" ng-click="searchOff()">
+    <button class="button button-clear" ng-click="!searchFlag && openPopover($event) || searchFlag && searchOff()">
       <i ng-class="searchFlag ? 'icon ion-arrow-left-c' : 'icon ion-erlenmeyer-flask light'"></i>
     </button> 
   </ion-nav-buttons>
 
   <ion-nav-title class="search-bar">
     <div class="bar item-input-inset-opaque search-bar">
-      <label class="item-input-wrapper-opaque"  ng-click="searchOn()" style="background-color: rgb(90, 31, 22);">
+      <label class="item-input-wrapper-opaque"  ng-click="!searchFlag && searchOn()" style="background-color: rgb(90, 31, 22);">
         <i class="icon ion-ios-search-strong" style="color: #DDD"></i>
         <input type="search" placeholder="Howdiy?" style="color: #DDD;"
         ng-model="query" ng-keyup="search(query)"/>
@@ -111,3 +115,18 @@
     
   </ion-content>
 </ion-view>
+
+
+<script id="my-popover.html" type="text/ng-template">
+  <ion-popover-view class="categoriesDropdown">
+    <ion-header-bar>
+      <h1 class="title"> Categories </h1>
+    </ion-header-bar>
+    <ion-content>
+       <a ng-repeat="result in categories" class="item" 
+        ng-click="">
+        <h2>{{result.name}}</h2>
+      </a>
+    </ion-content>
+  </ion-popover-view>
+</script>

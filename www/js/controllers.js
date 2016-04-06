@@ -102,7 +102,8 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, $timeout, ImageService) {
+.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, $timeout, ImageService, $ionicPopover) {
+  $scope.categories = [{name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}];
   $scope.guides = [];
   $scope.guideIndex = -1;
   $scope.searchFlag = false;
@@ -123,6 +124,24 @@ angular.module('starter.controllers', ['ionic'])
       });
     }
   }
+
+  $ionicPopover.fromTemplateUrl('my-popover.html', {
+    scope: $scope
+  }).then(function(popover) {
+    $scope.popover = popover;
+  });
+
+  $scope.openPopover = function($event) {
+    $scope.popover.show($event);
+  };
+  $scope.closePopover = function() {
+    $scope.popover.hide();
+  };
+  
+  // Cleanup the popover when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.popover.remove();
+  });
 
   $scope.loadMore = function() {
     if (!$scope.searchFlag && $scope.guideIndex > 0) {
