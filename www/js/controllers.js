@@ -102,8 +102,9 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, $timeout, ImageService, $ionicPopover) {
+.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, $timeout, ImageService, $ionicPopover, $ionicActionSheet) {
   $scope.categories = [{name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}];
+  $scope.cardView = true;
   $scope.guides = [];
   $scope.guideIndex = -1;
   $scope.searchFlag = false;
@@ -143,6 +144,30 @@ angular.module('starter.controllers', ['ionic'])
     $scope.popover.remove();
   });
 
+  $scope.showActionsheet = function() {
+    var cog = $ionicActionSheet.show({
+      buttons: [
+        { text: (($scope.cardView) ? '<i ng-hide="liked" class="icon ion-navicon" style="color: #E9523B;"></i> Switch to compact view' : 
+                                 '<i class="icon ion-card" style="color: #E9523B;"></i> Switch to card view')}
+      ],
+      buttonClicked: function(index) {
+        if (index === 0) {
+          $scope.cardView = !$scope.cardView;
+        } 
+        console.log('BUTTON CLICKED', index);
+        return true;
+      },
+      destructiveButtonClicked: function() {
+        console.log('DESTRUCT');
+        return true;
+      }
+    });
+
+    $timeout(function() {
+     cog();
+   }, 2000);
+  };
+
   $scope.loadMore = function() {
     if (!$scope.searchFlag && $scope.guideIndex > 0) {
       $http.get($scope.ec2Address + '/api/u/' + $scope.username + '/feed', 
@@ -166,7 +191,7 @@ angular.module('starter.controllers', ['ionic'])
       $scope.guides = [];
       $scope.guideIndex = result.data;
       $scope.$broadcast('scroll.refreshComplete');
-      $scope.loadMore();
+      $scope.loadMore();      
     }).catch(function(result) {
       console.log("Refresh error");
       $scope.$broadcast('scroll.refreshComplete');

@@ -38,6 +38,10 @@
     width: 100vw;
     left: 0px !important;
   }
+
+  .item-thumbnail-left, .item-thumbnail-left .item-content {
+    border-bottom: 0px;
+  }
 </style>
 
 <ion-view>
@@ -59,7 +63,7 @@
   </ion-nav-title>
   
   <ion-nav-buttons side="right">
-    <button class="button button-clear" ng-click="searchOff()">
+    <button class="button button-clear" ng-click="showActionsheet()">
       <i class="icon ion-ios-gear"></i>
     </button> 
   </ion-nav-buttons>
@@ -67,19 +71,16 @@
   <ion-content overflow-scroll="false" >
     <ion-refresher on-refresh="doRefresh()" pulling-icon="ion-beaker" spinner="crescent" class="assertive"></ion-refresher>
 
-    <div class="list card home-card" ng-repeat="guide in guides track by $index" ng-hide="searchFlag">
-
+    <div ng-if="cardView" ng-hide="searchFlag" class="list card home-card" ng-repeat="guide in guides">
         <div class="item item-avatar author-item" ion-affix data-affix-within-parent-with-class="card"
         ng-click="goTo('profile', {username: guide.author})"
         ng-hide="searchFlag">
             <img src="{{bucketURL + 'profilepicture_' + guide.author + '.jpg'}}">
-
             <h2>{{guide.title}}</h2>
-
-            <p>By: {{guide.author}} {{timeDifference(guide.meta.createDate)}}</p>
+            <p>{{guide.category}} &middot {{guide.author}} &middot {{timeDifference(guide.meta.createDate)}}</p>
         </div>
 
-        <div class="item item-body" ng-click="goTo('guide', {guideId: guide._id})">
+        <div ng-show="cardView" class="item item-body" ng-click="goTo('guide', {guideId: guide._id})">
             <img class="full-image" ng-src="{{guide.picturePath}}">
 
             <div class="item-body-text">
@@ -88,11 +89,28 @@
               </p>
 
               <p>
-                  <a href="#" class="subdued">{{guide.meta.likes}} Like</a>
-                  <a href="#" class="subdued">{{guide.comments.length}} Comments</a>
+                <a href="#" class="subdued" style="left:0px; padding-left: 16px;">{{guide.meta.likes}} Like</a>
+                <a href="#" class="subdued" style="float: right; padding-right: 16px;">{{guide.comments.length}} Comments</a>
               </p>
             </div>
         </div>
+    </div>
+
+    <div ng-show="!cardView" ng-hide="searchFlag" class="list" >
+      <div ng-show="!cardView" ng-repeat="guide in guides" >
+        <a class="item item-thumbnail-left" 
+          ng-click="goTo('guide', {guideId: '{{guide._id}}'})">
+          <img ng-src="{{guide.picturePath}}" alt="https://d30y9cdsu7xlg0.cloudfront.net/png/275465-200.png" title="thumbnail" width="100%" class="thumbnailPic" />
+          <p>{{guide.category}} &middot {{guide.author}} &middot {{timeDifference(guide.meta.createDate)}}</p>
+          <h2>{{guide.title}}</h2>
+          
+          <p>{{guide.description}}</p>
+        </a>
+        <p>
+          <a href="#" class="subdued" style="padding-left: 16px;">{{guide.meta.likes}} Like</a>
+          <a href="#" class="subdued" style="float: right; padding-right: 16px;">{{guide.comments.length}} Comments</a>
+        </p>
+      </div>
     </div>
 
 
@@ -102,7 +120,7 @@
                   (result.username && goTo('profile', {username: '{{result.username}}'}))">
         <img ng-src="{{result.picturePath || result.profilePicture}}" alt="https://d30y9cdsu7xlg0.cloudfront.net/png/275465-200.png" title="thumbnail" width="100%" class="thumbnailPic"/>
         <h2>{{result.title || result.username}}</h2>
-        <p>{{result.author}}</p>
+        <p>By: {{result.author}}</p>
         <p>{{result.description}}</p>
       </a>
     </div>
