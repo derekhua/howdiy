@@ -203,7 +203,7 @@
   <!-- Comment Modal -->
   <script id="templates/comment-modal.html" type="text/ng-template" >
     <ion-modal-view>
-      
+
       <ion-header-bar class="bar bar-header bar-assertive">
         <button class="button button-clear arrow-back-button" ng-click="commentModal.hide()">
           <i class="icon ion-arrow-left-c"></i>
@@ -222,19 +222,18 @@
         </div>
       </ion-content>
 
-      <ion-footer-bar keyboard-attach class="bar bar-footer bar-stable">
-        <div class="item item-input-inset comment-input">
-          <label class="item-input-wrapper">
+      <ion-footer-bar align-title="left" keyboard-attach class="bar bar-footer bar-stable">
+        <div class="item item-input-inset comment-input" style="padding-right: 0px; margin-right: 10px;">
+          <label class="item-input-wrapper" footerlabel>
             <i class="icon ion-edit placeholder-icon"></i>
             <input type="text" placeholder="Write a comment..." ng-model="commentInput">
           </label>
         </div>
 
-        <button class="button button-clear button-primary" ng-click="submitComment(commentInput); commentInput = null">
-          Post
+        <button class="button button-clear button-primary" ng-click="submitComment(commentInput); commentInput = null" style="padding-right: 5px;">
+          <i class="icon ion-ios-paperplane-outline"></i>
         </button>
       </ion-footer-bar>
-
     </ion-modal-view>
   </script>
 

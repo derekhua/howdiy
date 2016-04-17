@@ -102,7 +102,7 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
-.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, $timeout, ImageService, $ionicPopover, $ionicActionSheet) {
+.controller('HomeCtrl', function($scope, $rootScope, $cordovaCamera, $state, $http, $ionicPopup, AuthService, $ionicLoading, $cordovaFileTransfer, $timeout, ImageService, $ionicPopover, $ionicActionSheet, $ionicScrollDelegate) {
   $scope.categories = [{name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}, {name: 'cooking'}, {name: 'computers'}];
   $scope.cardView = true;
   $scope.guides = [];
@@ -110,6 +110,7 @@ angular.module('starter.controllers', ['ionic'])
   $scope.searchFlag = false;
   $scope.searchOn = function() {
     $scope.searchFlag = true;
+    $ionicScrollDelegate.scrollTop();
   };
   $scope.searchOff = function() {
     $scope.searchFlag = false;
@@ -174,8 +175,8 @@ angular.module('starter.controllers', ['ionic'])
       {params: {'index': $scope.guideIndex}}).then(function(result) {
         $scope.guideIndex -= result.data.length;
         $scope.guides = $scope.guides.concat(result.data);
+        console.log($scope.guides[0]);
         $scope.$broadcast('scroll.infiniteScrollComplete');
-        console.log(result.data);
       }).catch(function(result) {
         console.log("getGuides error");
         $scope.$broadcast('scroll.infiniteScrollComplete');
@@ -186,7 +187,6 @@ angular.module('starter.controllers', ['ionic'])
   };
 
   $scope.doRefresh = function() {
-    console.log('Refreshing!');
     $http.post($scope.ec2Address + '/api/u/' + $scope.username + '/updateNewsFeed').then(function(result) {
       $scope.guides = [];
       $scope.guideIndex = result.data;
@@ -888,10 +888,6 @@ angular.module('starter.controllers', ['ionic'])
         "username": $scope.username, 
         "body": comment,
         "date": Date.now()
-      });
-      var alertPopup = $ionicPopup.alert({
-        title: 'Success!',
-        template: 'Keep commenting!'
       });
     }).catch(function(err) {
       var alertPopup = $ionicPopup.alert({

@@ -45,13 +45,12 @@
     "shelljs": "^0.5.3"
   },
   "cordovaPlugins": [
+    "ionic-plugin-keyboard",
     "cordova-plugin-device",
     "cordova-plugin-console",
     "cordova-plugin-whitelist",
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
-    "ionic-plugin-keyboard",
-    "org.apache.cordova.camera",
     "cordova-plugin-camera",
     "cordova-plugin-file-transfer",
     "cordova-plugin-filepath"

@@ -14,17 +14,24 @@ var howdiyApp = angular.module('starter', ['ionic', 'ngCordova', 'starter.contro
   	$rootScope.appReady.status = true;
   	$rootScope.$apply();
 
+    console.log("KEYBOARD: Now load keyboard plugin...");
+    console.log("KEYBOARD: Keyboard plugin: " + window.cordova.plugins.Keyboard);
+    console.log("KEYBOARD: And cordova keyboard: " + cordova.plugins.Keyboard);
+
 	  // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard for form inputs)
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+    if (window.cordova && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       // On iOS, if there is an input in your footer, you will need to set
       cordova.plugins.Keyboard.disableScroll(true);
     }    
-    // if (window.StatusBar) {
-    //   // org.apache.cordova.statusbar required
-    //   StatusBar.styleDefault();
-    // }
+    if (window.StatusBar) {
+      StatusBar.styleDefault();
+    }
+
+    console.log("KEYBOARD: Loaded keyboard plugin...");
   });
+  
+  
 })
 
 .config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
